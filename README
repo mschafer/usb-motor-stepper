@@ -1,0 +1,5 @@
+usb-motor-stepper
+--------------------------
+
+Control usb stepper motors from a host pc connected to an embedded device via usb.
+
