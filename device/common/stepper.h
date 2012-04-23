@@ -1,5 +1,5 @@
-#ifndef umc_stepper_h
-#define umc_stepper_h
+#ifndef ums_stepper_h
+#define ums_stepper_h
 
 #include <stdint.h>
 #include "commands.h"

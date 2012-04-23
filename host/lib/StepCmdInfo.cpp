@@ -50,17 +50,17 @@ struct StepParser : qi::grammar<Iterator, ParsedStepCmd(), ascii::space_type>
 /**
  * step x+ Y0 u+ z- 2345
  */
-class StepInfo : public CommandInfo
+class StepCmdInfo : public CommandInfo
 {
 public:
-	StepInfo() {
+	StepCmdInfo() {
 		name_ = "Step";
 		id_ = StepCmd_ID;
 
 		addToRegistry();
 	}
 
-	 MaxCmdBuff parse(const std::string &input) const {
+	 MaxCmdBuff compile(const std::string &input) const {
 		 typedef std::string::const_iterator iterator;
 		 StepParser<iterator> grammar;
 		 iterator iter = input.begin();
@@ -94,18 +94,18 @@ public:
 	    ParsedStepDir sd = p.get<0>();
 	    s->stepDir = 0;
 
-	    if (at_c<0>(sd)) s->stepDir        |= UMC_X_STEP;
-	    if (at_c<0>(sd) == '+') s->stepDir |= UMC_X_DIR;
-	    if (at_c<1>(sd)) s->stepDir        |= UMC_Y_STEP;
-	    if (at_c<1>(sd) == '+') s->stepDir |= UMC_Y_DIR;
-	    if (at_c<2>(sd)) s->stepDir        |= UMC_Z_STEP;
-	    if (at_c<2>(sd) == '+') s->stepDir |= UMC_Z_DIR;
-	    if (at_c<3>(sd)) s->stepDir        |= UMC_U_STEP;
-	    if (at_c<3>(sd) == '+') s->stepDir |= UMC_U_DIR;
+	    if (at_c<0>(sd)) s->stepDir        |= UMS_X_STEP;
+	    if (at_c<0>(sd) == '+') s->stepDir |= UMS_X_DIR;
+	    if (at_c<1>(sd)) s->stepDir        |= UMS_Y_STEP;
+	    if (at_c<1>(sd) == '+') s->stepDir |= UMS_Y_DIR;
+	    if (at_c<2>(sd)) s->stepDir        |= UMS_Z_STEP;
+	    if (at_c<2>(sd) == '+') s->stepDir |= UMS_Z_DIR;
+	    if (at_c<3>(sd)) s->stepDir        |= UMS_U_STEP;
+	    if (at_c<3>(sd) == '+') s->stepDir |= UMS_U_DIR;
 	}
 };
 
 // static instance for the registry
-StepInfo theStep;
+StepCmdInfo theStep;
 
 }

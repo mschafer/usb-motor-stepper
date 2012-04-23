@@ -13,6 +13,10 @@ void handle_NoOpCmd(uint8_t *cmdData)
 {
 }
 
+void handle_PingCmd(uint8_t *cmdData)
+{
+}
+
 void handle_AxisCmd(uint8_t *cmdData)
 {
 	struct AxisCmd *c = (struct AxisCmd*)cmdData;
@@ -30,22 +34,17 @@ void handle_StepCmd(uint8_t *cmdData)
  * This handler is used for messages that should never be received or
  * unknow messages.  If we get here, then we are probably out of sync
  * with the command stream and we must abort.  This routine will send
- * an error message and put the device into a "crashed state" which
- * can only be fixed by a reset.
+ * an error message and ...
+ * \todo what to do when this happens?
  */
 void handle_bad_cmd(uint8_t *cmdData)
 {
     struct ErrorMsg e;
     e.msgId = ErrorMsg_ID;
-    e.errorId = UMC_ERROR_UNKNOWN_CMD_ID;
+    e.errorId = UMS_ERROR_UNKNOWN_CMD_ID;
     e.data[0] = cmdData[0];
     pf_send_bytes((uint8_t*)&e, ErrorMsg_LENGTH);
 
-}
-
-void handle_ResetCmd(uint8_t *cmdData)
-{
-    pf_reset();
 }
 
 void handle_LineCmd(uint8_t *cmdData)
@@ -70,18 +69,18 @@ void handle_LongLineCmd(uint8_t *cmdData)
 typedef void(*cmd_handler_t)(uint8_t *cmdData);
 static const cmd_handler_t handlers[] = {
         handle_NoOpCmd,
+        handle_PingCmd,
         handle_AxisCmd,
         handle_StepCmd,
-        handle_ResetCmd,
         handle_LineCmd,
         handle_LongLineCmd
 };
 
 static const uint8_t lengths[] = {
         NoOpCmd_LENGTH,
+        PingCmd_LENGTH,
         AxisCmd_LENGTH,
         StepCmd_LENGTH,
-        ResetCmd_LENGTH,
         LineCmd_LENGTH,
         LongLineCmd_LENGTH
 };

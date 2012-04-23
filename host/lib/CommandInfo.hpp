@@ -59,7 +59,6 @@ protected:
 		std::fill(pbuff, pbuff+sizeof(MaxCmdBuff), 0);
 		const uint8_t *pcmd = &cmd.cmdId;
 		std::copy(pcmd, pcmd+sizeof(T), pbuff);
-
 	}
 
 	void addToRegistry();

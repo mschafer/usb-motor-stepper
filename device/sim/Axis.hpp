@@ -1,5 +1,5 @@
-#ifndef umc_Axis_hpp
-#define umc_Axis_hpp
+#ifndef ums_Axis_hpp
+#define ums_Axis_hpp
 
 #include <boost/array.hpp>
 #include "commands.h"
@@ -7,12 +7,12 @@
 namespace ums {
 
 struct Pin {
-	Pin() : port_(UMC_UNASSIGNED_PORT) {}
+	Pin() : port_(UMS_UNASSIGNED_PORT) {}
 
 	void configure(uint8_t port, int8_t pin) {
 		port_ = port;
-		if (pin > UMC_INVERT_PIN) {
-			pin_ = pin - UMC_INVERT_PIN;
+		if (pin > UMS_INVERT_PIN) {
+			pin_ = pin - UMS_INVERT_PIN;
 			inverted_ = true;
 		} else {
 			pin_ = pin;
@@ -20,14 +20,14 @@ struct Pin {
 		}
 	}
 
-	bool unassigned() const { return (port_ == UMC_UNASSIGNED_PORT); }
+	bool unassigned() const { return (port_ == UMS_UNASSIGNED_PORT); }
 	bool &operator()(boost::array<bool, 256> &pins) const { return pins[index()]; }
 	void operator()(boost::array<bool, 256> &pins, bool val) const { pins[index()] = val; }
 	uint8_t index() const { return static_cast<uint8_t>(port_ * 16 + pin_); }
 	bool inverted() const { return inverted_; }
 	uint8_t port() const { return port_; }
 	uint8_t pin() const { return pin_; }
-	uint8_t cmdPin() const { return inverted_ ? pin_ + UMC_INVERT_PIN : pin_; }
+	uint8_t cmdPin() const { return inverted_ ? pin_ + UMS_INVERT_PIN : pin_; }
 
 private:
 	uint8_t port_;

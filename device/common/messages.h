@@ -1,13 +1,13 @@
-#ifndef umc_messages_h
-#define umc_messages_h
+#ifndef ums_messages_h
+#define ums_messages_h
 
 #include <stdint.h>
 
 /** \file
- * This file describes all the message that might be sent by the umc.
+ * This file describes all the message that might be sent by the ums.
  */
 
-#define UMC_ERROR_UNKNOWN_CMD_ID 0      ///\< Error Id for an unrecognized cmd Id.
+#define UMS_ERROR_UNKNOWN_CMD_ID 0      ///\< Error Id for an unrecognized cmd Id.
 
 static const uint8_t PongMsg_ID = 0;
 #define PongMsg_LENGTH (sizeof(struct PongMsg))
@@ -18,7 +18,7 @@ struct PongMsg {
 };
 
 /**
- * Message sent from the umc to indicate a fatal error.
+ * Message sent from the ums to indicate a fatal error.
  * The device resets itself and enters a disabled state after sending one of these.
  */
 static const uint8_t ErrorMsg_ID = 1;

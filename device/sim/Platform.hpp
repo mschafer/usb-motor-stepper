@@ -1,5 +1,5 @@
-#ifndef umc_Platform_hpp
-#define umc_Platform_hpp
+#ifndef ums_Platform_hpp
+#define ums_Platform_hpp
 
 #include <boost/circular_buffer.hpp>
 #include <boost/optional.hpp>
@@ -9,7 +9,7 @@
 #include "Axis.hpp"
 
 /**
- * \file Platform specific implementation of umc functions.
+ * \file Platform specific implementation of ums functions.
  */
 
 namespace ums {

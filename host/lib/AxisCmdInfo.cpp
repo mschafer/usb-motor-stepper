@@ -83,17 +83,17 @@ struct AxisParser : qi::grammar<Iterator, ParsedAxis(), ascii::space_type>
 /**
  * axis +step:p2_7 dir:p0_2 -fwd:p2_3 +rev:p2_4
  */
-class AxisInfo : public CommandInfo
+class AxisCmdInfo : public CommandInfo
 {
 public:
-	AxisInfo() {
+	AxisCmdInfo() {
 		name_ = "Axis";
 		id_ = AxisCmd_ID;
 
 		addToRegistry();
 	}
 
-	 MaxCmdBuff parse(const std::string &input) const {
+	 MaxCmdBuff compile(const std::string &input) const {
 		 typedef std::string::const_iterator iterator;
 		 AxisParser<iterator> grammar;
 		 iterator iter = input.begin();
@@ -109,10 +109,6 @@ public:
 		 }
 	}
 
-	std::string generate() const {
-		return std::string("generated");
-	}
-
 	static void createCmd(MaxCmdBuff *cmd, const ParsedAxis &pa)
 	{
 	    using boost::fusion::at_c;
@@ -122,10 +118,10 @@ public:
 	    ac.name = at_c<0>(pa);
 	    PinVec_t pinvec = at_c<1>(pa);
 
-        ac.stepPort = UMC_UNASSIGNED_PORT; ac.stepPin = 0;
-        ac.dirPort = UMC_UNASSIGNED_PORT; ac.dirPin = 0;
-        ac.fwdPort = UMC_UNASSIGNED_PORT; ac.fwdPin = 0;
-        ac.revPort = UMC_UNASSIGNED_PORT; ac.revPin = 0;
+        ac.stepPort = UMS_UNASSIGNED_PORT; ac.stepPin = 0;
+        ac.dirPort = UMS_UNASSIGNED_PORT; ac.dirPin = 0;
+        ac.fwdPort = UMS_UNASSIGNED_PORT; ac.fwdPin = 0;
+        ac.revPort = UMS_UNASSIGNED_PORT; ac.revPin = 0;
 
         //step
 	    if (at_c<0>(pinvec)) {
@@ -166,12 +162,12 @@ public:
         port = uport & 0xFF;
         pin = upin & 0xFF;
         if (inverted) {
-            upin |= UMC_INVERT_PIN;
+            upin |= UMS_INVERT_PIN;
         }
 	}
 };
 
 // static instance for the registry
-AxisInfo theAxis;
+AxisCmdInfo theAxis;
 
 }

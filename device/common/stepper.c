@@ -73,10 +73,10 @@ void st_line_setup(int dx, int dy, int dz, int du, uint16_t delay)
     Line.adu = abs(du);
 
     Line.dir = 0;
-    Line.dir |= (dx < 0) ? 0 : UMC_X_DIR;
-    Line.dir |= (dy < 0) ? 0 : UMC_Y_DIR;
-    Line.dir |= (dz < 0) ? 0 : UMC_Z_DIR;
-    Line.dir |= (du < 0) ? 0 : UMC_U_DIR;
+    Line.dir |= (dx < 0) ? 0 : UMS_X_DIR;
+    Line.dir |= (dy < 0) ? 0 : UMS_Y_DIR;
+    Line.dir |= (dz < 0) ? 0 : UMS_Z_DIR;
+    Line.dir |= (du < 0) ? 0 : UMS_U_DIR;
 
     Line.maxd = Line.adx;
     Line.maxd = Line.ady > Line.maxd ? Line.ady : Line.maxd;
@@ -98,25 +98,25 @@ uint8_t st_line_next_step()
 
     Line.ex += 2 * Line.adx;
     if (Line.ex > Line.maxd) {
-        step |= UMC_X_STEP;
+        step |= UMS_X_STEP;
         Line.ex -= 2 * Line.maxd;
     }
 
     Line.ey += 2 * Line.ady;
     if (Line.ey > Line.maxd) {
-        step |= UMC_Y_STEP;
+        step |= UMS_Y_STEP;
         Line.ey -= 2 * Line.maxd;
     }
 
     Line.ez += 2 * Line.adz;
     if (Line.ez > Line.maxd) {
-        step |= UMC_Z_STEP;
+        step |= UMS_Z_STEP;
         Line.ez -= 2 * Line.maxd;
     }
 
     Line.eu += 2 * Line.adu;
     if (Line.eu > Line.maxd) {
-        step |= UMC_U_STEP;
+        step |= UMS_U_STEP;
         Line.eu -= 2 * Line.maxd;
     }
 
@@ -135,9 +135,9 @@ void st_init( )
 	ac.dirPort = 3;
 	ac.dirPin = 1;
 	ac.fwdPort = 2;
-	ac.fwdPin = 0 | UMC_INVERT_PIN;
+	ac.fwdPin = 0 | UMS_INVERT_PIN;
 	ac.revPort = 2;
-	ac.revPin = 1 | UMC_INVERT_PIN;
+	ac.revPin = 1 | UMS_INVERT_PIN;
 	st_setup_axis(&ac);
 
     ac.name = 'y';
@@ -146,9 +146,9 @@ void st_init( )
     ac.dirPort = 3;
     ac.dirPin = 3;
     ac.fwdPort = 2;
-    ac.fwdPin = 2 | UMC_INVERT_PIN;
+    ac.fwdPin = 2 | UMS_INVERT_PIN;
     ac.revPort = 2;
-    ac.revPin = 3 | UMC_INVERT_PIN;
+    ac.revPin = 3 | UMS_INVERT_PIN;
     st_setup_axis(&ac);
 
     ac.name = 'z';
@@ -157,9 +157,9 @@ void st_init( )
     ac.dirPort = 2;
     ac.dirPin = 5;
     ac.fwdPort = 2;
-    ac.fwdPin = 8 | UMC_INVERT_PIN;
+    ac.fwdPin = 8 | UMS_INVERT_PIN;
     ac.revPort = 2;
-    ac.revPin = 9 | UMC_INVERT_PIN;
+    ac.revPin = 9 | UMS_INVERT_PIN;
     st_setup_axis(&ac);
 
     ac.name = 'u';
@@ -168,9 +168,9 @@ void st_init( )
     ac.dirPort = 2;
     ac.dirPin = 7;
     ac.fwdPort = 2;
-    ac.fwdPin = 10 | UMC_INVERT_PIN;
+    ac.fwdPin = 10 | UMS_INVERT_PIN;
     ac.revPort = 2;
-    ac.revPin = 11 | UMC_INVERT_PIN;
+    ac.revPin = 11 | UMS_INVERT_PIN;
     st_setup_axis(&ac);
 
     // initialize step fifo
@@ -223,7 +223,7 @@ void st_add_step(uint8_t stepDir, uint16_t delay)
  */
 void st_set_ipin(uint8_t port, uint8_t ipin, uint8_t val)
 {
-	uint8_t pin = ipin & ~UMC_INVERT_PIN;
+	uint8_t pin = ipin & ~UMS_INVERT_PIN;
 	if (pin != ipin) {
 		val = (val==0) ? 1 : 0;
 	}
@@ -235,7 +235,7 @@ void st_set_ipin(uint8_t port, uint8_t ipin, uint8_t val)
  */
 uint8_t st_read_ipin(uint8_t port, uint8_t ipin)
 {
-	uint8_t pin = ipin & ~UMC_INVERT_PIN;
+	uint8_t pin = ipin & ~UMS_INVERT_PIN;
 	uint8_t val = pf_read_port_pin(port, pin);
 	if (pin != ipin) {
 		val = (val==0) ? 1 : 0;
@@ -243,8 +243,8 @@ uint8_t st_read_ipin(uint8_t port, uint8_t ipin)
 	return val;
 }
 
-#define UMC_STEP_BIT 0x01
-#define UMC_DIR_BIT  0x02
+#define UMS_STEP_BIT 0x01
+#define UMS_DIR_BIT  0x02
 /**
  * Generate a step in the specified direction on the specified axis.
  * \param stepDir bit0 is step, bit 1 is dir.
@@ -252,21 +252,21 @@ uint8_t st_read_ipin(uint8_t port, uint8_t ipin)
 void st_do_step(Axis_t *a, uint8_t stepDir)
 {
 	// do nothing if this axis has no step dir pins assigned
-	if (a->dirPin == UMC_UNASSIGNED_PORT || a->stepPin == UMC_UNASSIGNED_PORT)
+	if (a->dirPin == UMS_UNASSIGNED_PORT || a->stepPin == UMS_UNASSIGNED_PORT)
 		return;
 
 	// set direction bit first
-	st_set_ipin(a->dirPort, a->dirPin, stepDir & UMC_DIR_BIT);
+	st_set_ipin(a->dirPort, a->dirPin, stepDir & UMS_DIR_BIT);
 
-	if ( (stepDir & UMC_STEP_BIT) != 0) {
+	if ( (stepDir & UMS_STEP_BIT) != 0) {
 		// moving forward
-		if (a->fwdPort != UMC_UNASSIGNED_PORT && (stepDir & UMC_DIR_BIT) != 0) {
+		if (a->fwdPort != UMS_UNASSIGNED_PORT && (stepDir & UMS_DIR_BIT) != 0) {
 			uint8_t limit = st_read_ipin(a->fwdPort, a->fwdPin);
 			if (limit != 0) {
 				// limit activated, don't step
 				return;
 			}
-		} else if (a->revPort != UMC_UNASSIGNED_PORT) { // moving reverse
+		} else if (a->revPort != UMS_UNASSIGNED_PORT) { // moving reverse
 			uint8_t limit = st_read_ipin(a->revPort, a->revPin);
 			if (limit != 0) {
 				// limit activated, don't step
@@ -284,13 +284,13 @@ void st_do_step(Axis_t *a, uint8_t stepDir)
 void st_clear_steps()
 {
 
-	if (Axes.x.stepPort != UMC_UNASSIGNED_PORT)
+	if (Axes.x.stepPort != UMS_UNASSIGNED_PORT)
 		st_set_ipin(Axes.x.stepPort, Axes.x.stepPin, 0);
-	if (Axes.y.stepPort != UMC_UNASSIGNED_PORT)
+	if (Axes.y.stepPort != UMS_UNASSIGNED_PORT)
 		st_set_ipin(Axes.y.stepPort, Axes.y.stepPin, 0);
-	if (Axes.z.stepPort != UMC_UNASSIGNED_PORT)
+	if (Axes.z.stepPort != UMS_UNASSIGNED_PORT)
 		st_set_ipin(Axes.z.stepPort, Axes.z.stepPin, 0);
-	if (Axes.u.stepPort != UMC_UNASSIGNED_PORT)
+	if (Axes.u.stepPort != UMS_UNASSIGNED_PORT)
 		st_set_ipin(Axes.u.stepPort, Axes.u.stepPin, 0);
 }
 
@@ -323,26 +323,26 @@ void st_setup_axis(struct AxisCmd *c)
 	Axis_t *axis = getAxis(c->name);
 	axis->stepPort = c->stepPort;
 	axis->stepPin  = c->stepPin;
-	pf_configure_port_pin(axis->stepPort, axis->stepPin & ~UMC_INVERT_PIN, UMC_OUTPUT_PIN);
+	pf_configure_port_pin(axis->stepPort, axis->stepPin & ~UMS_INVERT_PIN, UMS_OUTPUT_PIN);
 
 	axis->dirPort  = c->dirPort;
 	axis->dirPin   = c->dirPin;
-    pf_configure_port_pin(axis->stepPort, axis->stepPin & ~UMC_INVERT_PIN, UMC_OUTPUT_PIN);
+    pf_configure_port_pin(axis->stepPort, axis->stepPin & ~UMS_INVERT_PIN, UMS_OUTPUT_PIN);
 
     // configure the limit pins with a pullup or pulldown to be inactive when disconnected
     axis->fwdPort  = c->fwdPort;
 	axis->fwdPin   = c->fwdPin;
-	if (axis->fwdPin & UMC_INVERT_PIN) {
-	    pf_configure_port_pin(axis->fwdPort, axis->fwdPin & ~UMC_INVERT_PIN, UMC_INPUT_PULLUP_PIN);
+	if (axis->fwdPin & UMS_INVERT_PIN) {
+	    pf_configure_port_pin(axis->fwdPort, axis->fwdPin & ~UMS_INVERT_PIN, UMS_INPUT_PULLUP_PIN);
 	} else {
-        pf_configure_port_pin(axis->fwdPort, axis->fwdPin & ~UMC_INVERT_PIN, UMC_INPUT_PULLDOWN_PIN);
+        pf_configure_port_pin(axis->fwdPort, axis->fwdPin & ~UMS_INVERT_PIN, UMS_INPUT_PULLDOWN_PIN);
 	}
 
 	axis->revPort  = c->revPort;
 	axis->revPin   = c->revPin;
-    if (axis->revPin & UMC_INVERT_PIN) {
-        pf_configure_port_pin(axis->revPort, axis->revPin & ~UMC_INVERT_PIN, UMC_INPUT_PULLUP_PIN);
+    if (axis->revPin & UMS_INVERT_PIN) {
+        pf_configure_port_pin(axis->revPort, axis->revPin & ~UMS_INVERT_PIN, UMS_INPUT_PULLUP_PIN);
     } else {
-        pf_configure_port_pin(axis->revPort, axis->revPin & ~UMC_INVERT_PIN, UMC_INPUT_PULLDOWN_PIN);
+        pf_configure_port_pin(axis->revPort, axis->revPin & ~UMS_INVERT_PIN, UMS_INPUT_PULLDOWN_PIN);
     }
 }

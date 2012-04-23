@@ -1,10 +1,10 @@
-#ifndef umc_commands_h
-#define umc_commands_h
+#ifndef ums_commands_h
+#define ums_commands_h
 
 #include <stdint.h>
 
 /** \file
- * This file lists all the commands that are recognized by the umc.
+ * This file lists all the commands that are recognized by the ums.
  */
 
 /**
@@ -27,10 +27,10 @@ struct PingCmd {
 
 
 /** Invalid port number used to indicate an unassigned pin. */
-#define UMC_UNASSIGNED_PORT 0xFF
+#define UMS_UNASSIGNED_PORT 0xFF
 
 /** Valid pin numbers are 0-15.  Setting this bit indicates the pin is inverted. */
-#define UMC_INVERT_PIN 0x10
+#define UMS_INVERT_PIN 0x10
 
 /**
  * IO pin descriptors consist of an 8 bit unsigned port number and an 8 bit unsigned pin number.
@@ -55,14 +55,14 @@ struct AxisCmd {
 	uint8_t revPin;
 };
 
-#define UMC_X_STEP 0x01     /**< setting this bit in stepDir causes the x axis to move */
-#define UMC_X_DIR  0x02     /**< setting this bit in stepDir sets the x direction to fwd */
-#define UMC_Y_STEP 0x04     /**< setting this bit in stepDir causes the y axis to move */
-#define UMC_Y_DIR  0x08     /**< setting this bit in stepDir sets the y direction to fwd */
-#define UMC_Z_STEP 0x10     /**< setting this bit in stepDir causes the z axis to move */
-#define UMC_Z_DIR  0x20     /**< setting this bit in stepDir sets the z direction to fwd */
-#define UMC_U_STEP 0x40     /**< setting this bit in stepDir causes the u axis to move */
-#define UMC_U_DIR  0x80     /**< setting this bit in stepDir sets the u direction to fwd */
+#define UMS_X_STEP 0x01     /**< setting this bit in stepDir causes the x axis to move */
+#define UMS_X_DIR  0x02     /**< setting this bit in stepDir sets the x direction to fwd */
+#define UMS_Y_STEP 0x04     /**< setting this bit in stepDir causes the y axis to move */
+#define UMS_Y_DIR  0x08     /**< setting this bit in stepDir sets the y direction to fwd */
+#define UMS_Z_STEP 0x10     /**< setting this bit in stepDir causes the z axis to move */
+#define UMS_Z_DIR  0x20     /**< setting this bit in stepDir sets the z direction to fwd */
+#define UMS_U_STEP 0x40     /**< setting this bit in stepDir causes the u axis to move */
+#define UMS_U_DIR  0x80     /**< setting this bit in stepDir sets the u direction to fwd */
 
 /**
  * Steps all the axes and then waits.

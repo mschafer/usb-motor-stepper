@@ -19,29 +19,29 @@ BOOST_FUSION_ADAPT_STRUCT(NoOpCmd, (uint8_t, cmdId));
 namespace ums {
 
 template <typename Iterator>
-struct PingParser : qi::grammar<Iterator, PingCmd(), ascii::space_type>
+struct NoOpParser : qi::grammar<Iterator, NoOpCmd(), ascii::space_type>
 {
-	PingParser () : PingParser::base_type(start)
+	NoOpParser () : NoOpParser::base_type(start)
 	{
-		start = qi::no_case[qi::lit("ping")] >> qi::attr(PingCmd_ID);
+		start = qi::no_case[qi::lit("noop")] >> qi::attr(NoOpCmd_ID);
 	}
-	qi::rule<Iterator, PingCmd(), ascii::space_type> start;
+	qi::rule<Iterator, NoOpCmd(), ascii::space_type> start;
 };
 
 
-class PingInfo : public CommandInfo
+class NoOpCmdInfo : public CommandInfo
 {
 public:
-	PingInfo() {
-		name_ = "Ping";
-		id_ = PingCmd_ID;
+	NoOpCmdInfo() {
+		name_ = "NoOp";
+		id_ = NoOpCmd_ID;
 
 		addToRegistry();
 	}
 
 	 MaxCmdBuff compile(const std::string &input) const {
 		 typedef std::string::const_iterator iterator;
-		 noop_parser<iterator> grammar;
+		 NoOpParser<iterator> grammar;
 		 iterator iter = input.begin();
 		 iterator end = input.end();
 		 NoOpCmd noop;
@@ -55,8 +55,12 @@ public:
 		 }
 	}
 
+	std::string generate() const {
+		return std::string("generated");
+	}
+
 };
 
-PingInfo thePing;
+NoOpCmdInfo theNoOp;
 
 }

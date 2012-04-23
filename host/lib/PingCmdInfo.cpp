@@ -14,53 +14,49 @@
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 
-BOOST_FUSION_ADAPT_STRUCT(NoOpCmd, (uint8_t, cmdId));
+BOOST_FUSION_ADAPT_STRUCT(PingCmd, (uint8_t, cmdId));
 
 namespace ums {
 
 template <typename Iterator>
-struct noop_parser : qi::grammar<Iterator, NoOpCmd(), ascii::space_type>
+struct PingParser : qi::grammar<Iterator, PingCmd(), ascii::space_type>
 {
-	noop_parser () : noop_parser::base_type(start)
+	PingParser () : PingParser::base_type(start)
 	{
-		start = qi::no_case[qi::lit("noop")] >> qi::attr(NoOpCmd_ID);
+		start = qi::no_case[qi::lit("ping")] >> qi::attr(PingCmd_ID);
 	}
-	qi::rule<Iterator, NoOpCmd(), ascii::space_type> start;
+	qi::rule<Iterator, PingCmd(), ascii::space_type> start;
 };
 
 
-class NoOpInfo : public CommandInfo
+class PingCmdInfo : public CommandInfo
 {
 public:
-	NoOpInfo() {
-		name_ = "NoOp";
-		id_ = NoOpCmd_ID;
+	PingCmdInfo() {
+		name_ = "Ping";
+		id_ = PingCmd_ID;
 
 		addToRegistry();
 	}
 
-	 MaxCmdBuff parse(const std::string &input) const {
+	 MaxCmdBuff compile(const std::string &input) const {
 		 typedef std::string::const_iterator iterator;
-		 noop_parser<iterator> grammar;
+		 PingParser<iterator> grammar;
 		 iterator iter = input.begin();
 		 iterator end = input.end();
-		 NoOpCmd noop;
-		 bool r = phrase_parse(iter, end, grammar, ascii::space, noop);
+		 PingCmd ping;
+		 bool r = phrase_parse(iter, end, grammar, ascii::space, ping);
 		 if (!r || iter != end) {
-			 throw (std::runtime_error("parse NoOp failed"));
+			 throw (std::runtime_error("parse Ping failed"));
 		 } else {
 			 MaxCmdBuff ret;
-			 fillCmdBuff(ret, noop);
+			 fillCmdBuff(ret, ping);
 			 return ret;
 		 }
 	}
 
-	std::string generate() const {
-		return std::string("generated");
-	}
-
 };
 
-NoOpInfo theNoOp;
+PingCmdInfo thePing;
 
 }

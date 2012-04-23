@@ -49,17 +49,17 @@ struct LineParser : qi::grammar<Iterator, ParsedLineCmd(), ascii::space_type>
 };
 
 
-class LineInfo : public CommandInfo
+class LineCmdInfo : public CommandInfo
 {
 public:
-    LineInfo() {
+    LineCmdInfo() {
         name_ = "Line";
         id_ = LineCmd_ID;
 
         addToRegistry();
     }
 
-    MaxCmdBuff parse(const std::string &input) const {
+    MaxCmdBuff compile(const std::string &input) const {
         typedef std::string::const_iterator iterator;
         LineParser<iterator> grammar;
         iterator iter = input.begin();
@@ -101,6 +101,6 @@ public:
 };
 
 // static instance for the registry
-LineInfo theLine;
+LineCmdInfo theLine;
 
 }

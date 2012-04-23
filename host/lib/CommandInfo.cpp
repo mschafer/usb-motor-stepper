@@ -46,7 +46,7 @@ CommandInfo::parseLine(const std::string &line)
         std::string cmdName = *tok.begin();
         const CommandInfo *ci = findByName(cmdName);
         if (ci != NULL) {
-            ret.reset(new MaxCmdBuff(ci->parse(tl)));
+            ret.reset(new MaxCmdBuff(ci->compile(tl)));
         }
     }
 

@@ -1,31 +1,31 @@
-#ifndef umc_h
-#define umc_h
+#ifndef ums_h
+#define ums_h
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef UMC_IMPL
+#ifdef UMS_IMPL
 #define EXTERN
 #else
 #define EXTERN extern
 #endif
 
-EXTERN const char UMC_ENABLE[];
+EXTERN const char UMS_ENABLE[];
 
-#define UMC_MAJOR_VERSION 0
-#define UMC_MINOR_VERSION 0
+#define UMS_MAJOR_VERSION 0
+#define UMS_MINOR_VERSION 0
 
 /**
- * This function initializes the umc and clears all data including axis configuration.
+ * This function initializes the ums and clears all data including axis configuration.
  * It is left in a disabled state where all commands are ignored until the enable string is received.
  */
-void umc_init();
+void ums_init();
 
 /**
  * This function executes the idle thread once and should be called as often as possible.
  */
-void umc_idle();
+void ums_idle();
 
 #ifdef __cplusplus
 }

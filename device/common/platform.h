@@ -1,5 +1,5 @@
-#ifndef umc_platform_h
-#define umc_platform_h
+#ifndef ums_platform_h
+#define ums_platform_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,16 +19,16 @@ uint8_t pf_send_bytes(uint8_t *data, uint16_t size);
 uint8_t pf_receive_byte(uint8_t *rxByte);
 
 
-enum umc_pin_func {
-    UMC_OUTPUT_PIN,          ///\< Push-pull output.
-    UMC_INPUT_PULLUP_PIN,    ///\< Input pin with pull up.
-    UMC_INPUT_PULLDOWN_PIN   ///\< Input pin with pull down.
+enum ums_pin_func {
+    UMS_OUTPUT_PIN,          ///\< Push-pull output.
+    UMS_INPUT_PULLUP_PIN,    ///\< Input pin with pull up.
+    UMS_INPUT_PULLDOWN_PIN   ///\< Input pin with pull down.
 };
 
 /**
  * Configure an i/o pin to have the desired functionality.
  */
-void pf_configure_port_pin(uint8_t port, uint8_t pin, enum umc_pin_func func);
+void pf_configure_port_pin(uint8_t port, uint8_t pin, enum ums_pin_func func);
 
 /**
  * Set the value of an output pin.
@@ -55,12 +55,6 @@ void pf_set_step_timer(uint16_t val);
  * \return 0 if the timer is not counting down and non-zero if it is.
  */
 uint8_t pf_is_timer_running();
-
-/**
- * Reset the system to its power on state.
- * May be called by internal logic when something terminal has happened.
- */
-void pf_reset();
 
 #ifdef __cplusplus
 }

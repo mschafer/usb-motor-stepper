@@ -1,6 +1,6 @@
 #include "Platform.hpp"
 #include "platform.h"
-#include "umc.h"
+#include "ums.h"
 #include "stepper.h"
 
 namespace ums {
@@ -12,7 +12,7 @@ Platform *Platform::thePlatform_ = NULL;
 
 Platform::Platform() : toHost_(TO_BUFFER_SIZE), fromHost_(FROM_BUFFER_SIZE), t_(0)
 {
-	umc_init();
+	ums_init();
 }
 
 Platform &
@@ -36,7 +36,7 @@ Platform::reset()
 void
 Platform::runOnce()
 {
-	umc_idle();
+	ums_idle();
 	if (timerRunning()) {
 		t_ += delay_.get();
 		st_run_once();
@@ -154,7 +154,7 @@ uint8_t pf_receive_byte(uint8_t *rxByte)
 	}
 }
 
-void pf_configure_port_pin(uint8_t port, uint8_t pin, enum umc_pin_func func)
+void pf_configure_port_pin(uint8_t port, uint8_t pin, enum ums_pin_func func)
 {
     ///\todo mimic configured pins in simulator?
 }
