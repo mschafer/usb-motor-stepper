@@ -2,7 +2,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/tokenizer.hpp>
 
-namespace umc {
+namespace ums {
 
 CommandInfo::CommandInfo_set &
 CommandInfo::registry()

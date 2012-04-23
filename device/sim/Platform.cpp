@@ -3,7 +3,7 @@
 #include "umc.h"
 #include "stepper.h"
 
-namespace umc {
+namespace ums {
 
 const int Platform::TO_BUFFER_SIZE = 1024;
 const int Platform::FROM_BUFFER_SIZE = 2048;
@@ -123,7 +123,7 @@ void Platform::timerDelay(uint16_t delay)
 
 uint8_t pf_send_bytes(uint8_t *data, uint16_t size)
 {
-	umc::Platform &platform = umc::Platform::instance();
+	ums::Platform &platform = ums::Platform::instance();
 
 	// is there enough room?
 	if (platform.toHost_.reserve() < size) {
@@ -138,13 +138,13 @@ uint8_t pf_send_bytes(uint8_t *data, uint16_t size)
 
 uint16_t pf_bytes_available()
 {
-	umc::Platform &platform = umc::Platform::instance();
+	ums::Platform &platform = ums::Platform::instance();
 	return static_cast<uint16_t>(platform.fromHost_.reserve());
 }
 
 uint8_t pf_receive_byte(uint8_t *rxByte)
 {
-	umc::Platform &platform = umc::Platform::instance();
+	ums::Platform &platform = ums::Platform::instance();
 	if (platform.fromHost_.empty()) {
 		return 0;
 	} else {
@@ -161,27 +161,27 @@ void pf_configure_port_pin(uint8_t port, uint8_t pin, enum umc_pin_func func)
 
 void pf_set_port_pin(uint8_t port, uint8_t pin, uint8_t val)
 {
-	umc::Platform &platform = umc::Platform::instance();
+	ums::Platform &platform = ums::Platform::instance();
 	uint8_t addr = (port << 4) | pin;
 	platform.portPin(addr, val != 0);
 }
 
 uint8_t pf_read_port_pin(uint8_t port, uint8_t pin)
 {
-	umc::Platform &platform = umc::Platform::instance();
+	ums::Platform &platform = ums::Platform::instance();
 	uint8_t addr = (port << 4) | pin;
 	return platform.portPin(addr);
 }
 
 void pf_set_step_timer(uint16_t delay)
 {
-	umc::Platform &platform = umc::Platform::instance();
+	ums::Platform &platform = ums::Platform::instance();
 	platform.timerDelay(delay);
 }
 
 uint8_t pf_is_timer_running()
 {
-	umc::Platform &platform = umc::Platform::instance();
+	ums::Platform &platform = ums::Platform::instance();
 	if (platform.timerRunning())
 		return 1;
 	else
@@ -190,6 +190,6 @@ uint8_t pf_is_timer_running()
 
 void pf_reset()
 {
-    umc::Platform &platform = umc::Platform::instance();
+    ums::Platform &platform = ums::Platform::instance();
     platform.reset();
 }

@@ -16,7 +16,7 @@ namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 namespace phx = boost::phoenix;
 
-namespace umc {
+namespace ums {
 
 typedef boost::fusion::vector<boost::optional<char>, unsigned int, unsigned int> ParsedPortPin;
 

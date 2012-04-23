@@ -20,7 +20,7 @@ namespace phx = boost::phoenix;
 
 using boost::optional;
 
-namespace umc {
+namespace ums {
 
 typedef boost::fusion::vector<optional<char>, optional<char>, optional<char>, optional<char> > ParsedStepDir;
 typedef boost::tuple<ParsedStepDir, unsigned int> ParsedStepCmd;

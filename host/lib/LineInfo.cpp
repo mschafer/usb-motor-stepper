@@ -19,7 +19,7 @@ namespace ascii = boost::spirit::ascii;
 namespace phx = boost::phoenix;
 using boost::optional;
 
-namespace umc {
+namespace ums {
 
 typedef boost::fusion::vector<optional<int>, optional<int>, optional<int>, optional<int> > ParsedLineDelta;
 typedef boost::tuple<ParsedLineDelta, unsigned int> ParsedLineCmd;

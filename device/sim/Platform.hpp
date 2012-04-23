@@ -12,7 +12,7 @@
  * \file Platform specific implementation of umc functions.
  */
 
-namespace umc {
+namespace ums {
 
 /**
  * Simulation platform implementation.

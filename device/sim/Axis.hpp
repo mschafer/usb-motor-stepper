@@ -4,7 +4,7 @@
 #include <boost/array.hpp>
 #include "commands.h"
 
-namespace umc {
+namespace ums {
 
 struct Pin {
 	Pin() : port_(UMC_UNASSIGNED_PORT) {}

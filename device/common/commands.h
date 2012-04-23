@@ -8,13 +8,23 @@
  */
 
 /**
- * A NoOp command is parsed and then ignored.
+ * A NoOp command is received without error by the device but ignored.
  */
 static const uint8_t NoOpCmd_ID = 0;
 #define NoOpCmd_LENGTH (sizeof(struct NoOpCmd))
 struct NoOpCmd {
 	uint8_t cmdId;
 };
+
+/**
+ * The device responds to a PingCmd with a PongMsg.
+ */
+static const uint8_t PingCmd_ID = 1;
+#define PingCmd_LENGTH (sizeof(struct PingCmd))
+struct PingCmd {
+	uint8_t cmdId;
+};
+
 
 /** Invalid port number used to indicate an unassigned pin. */
 #define UMC_UNASSIGNED_PORT 0xFF
@@ -28,9 +38,9 @@ struct NoOpCmd {
  * Inverted step pin generates falling edges to trigger a step.
  * Inverted dir pin generates a 0 for fwd and a 1 for rev.
  * Inverted limit pins are active low.
- * Note that port 0xFF (255) is reserved to indicate unsassigned pins.
+ * Note that port 0xFF (255) is reserved to indicate unassigned pins.
  */
-static const uint8_t AxisCmd_ID = 1;
+static const uint8_t AxisCmd_ID = 2;
 #define AxisCmd_LENGTH (sizeof(struct AxisCmd))
 struct AxisCmd {
 	uint8_t cmdId;
@@ -61,20 +71,13 @@ struct AxisCmd {
  * \param delay_hi Most significant byte of the 16 bit delay value.
  * \param delay_hi Least significant byte of the 16 bit delay value.
  */
-static const uint8_t StepCmd_ID = 2;
+static const uint8_t StepCmd_ID = 3;
 #define StepCmd_LENGTH (sizeof(struct StepCmd))
 struct StepCmd {
 	uint8_t cmdId;
 	uint8_t stepDir;
     uint8_t delay_hi;
     uint8_t delay_lo;
-};
-
-
-static const uint8_t ResetCmd_ID = 3;
-#define ResetCmd_LENGTH (sizeof(struct ResetCmd))
-struct ResetCmd {
-    uint8_t cmdId;
 };
 
 static const uint8_t LineCmd_ID = 4;
