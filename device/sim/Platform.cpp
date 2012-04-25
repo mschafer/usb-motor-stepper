@@ -2,16 +2,16 @@
 #include "platform.h"
 #include "ums.h"
 #include "stepper.h"
+#include <boost/foreach.hpp>
 
-namespace ums {
-
-const int Platform::TO_BUFFER_SIZE = 1024;
-const int Platform::FROM_BUFFER_SIZE = 2048;
+namespace ums { namespace sim {
 
 Platform *Platform::thePlatform_ = NULL;
 
-Platform::Platform() : toHost_(TO_BUFFER_SIZE), fromHost_(FROM_BUFFER_SIZE), t_(0)
+Platform::Platform() : t_(0)
 {
+	fromHost_.clear();
+	toHost_.clear();
 	ums_init();
 }
 
@@ -117,34 +117,55 @@ void Platform::timerDelay(uint16_t delay)
 	delay_ = delay;
 }
 
+void Platform::write(std::vector<uint8_t> &bytes)
+{
+	BOOST_FOREACH(uint8_t b, bytes) {
+		toHost_.push_back(b);
+	}
 }
+
+std::deque<uint8_t> Platform::read()
+{
+	std::deque<uint8_t> ret;
+	ret.swap(fromHost_);
+	return ret;
+}
+
+boost::optional<uint8_t> Platform::readByte()
+{
+	boost::optional<uint8_t> ret;
+	if (fromHost_.size() > 0) {
+		ret = fromHost_.front();
+		fromHost_.pop_front();
+	}
+	return ret;
+}
+
+}}
 
 ///////////////////////////////////////// C API //////////////////////////////////////////
 
+using ums::sim::Platform;
+
 uint8_t pf_send_bytes(uint8_t *data, uint16_t size)
 {
-	ums::Platform &platform = ums::Platform::instance();
+	Platform &platform = Platform::instance();
 
-	// is there enough room?
-	if (platform.toHost_.reserve() < size) {
-		return 0;
-	} else {
-		for (int i=0; i<size; i++) {
-			platform.toHost_.push_back(data[i]);
-		}
-		return 1;
+	for (size_t i=0; i<size; i++) {
+		platform.toHost_.push_back(data[i]);
 	}
+	return 1;
 }
 
 uint16_t pf_bytes_available()
 {
-	ums::Platform &platform = ums::Platform::instance();
-	return static_cast<uint16_t>(platform.fromHost_.reserve());
+	Platform &platform = Platform::instance();
+	return static_cast<uint16_t>(platform.fromHost_.size());
 }
 
 uint8_t pf_receive_byte(uint8_t *rxByte)
 {
-	ums::Platform &platform = ums::Platform::instance();
+	Platform &platform = Platform::instance();
 	if (platform.fromHost_.empty()) {
 		return 0;
 	} else {
@@ -161,27 +182,27 @@ void pf_configure_port_pin(uint8_t port, uint8_t pin, enum ums_pin_func func)
 
 void pf_set_port_pin(uint8_t port, uint8_t pin, uint8_t val)
 {
-	ums::Platform &platform = ums::Platform::instance();
+	Platform &platform = Platform::instance();
 	uint8_t addr = (port << 4) | pin;
 	platform.portPin(addr, val != 0);
 }
 
 uint8_t pf_read_port_pin(uint8_t port, uint8_t pin)
 {
-	ums::Platform &platform = ums::Platform::instance();
+	Platform &platform = Platform::instance();
 	uint8_t addr = (port << 4) | pin;
 	return platform.portPin(addr);
 }
 
 void pf_set_step_timer(uint16_t delay)
 {
-	ums::Platform &platform = ums::Platform::instance();
+	Platform &platform = Platform::instance();
 	platform.timerDelay(delay);
 }
 
 uint8_t pf_is_timer_running()
 {
-	ums::Platform &platform = ums::Platform::instance();
+	Platform &platform = Platform::instance();
 	if (platform.timerRunning())
 		return 1;
 	else
@@ -190,6 +211,6 @@ uint8_t pf_is_timer_running()
 
 void pf_reset()
 {
-    ums::Platform &platform = ums::Platform::instance();
+	Platform &platform = Platform::instance();
     platform.reset();
 }

@@ -13,6 +13,7 @@ add_library (ums STATIC
 include_directories ( ${Boost_INCLUDE_DIRS} 
 	${PROJECT_SOURCE_DIR}/device/common
 	${PROJECT_SOURCE_DIR}/device/sim
+	${PROJECT_SOURCE_DIR}/host/lib
 )
 
 link_directories(${Boost_LIBRARY_DIRS})

@@ -1,32 +1,26 @@
 #ifndef ums_Platform_hpp
 #define ums_Platform_hpp
 
-#include <boost/circular_buffer.hpp>
+#include <deque>
 #include <boost/optional.hpp>
 #include <boost/array.hpp>
 #include <stdint.h>
 #include <boost/container/flat_map.hpp>
 #include "Axis.hpp"
+#include "ILink.hpp"
 
 /**
- * \file Platform specific implementation of ums functions.
+ * \file Platform specific implementation of ums functions for simulator.
  */
 
-namespace ums {
+namespace ums { namespace sim {
 
 /**
  * Simulation platform implementation.
  * Singleton.
  */
-class Platform {
+class Platform : public ILink {
 public:
-
-	static const int TO_BUFFER_SIZE;
-	static const int FROM_BUFFER_SIZE;
-
-	boost::circular_buffer<uint8_t> toHost_;
-	boost::circular_buffer<uint8_t> fromHost_;
-
 	void runOnce();
 
 	void axis(char name, Axis &a);
@@ -40,14 +34,25 @@ public:
 	bool timerRunning();
 	void timerDelay(uint16_t delay);
 
-	void reset();
+	/**
+	 * Deletes the singleton and creates a new one.
+	 * Used to simulate a hard reset of embedded controller.
+	 */
+	static void reset();
+
+	virtual void write(std::vector<uint8_t> &bytes);
+	virtual std::deque<uint8_t> read();
+	virtual boost::optional<uint8_t> readByte();
 
 	static Platform &instance();
+
+	std::deque<uint8_t> toHost_;
+	std::deque<uint8_t> fromHost_;
+
 private:
 	Platform();
 
 	static Platform *thePlatform_;
-
 	boost::optional<uint16_t> delay_;
 	size_t t_;
 	boost::array<bool, 256> pins_;
@@ -57,5 +62,5 @@ private:
 
 };
 
-}
+}}
 #endif
