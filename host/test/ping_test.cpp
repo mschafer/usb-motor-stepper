@@ -18,7 +18,6 @@ BOOST_AUTO_TEST_CASE ( ping_test )
 	}
 
 	std::deque<uint8_t> buff;
-	std::cout << "deque size = " << buff.max_size() << std::endl;
 }
 
 BOOST_AUTO_TEST_CASE( one_step_test )

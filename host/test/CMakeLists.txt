@@ -3,6 +3,7 @@
 add_executable(test-usb-motor-stepper
 	hello_test.cpp
 	ping_test.cpp
+	serial_test.cpp
 )
 
 include_directories ( 
@@ -14,4 +15,4 @@ include_directories (
 
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
-target_link_libraries(test-usb-motor-stepper boost_unit_test_framework ums)
+target_link_libraries(test-usb-motor-stepper boost_unit_test_framework boost_system boost_thread ums)
