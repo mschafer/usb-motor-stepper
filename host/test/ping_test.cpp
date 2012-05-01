@@ -5,6 +5,7 @@
 #include "ums.h"
 #include "Axis.hpp"
 #include "Platform.hpp"
+#include "Host.hpp"
 
 using ums::sim::Platform;
 
@@ -22,36 +23,26 @@ BOOST_AUTO_TEST_CASE ( ping_test )
 
 BOOST_AUTO_TEST_CASE( one_step_test )
 {
-	Platform::reset();
-	Platform &p = Platform::instance();
-	std::string enableStr(UMS_ENABLE);
-	BOOST_FOREACH(char c, enableStr) {
-		p.fromHost_.push_back(c);
-	}
+	ums::Host host(ums::Host::SIMULATOR_NAME);
+	host.enableDevice();
 
 	ums::Axis x;
 	x.step_.configure(0, 0);
 	x.dir_.configure(0, 1);
-	p.axis('X', x);
+	Platform::instance().axis('X', x);
 
-	AxisCmd ac = p.axisCommand('X');
-	uint8_t *d = reinterpret_cast<uint8_t*>(&ac);
-	for (size_t i=0; i<sizeof(ac); i++) {
-		p.fromHost_.push_back(d[i]);
-	}
+	AxisCmd ac = Platform::instance().axisCommand('X');
+	host.sendCommand(&ac, sizeof(ac));
 
-	p.runOnce();
+	Platform::instance().runOnce();
 
 	StepCmd sc;
 	sc.cmdId = StepCmd_ID;
 	sc.delay_lo = 100;
 	sc.delay_hi = 0;
 	sc.stepDir = UMS_X_STEP | UMS_X_DIR;
-	d = reinterpret_cast<uint8_t*>(&sc);
-	for (size_t i=0; i<sizeof(sc); i++) {
-		p.fromHost_.push_back(d[i]);
-	}
-	p.runOnce();
+	host.sendCommand(&sc, sizeof(sc));
+	Platform::instance().runOnce();
 
-	BOOST_CHECK(p.axis('X').get().position_ == 1);
+	BOOST_CHECK(Platform::instance().axis('X').get().position_ == 1);
 }

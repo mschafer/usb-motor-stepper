@@ -42,7 +42,20 @@ SerialLink::write(std::vector<uint8_t> &bytes)
 {
 	boost::lock_guard<boost::mutex> guard(mutex_);
 	writeQueue_.insert(writeQueue_.end(), bytes.begin(), bytes.end());
+	writeImpl();
 
+}
+
+void
+SerialLink::write(void *bytes, size_t nBytes)
+{
+	uint8_t *pBytes = reinterpret_cast<uint8_t*>(bytes);
+	boost::lock_guard<boost::mutex> guard(mutex_);
+	writeQueue_.insert(writeQueue_.end(), pBytes, pBytes+nBytes);
+	writeImpl();
+}
+
+void SerialLink::writeImpl() {
 	// don't do anything else if a write operation is in progress
 	if (writeBuff_.size() == 0) {
 		writeBuff_.resize(writeQueue_.size());
@@ -53,8 +66,8 @@ SerialLink::write(std::vector<uint8_t> &bytes)
 				asio::placeholders::error, asio::placeholders::bytes_transferred);
 		asio::async_write(port_, asio::buffer(writeBuff_), handler);
 	}
-
 }
+
 
 void
 SerialLink::writeHandler(const boost::system::error_code &ec, size_t count)

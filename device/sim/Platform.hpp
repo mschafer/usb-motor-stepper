@@ -19,7 +19,7 @@ namespace ums { namespace sim {
  * Simulation platform implementation.
  * Singleton.
  */
-class Platform : public ILink {
+class Platform : public boost::noncopyable {
 public:
 	void runOnce();
 
@@ -39,10 +39,6 @@ public:
 	 * Used to simulate a hard reset of embedded controller.
 	 */
 	static void reset();
-
-	virtual void write(std::vector<uint8_t> &bytes);
-	virtual std::deque<uint8_t> read();
-	virtual boost::optional<uint8_t> readByte();
 
 	static Platform &instance();
 

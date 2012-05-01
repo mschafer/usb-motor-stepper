@@ -117,30 +117,6 @@ void Platform::timerDelay(uint16_t delay)
 	delay_ = delay;
 }
 
-void Platform::write(std::vector<uint8_t> &bytes)
-{
-	BOOST_FOREACH(uint8_t b, bytes) {
-		toHost_.push_back(b);
-	}
-}
-
-std::deque<uint8_t> Platform::read()
-{
-	std::deque<uint8_t> ret;
-	ret.swap(fromHost_);
-	return ret;
-}
-
-boost::optional<uint8_t> Platform::readByte()
-{
-	boost::optional<uint8_t> ret;
-	if (fromHost_.size() > 0) {
-		ret = fromHost_.front();
-		fromHost_.pop_front();
-	}
-	return ret;
-}
-
 }}
 
 ///////////////////////////////////////// C API //////////////////////////////////////////

@@ -8,13 +8,14 @@
 
 namespace ums {
 
-class SerialLink : public boost::noncopyable
+class SerialLink : public ILink
 {
 public:
 	SerialLink(const std::string &portName);
 	virtual ~SerialLink();
 
 	virtual void write(std::vector<uint8_t> &bytes);
+	virtual void write(void *bytes, size_t nBytes);
 	virtual std::deque<uint8_t> read();
 	virtual boost::optional<uint8_t> readByte();
 
@@ -37,6 +38,7 @@ private:
 	boost::array<uint8_t, READ_BUFFER_SIZE> readBuff_;
 	std::vector<uint8_t> writeBuff_;
 
+	void writeImpl();
 	void writeHandler(const boost::system::error_code &ec, size_t count);
 	void readHandler(const boost::system::error_code &ec, size_t count);
 	void initiateRead();

@@ -12,7 +12,7 @@ CommandInfo::registry()
 }
 
 const CommandInfo *
-CommandInfo::findByName(std::string name)
+CommandInfo::findByName(const std::string &name)
 {
 	std::string lower_name = boost::to_lower_copy(name);
 	CommandInfo_set::index<Name>::type &nameIdx = registry().get<Name>();

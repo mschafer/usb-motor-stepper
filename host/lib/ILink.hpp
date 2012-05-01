@@ -21,6 +21,8 @@ public:
 	 */
 	virtual void write(std::vector<uint8_t> &bytes) = 0;
 
+	virtual void write(void *bytes, size_t nBytes) = 0;
+
 	/**
 	 * Read a sequence of bytes from the device.
 	 * \return A deque containing all available bytes from the device.

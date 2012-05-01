@@ -94,6 +94,7 @@ uint8_t cmd_get_length(uint8_t cmdId)
 {
 	return lengths[cmdId];
 }
+
 uint8_t *cmd_receive()
 {
 	if (rxOffset == 0) {

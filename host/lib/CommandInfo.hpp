@@ -1,5 +1,5 @@
-#ifndef umc_CommandInfo_hpp
-#define umc_CommandInfo_hpp
+#ifndef ums_CommandInfo_hpp
+#define ums_CommandInfo_hpp
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/hashed_index.hpp>
@@ -28,7 +28,7 @@ public:
 	 */
 	virtual MaxCmdBuff compile(const std::string &input) const = 0;
 
-	static const CommandInfo *findByName(std::string name);
+	static const CommandInfo *findByName(const std::string &name);
 	static const CommandInfo *findById(uint8_t id);
 
 	/**
