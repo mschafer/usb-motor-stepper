@@ -36,14 +36,39 @@ MessageInfo::findById(uint8_t id)
 	}
 }
 
-boost::optional<MessageInfo::buffer_t>
-MessageInfo::receiveMessage(ILink *link)
+void
+MessageInfo::receiveMessage(buffer_t &msgBuff, ILink *link)
 {
-	boost::optional<MessageInfo::buffer_t> ret;
+	static size_t rxOffset;
+	static buffer_t rxBuff;
 
+	boost::optional<uint8_t> rx;
 
+	if (rxOffset == 0) {
+		rx = link->readByte();
+		if (rx) {
+			rxOffset = 1;
+			rxBuff.push_back(rx.get());
+		} else {
+			return;
+		}
+	}
 
-	return ret;
+	const MessageInfo *minfo = findById(rxBuff[0]);
+	if (minfo == NULL) {
+		rxOffset = 0;
+		rxBuff.clear();
+		throw (std::runtime_error("Received bad message id"));
+	} else {
+		size_t size = minfo->size();
+		while (rxBuff.size() < size) {
+			rx = link->readByte();
+			if (!rx) return;
+			rxBuff.push_back(rx.get());
+		}
+		msgBuff.swap(rxBuff);
+		rxBuff.clear();
+	}
 }
 
 }

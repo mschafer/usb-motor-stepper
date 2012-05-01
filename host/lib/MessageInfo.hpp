@@ -25,6 +25,7 @@ public:
 	const std::string &name() const { return name_; }
 	std::string lowerName() const { return boost::to_lower_copy(name_); }
 	uint8_t id() const { return id_; }
+	size_t size() const { return size_; }
 
 	/**
 	 * Translate a binary message into a human readable string.
@@ -34,10 +35,11 @@ public:
 	static const MessageInfo *findByName(const std::string &name);
 	static const MessageInfo *findById(uint8_t id);
 
-	static boost::optional<buffer_t> receiveMessage(ILink *);
+	static void receiveMessage(buffer_t &msgBuff, ILink *);
 protected:
 	std::string name_;
 	uint8_t id_;
+	size_t size_;
 
 	struct Name {};
 	struct Id {};

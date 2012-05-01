@@ -3,6 +3,7 @@
 
 #include <boost/utility.hpp>
 #include "ILink.hpp"
+#include "MessageInfo.hpp"
 
 namespace ums {
 
@@ -37,7 +38,10 @@ public:
 		link_->write(cmdBuff, cmdSize);
 	}
 
-	boost::optional<std::vector<uint8_t> > receiveMessage();
+	void receiveMessage(MessageInfo::buffer_t msgBuff) {
+		msgBuff.clear();
+		MessageInfo::receiveMessage(msgBuff, link_.get());
+	}
 
 private:
 	std::auto_ptr<ILink> link_;
