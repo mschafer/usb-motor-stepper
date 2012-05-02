@@ -71,4 +71,9 @@ MessageInfo::receiveMessage(buffer_t &msgBuff, ILink *link)
 	}
 }
 
+void
+MessageInfo::addToRegistry() {
+	registry().insert(this);
+}
+
 }

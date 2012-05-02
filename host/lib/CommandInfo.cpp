@@ -53,7 +53,6 @@ CommandInfo::parseLine(const std::string &line)
     return ret;
 }
 
-
 void
 CommandInfo::addToRegistry() {
 	registry().insert(this);

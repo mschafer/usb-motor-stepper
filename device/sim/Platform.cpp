@@ -4,6 +4,9 @@
 #include "stepper.h"
 #include <boost/foreach.hpp>
 
+
+///\todo need locks to protect toHost and fromHost
+
 namespace ums { namespace sim {
 
 Platform *Platform::thePlatform_ = NULL;
@@ -183,10 +186,4 @@ uint8_t pf_is_timer_running()
 		return 1;
 	else
 		return 0;
-}
-
-void pf_reset()
-{
-	Platform &platform = Platform::instance();
-    platform.reset();
 }

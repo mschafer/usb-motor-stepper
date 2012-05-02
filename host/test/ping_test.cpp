@@ -11,19 +11,21 @@ using ums::sim::Platform;
 
 BOOST_AUTO_TEST_CASE ( ping_test )
 {
-	Platform::reset();
-	Platform &p = Platform::instance();
-	std::string enableStr(UMS_ENABLE);
-	BOOST_FOREACH(char c, enableStr) {
-		p.fromHost_.push_back(c);
-	}
+	ums::Host host;
+	host.enableDevice();
+	host.pingDevice();
 
-	std::deque<uint8_t> buff;
+	Platform::instance().runOnce();
+
+	ums::MessageInfo::buffer_t pongBuff;
+	host.receiveMessage(pongBuff);
+
+	BOOST_CHECK(pongBuff.size() == PongMsg_LENGTH);
 }
 
 BOOST_AUTO_TEST_CASE( one_step_test )
 {
-	ums::Host host(ums::Host::SIMULATOR_NAME);
+	ums::Host host;
 	host.enableDevice();
 
 	ums::Axis x;
