@@ -115,6 +115,16 @@ struct MaxCmdBuff {
 	uint8_t data[MAX_CMD_LENGTH];
 };
 
+static const uint8_t DelayCmd_ID = 6;
+#define DelayCmd_LENGTH (sizeof(struct DelayCmd))
+struct DelayCmd {
+	uint8_t cmdId;
+	uint8_t delay_hi;
+	uint8_t delay_hm;
+	uint8_t delay_lm;
+	uint8_t delay_lo;
+};
+
 /** This function dispatches received commands to the appropriate handler based on the id in buff. */
 void cmd_handler(uint8_t *buff);
 

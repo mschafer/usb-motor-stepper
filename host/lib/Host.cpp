@@ -2,7 +2,6 @@
 #include "Platform.hpp"
 #include <string>
 #include <boost/foreach.hpp>
-#include "SimLink.hpp"
 #include "SerialLink.hpp"
 #include "ums.h"
 
@@ -20,18 +19,27 @@ Host::Host(const std::string &linkName) : ownsSim_(false), rxOffset_(0)
 			throw std::runtime_error("Simulator already in use");
 		}
 		sim::Platform::reset();
-		link_.reset(new SimLink());
+		link_ = &sim::Platform::instance();
 		boost::thread t(boost::ref(simThread_));
 		simExec_.swap(t);
 	} else {
-		link_.reset(new SerialLink(linkName));
+		ownedLink_.reset(new SerialLink(linkName));
+		link_ = ownedLink_.get();
 	}
 }
 
 Host::~Host()
 {
-	if (ownsSim_) {
-		uniqueSim_.unlock();
+	try {
+		if (ownsSim_) {
+			uniqueSim_.unlock();
+		}
+		if (simExec_.joinable()) {
+			simThread_.run_ = false;
+			simExec_.join();
+		}
+	} catch (...) {
+		std::cerr << "deleting host threw something" << std::endl;
 	}
 }
 

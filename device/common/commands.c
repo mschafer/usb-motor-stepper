@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #define MAKE_UINT16(hi, lo) ( ((uint16_t)(hi) << 8) + (lo) )
+#define MAKE_UINT32(hi, hm, lm, lo) ( ((uint32_t)(hi) << 24) + ((uint32_t)(hm) << 16) + ((uint32_t)(lm) << 8) + (lo) )
 
 uint8_t cmdBuff[MAX_CMD_LENGTH];
 uint8_t rxOffset = 0;
@@ -40,8 +41,8 @@ void handle_StepCmd(uint8_t *cmdData)
  * This handler is used for messages that should never be received or
  * unknow messages.  If we get here, then we are probably out of sync
  * with the command stream and we must abort.  This routine will send
- * an error message and ...
- * \todo what to do when this happens?
+ * an error message and reinitialize the ums putting it back in a
+ * disabled state.
  */
 void handle_bad_cmd(uint8_t *cmdData)
 {
@@ -51,6 +52,8 @@ void handle_bad_cmd(uint8_t *cmdData)
     e.data[0] = cmdData[0];
     pf_send_bytes((uint8_t*)&e, ErrorMsg_LENGTH);
 
+    // reinitialize, back to disabled state
+    ums_init();
 }
 
 void handle_LineCmd(uint8_t *cmdData)
@@ -72,6 +75,13 @@ void handle_LongLineCmd(uint8_t *cmdData)
     st_full();
 }
 
+void handle_DelayCmd(uint8_t *cmdData)
+{
+	struct DelayCmd *dcmd = (struct DelayCmd *)cmdData;
+	uint32_t delay = MAKE_UINT32(dcmd->delay_hi, dcmd->delay_hm, dcmd->delay_lm, dcmd->delay_lo);
+	st_add_step(0, delay);
+}
+
 typedef void(*cmd_handler_t)(uint8_t *cmdData);
 static const cmd_handler_t handlers[] = {
         handle_NoOpCmd,
@@ -79,7 +89,8 @@ static const cmd_handler_t handlers[] = {
         handle_AxisCmd,
         handle_StepCmd,
         handle_LineCmd,
-        handle_LongLineCmd
+        handle_LongLineCmd,
+        handle_DelayCmd
 };
 
 static const uint8_t lengths[] = {
@@ -88,7 +99,8 @@ static const uint8_t lengths[] = {
         AxisCmd_LENGTH,
         StepCmd_LENGTH,
         LineCmd_LENGTH,
-        LongLineCmd_LENGTH
+        LongLineCmd_LENGTH,
+        DelayCmd_LENGTH
 };
 
 void cmd_handler(uint8_t *buff)

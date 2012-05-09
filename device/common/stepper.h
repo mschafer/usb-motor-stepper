@@ -22,7 +22,7 @@ uint8_t st_full();
 /**
  * Add a step command w/ delay to the FIFO.
  */
-void st_add_step(uint8_t stepDir, uint16_t delay);
+void st_add_step(uint8_t stepDir, uint32_t delay);
 
 /**
  * This routine outputs the next step and should be called when the timer goes off.

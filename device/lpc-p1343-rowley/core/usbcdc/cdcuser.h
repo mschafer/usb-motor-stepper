@@ -63,7 +63,18 @@ extern unsigned short CDC_DepInEmpty; // DataEndPoint IN empty
  * \param buffer Must be at least 64 bytes long.
  * \return The number of bytes read from the endpoint, >= 0 && <= 64.
  */
-uint32_t CDC_PollOutEp(uint8_t *buffer);
+uint32_t CDC_GetOutEpBuff(uint8_t *buff);
+
+/**
+ * Poll the out endpoint and transfer data into buffer pool if any is available.
+ * Data may be read one byte at a time using \sa CDC_ReadByte.
+ */
+void CDC_PollOutEp(uint8_t *buffer);
+
+/**
+ *
+ */
+uint8_t CDC_ReadByte(uint8_t *rxByte);
 
 /**
  * Write data to the In endpoint.

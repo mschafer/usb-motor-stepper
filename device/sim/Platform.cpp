@@ -1,11 +1,8 @@
 #include "Platform.hpp"
-#include "platform.h"
 #include "ums.h"
 #include "stepper.h"
 #include <boost/foreach.hpp>
 
-
-///\todo need locks to protect toHost and fromHost
 
 namespace ums { namespace sim {
 
@@ -120,6 +117,42 @@ void Platform::timerDelay(uint16_t delay)
 	delay_ = delay;
 }
 
+void
+Platform::write(std::vector<uint8_t> &bytes)
+{
+	boost::lock_guard<boost::mutex> guard(hostCommMutex_);
+	fromHost_.insert(fromHost_.end(), bytes.begin(), bytes.end());
+}
+
+void
+Platform::write(void *bytes, size_t nBytes)
+{
+	boost::lock_guard<boost::mutex> guard(hostCommMutex_);
+	uint8_t *pBytes = reinterpret_cast<uint8_t*>(bytes);
+	fromHost_.insert(fromHost_.end(), pBytes, pBytes+nBytes);
+}
+
+std::deque<uint8_t>
+Platform::read()
+{
+	boost::lock_guard<boost::mutex> guard(hostCommMutex_);
+	std::deque<uint8_t> ret;
+	ret.swap(toHost_);
+	return ret;
+}
+
+boost::optional<uint8_t>
+Platform::readByte()
+{
+	boost::lock_guard<boost::mutex> guard(hostCommMutex_);
+	boost::optional<uint8_t> ret;
+	if (!toHost_.empty()) {
+		ret = toHost_.front();
+		toHost_.pop_front();
+	}
+	return ret;
+}
+
 }}
 
 ///////////////////////////////////////// C API //////////////////////////////////////////
@@ -129,22 +162,17 @@ using ums::sim::Platform;
 uint8_t pf_send_bytes(uint8_t *data, uint16_t size)
 {
 	Platform &platform = Platform::instance();
-
+	boost::lock_guard<boost::mutex> guard(platform.hostCommMutex_);
 	for (size_t i=0; i<size; i++) {
 		platform.toHost_.push_back(data[i]);
 	}
 	return 1;
 }
 
-uint16_t pf_bytes_available()
-{
-	Platform &platform = Platform::instance();
-	return static_cast<uint16_t>(platform.fromHost_.size());
-}
-
 uint8_t pf_receive_byte(uint8_t *rxByte)
 {
 	Platform &platform = Platform::instance();
+	boost::lock_guard<boost::mutex> guard(platform.hostCommMutex_);
 	if (platform.fromHost_.empty()) {
 		return 0;
 	} else {
@@ -173,7 +201,7 @@ uint8_t pf_read_port_pin(uint8_t port, uint8_t pin)
 	return platform.portPin(addr);
 }
 
-void pf_set_step_timer(uint16_t delay)
+void pf_set_step_timer(uint32_t delay)
 {
 	Platform &platform = Platform::instance();
 	platform.timerDelay(delay);

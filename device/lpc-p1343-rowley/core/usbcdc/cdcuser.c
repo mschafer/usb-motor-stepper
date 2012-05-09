@@ -73,12 +73,13 @@ void CDC_FreeBlock(CDCBlock_t *b)
     CDC_FreeBlocks = b;
 }
 
-int16_t CDC_ReadByte()
+uint8_t CDC_ReadByte(uint8_t *rxByte)
 {
-    int16_t ret = -1;
+    uint8_t ret = -1;
     CDCBlock_t *b = CDC_FullBlocks;
     if (b !=NULL) {
-        ret = b->data[b->position];
+    	ret = 0;
+    	*rxByte = b->data[b->position];
         b->position++;
         if (b->position == b->count) {
             CDC_FullBlocks = b->next;
@@ -289,9 +290,8 @@ void CDC_NotificationIn(void) {
     USB_WriteEP(CDC_CEP_IN, NotificationBuf, 10); // send notification
 }
 
-uint32_t CDC_PollOutEp(uint8_t *buffer)
+uint32_t CDC_GetOutEpBuff(uint8_t *buff)
 {
-#if 0
     uint32_t s = USB_EPBufState(CDC_DEP_OUT);
     uint32_t count = 0;
     // check the full/empty bit for data waiting in EP
@@ -299,7 +299,10 @@ uint32_t CDC_PollOutEp(uint8_t *buffer)
         count = USB_ReadEP(CDC_DEP_OUT, buffer);
     }
     return count;
-#else
+}
+
+void CDC_PollOutEp()
+{
     uint32_t s = USB_EPBufState(CDC_DEP_OUT);
     if ((s & 0x01) != 0) {
         CDCBlock_t *b = CDC_AllocBlock();
@@ -312,8 +315,6 @@ uint32_t CDC_PollOutEp(uint8_t *buffer)
             }
         }
     }
-    return 0;
-#endif
 }
 
 uint32_t CDC_WriteInEp(const uint8_t *data, uint32_t length) {

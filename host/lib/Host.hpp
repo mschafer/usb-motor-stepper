@@ -50,7 +50,7 @@ public:
 
 	void receiveMessage(MessageInfo::buffer_t &msgBuff) const {
 		msgBuff.clear();
-		MessageInfo::receiveMessage(msgBuff, link_.get());
+		MessageInfo::receiveMessage(msgBuff, link_);
 	}
 
 private:
@@ -61,7 +61,8 @@ private:
 	static boost::mutex uniqueSim_;
 
 	bool ownsSim_;
-	std::auto_ptr<ILink> link_;
+	ILink *link_;
+	std::auto_ptr<ILink> ownedLink_;
 	std::vector<uint8_t> rxMessage_;
 	size_t rxOffset_;
 	boost::thread simExec_;

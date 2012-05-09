@@ -49,7 +49,7 @@ Axis_t *getAxis(char axisName)
 
 #define STEP_FIFO_SIZE 8
 uint8_t stepFIFO[STEP_FIFO_SIZE];
-uint16_t delayFIFO[STEP_FIFO_SIZE];
+uint32_t delayFIFO[STEP_FIFO_SIZE];
 uint8_t stepHead, stepTail;
 
 struct
@@ -202,7 +202,7 @@ uint8_t st_full()
 	}
 }
 
-void st_add_step(uint8_t stepDir, uint16_t delay)
+void st_add_step(uint8_t stepDir, uint32_t delay)
 {
 	stepFIFO[stepHead]  = stepDir;
 	delayFIFO[stepHead] = delay;
