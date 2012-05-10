@@ -21,11 +21,12 @@
   <MemoryWindow autoEvaluate="0" addressText="" numColumns="8" sizeText="" dataSize="1" radix="16" addressSpace="" />
  </Memory4>
  <Project>
-  <ProjectSessionItem path="umc" name="unnamed" />
-  <ProjectSessionItem path="umc;umc" name="unnamed" />
-  <ProjectSessionItem path="umc;umc;Source Files" name="unnamed" />
-  <ProjectSessionItem path="umc;umc;Source Files;core" name="unnamed" />
-  <ProjectSessionItem path="umc;umc;Source Files;core;usbcdc" name="unnamed" />
+  <ProjectSessionItem path="ums" name="unnamed" />
+  <ProjectSessionItem path="ums;ums" name="unnamed" />
+  <ProjectSessionItem path="ums;ums;CMSIS Files" name="unnamed" />
+  <ProjectSessionItem path="ums;ums;Source Files" name="unnamed" />
+  <ProjectSessionItem path="ums;ums;Source Files;core" name="unnamed" />
+  <ProjectSessionItem path="ums;ums;Source Files;core;usbcdc" name="unnamed" />
  </Project>
  <Register1>
   <RegisterWindow openNodes="CT16B0" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="CT16B0" decimalNodes="" octalNodes="" asciiNodes="" />
@@ -56,13 +57,11 @@
   <Watches active="0" update="Never" />
  </Watch4>
  <Files>
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/sysinit.c" y="45" path="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/sysinit.c" left="0" selected="0" name="unnamed" top="36" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/core/systick/systick.c" y="0" path="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/core/systick/systick.c" left="0" selected="0" name="unnamed" top="51" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/step_timer.c" y="42" path="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/step_timer.c" left="0" selected="0" name="unnamed" top="18" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/main.c" y="72" path="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/main.c" left="0" selected="1" name="unnamed" top="50" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/core/gpio/gpio.h" y="11" path="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/core/gpio/gpio.h" left="0" selected="0" name="unnamed" top="0" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/core/gpio/gpio.c" y="70" path="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/core/gpio/gpio.c" left="0" selected="0" name="unnamed" top="42" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/core/usbcdc/usbhw.c" y="364" path="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley/core/usbcdc/usbhw.c" left="0" selected="0" name="unnamed" top="345" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/main.c" y="67" path="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/main.c" left="0" selected="0" name="unnamed" top="43" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="19" debugPath="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc/cdcuser.h" y="71" path="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc/cdcuser.h" left="0" selected="0" name="unnamed" top="51" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc/cdcuser.c" y="303" path="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc/cdcuser.c" left="0" selected="0" name="unnamed" top="274" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/Library/Rowley Associates Limited/CrossWorks for ARM/packages/targets/LPC1000/include/CMSIS/LPC13xx.h" y="118" path="/Users/mschafer/Library/Rowley Associates Limited/CrossWorks for ARM/packages/targets/LPC1000/include/CMSIS/LPC13xx.h" left="0" selected="0" name="unnamed" top="94" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/platform.c" y="0" path="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/platform.c" left="0" selected="1" name="unnamed" top="0" />
  </Files>
- <ARMCrossStudioWindow activeProject="umc" autoConnectTarget="Texas Instruments ICDI" debugSearchFileMap="" fileDialogInitialDirectory="/Users/mschafer/Dropbox/workspace/umc/device/lpc-p1343-rowley" fileDialogDefaultFilter="*.c" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Debug" />
+ <ARMCrossStudioWindow activeProject="ums" autoConnectTarget="Texas Instruments ICDI" debugSearchFileMap="" fileDialogInitialDirectory="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley" fileDialogDefaultFilter="*.c" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Debug" />
 </session>

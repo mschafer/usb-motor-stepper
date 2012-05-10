@@ -296,7 +296,7 @@ uint32_t CDC_GetOutEpBuff(uint8_t *buff)
     uint32_t count = 0;
     // check the full/empty bit for data waiting in EP
     if ((s & 0x01) != 0) {
-        count = USB_ReadEP(CDC_DEP_OUT, buffer);
+        count = USB_ReadEP(CDC_DEP_OUT, buff);
     }
     return count;
 }

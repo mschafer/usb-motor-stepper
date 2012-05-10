@@ -65,7 +65,7 @@ int main(void) {
 
     uint32_t chars = 0;
     while (1) {
-        uint32_t cnt = CDC_PollOutEp(buffer);
+        uint32_t cnt = CDC_GetOutEpBuff(buffer);
         chars += cnt;
 
         for (uint32_t i=0; i<cnt; i++) {

@@ -49,7 +49,7 @@ extern void CDC_BulkOut(void);
 /* CDC Notification Callback Function */
 extern void CDC_NotificationIn(void);
 
-/* CDC Initializtion Function */
+/* CDC Initialization Function */
 extern void CDC_Init(void);
 
 /* CDC prepare the SERAIAL_STATE */
@@ -69,7 +69,7 @@ uint32_t CDC_GetOutEpBuff(uint8_t *buff);
  * Poll the out endpoint and transfer data into buffer pool if any is available.
  * Data may be read one byte at a time using \sa CDC_ReadByte.
  */
-void CDC_PollOutEp(uint8_t *buffer);
+void CDC_PollOutEp();
 
 /**
  *

@@ -1,2 +1,5 @@
 /build
 /.settings
+device/.DS_Store
+device/lpc-p1343-rowley/THUMB Flash Debug
+*.bak
