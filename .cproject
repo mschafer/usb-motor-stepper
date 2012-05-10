@@ -70,10 +70,25 @@
 				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>true</runAllBuilders>
 			</target>
+			<target name="crossbuild" path="device/lpc-p1343-rowley" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>/Applications/CrossWorks for ARM 2.2/bin/crossbuild</buildCommand>
+				<buildArguments> -echo -verbose -config 'THUMB Flash Debug' -project ums ums.hzp</buildArguments>
+				<buildTarget/>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>false</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="clean crossbuild" path="device/lpc-p1343-rowley" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>/Applications/CrossWorks for ARM 2.2/bin/crossbuild</buildCommand>
+				<buildArguments>  -clean -echo -verbose -config 'THUMB Flash Debug' -project ums ums.hzp</buildArguments>
+				<buildTarget/>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>false</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
 			<target name="build" path="build" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>make</buildCommand>
 				<buildArguments/>
-				<buildTarget/>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>true</runAllBuilders>

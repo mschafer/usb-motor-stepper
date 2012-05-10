@@ -22,8 +22,6 @@
  </Memory4>
  <Project>
   <ProjectSessionItem path="ums" name="unnamed" />
-  <ProjectSessionItem path="ums;ums" name="unnamed" />
-  <ProjectSessionItem path="ums;ums;Source Files" name="unnamed" />
  </Project>
  <Register1>
   <RegisterWindow openNodes="" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" />
@@ -53,9 +51,6 @@
  <Watch4>
   <Watches active="0" update="Never" />
  </Watch4>
- <Files>
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/core/systick/systick.h" y="41" path="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/core/systick/systick.h" left="0" selected="0" name="unnamed" top="0" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="40" debugPath="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/platform.c" y="15" path="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/platform.c" left="0" selected="1" name="unnamed" top="0" />
- </Files>
+ <Files/>
  <ARMCrossStudioWindow activeProject="ums" autoConnectTarget="" debugSearchFileMap="" fileDialogInitialDirectory="/Users/mschafer/projects/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc" fileDialogDefaultFilter="*.c" autoConnectCapabilities="0" debugSearchPath="" buildConfiguration="THUMB Flash Debug" />
 </session>
