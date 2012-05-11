@@ -37,3 +37,53 @@ uint8_t pf_is_timer_running()
 {
     return step_timer_enabled();
 }
+
+void pf_init_axes()
+{
+	// default pin configuration for lpc-p1343
+	struct AxisCmd ac;
+	ac.cmdId = AxisCmd_ID;
+	ac.name = 'x';
+	ac.stepPort = 3;
+	ac.stepPin = 0;
+	ac.dirPort = 3;
+	ac.dirPin = 1;
+	ac.fwdPort = 2;
+	ac.fwdPin = 0 | UMS_INVERT_PIN;
+	ac.revPort = 2;
+	ac.revPin = 1 | UMS_INVERT_PIN;
+	st_setup_axis(&ac);
+
+    ac.name = 'y';
+    ac.stepPort = 3;
+    ac.stepPin = 2;
+    ac.dirPort = 3;
+    ac.dirPin = 3;
+    ac.fwdPort = 2;
+    ac.fwdPin = 2 | UMS_INVERT_PIN;
+    ac.revPort = 2;
+    ac.revPin = 3 | UMS_INVERT_PIN;
+    st_setup_axis(&ac);
+
+    ac.name = 'z';
+    ac.stepPort = 2;
+    ac.stepPin = 4;
+    ac.dirPort = 2;
+    ac.dirPin = 5;
+    ac.fwdPort = 2;
+    ac.fwdPin = 8 | UMS_INVERT_PIN;
+    ac.revPort = 2;
+    ac.revPin = 9 | UMS_INVERT_PIN;
+    st_setup_axis(&ac);
+
+    ac.name = 'u';
+    ac.stepPort = 2;
+    ac.stepPin = 6;
+    ac.dirPort = 2;
+    ac.dirPin = 7;
+    ac.fwdPort = 2;
+    ac.fwdPin = 10 | UMS_INVERT_PIN;
+    ac.revPort = 2;
+    ac.revPin = 11 | UMS_INVERT_PIN;
+    st_setup_axis(&ac);
+}

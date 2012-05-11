@@ -56,6 +56,14 @@ void pf_set_step_timer(uint32_t val);
  */
 uint8_t pf_is_timer_running();
 
+/**
+ * This routine sets up the platform specific default pin configurations for each
+ * of the four axes. It should be implemented by creating an \sa AxisCmd and
+ * calling \sa st_setup_axis.  It is called from st_init.
+ */
+void pf_init_axes();
+
+
 #ifdef __cplusplus
 }
 #endif

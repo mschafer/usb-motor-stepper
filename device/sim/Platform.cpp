@@ -184,7 +184,8 @@ uint8_t pf_receive_byte(uint8_t *rxByte)
 
 void pf_configure_port_pin(uint8_t port, uint8_t pin, enum ums_pin_func func)
 {
-    ///\todo mimic configured pins in simulator?
+	// simulator pins all behave as outputs for now (writable and readable).
+	///\todo set initial value of pins based on pullup/pulldown for inputs and invert for outputs.
 }
 
 void pf_set_port_pin(uint8_t port, uint8_t pin, uint8_t val)
@@ -214,4 +215,46 @@ uint8_t pf_is_timer_running()
 		return 1;
 	else
 		return 0;
+}
+
+void pf_init_axes()
+{
+	Platform &platform = Platform::instance();
+
+	uint8_t port = 0;
+	ums::Axis axis;
+	axis.step_.configure(port, 0);
+	axis.dir_.configure(port, 1);
+	axis.fwdLimit_.configure(port, 2);
+	axis.revLimit_.configure(port, 3 + UMS_INVERT_PIN);
+	platform.axis('X', axis);
+	struct AxisCmd ac = platform.axisCommand('X');
+	st_setup_axis(&ac);
+
+	port = 1;
+	axis.step_.configure(port, 0);
+	axis.dir_.configure(port, 1);
+	axis.fwdLimit_.configure(port, 2 + UMS_INVERT_PIN);
+	axis.revLimit_.configure(port, 3);
+	platform.axis('Y', axis);
+	ac = platform.axisCommand('Y');
+	st_setup_axis(&ac);
+
+	port = 2;
+	axis.step_.configure(port, 0);
+	axis.dir_.configure(port, 1 + UMS_INVERT_PIN);
+	axis.fwdLimit_.configure(port, 2);
+	axis.revLimit_.configure(port, 3);
+	platform.axis('Z', axis);
+	ac = platform.axisCommand('Z');
+	st_setup_axis(&ac);
+
+	port = 3;
+	axis.step_.configure(port, 0 + UMS_INVERT_PIN);
+	axis.dir_.configure(port, 1);
+	axis.fwdLimit_.configure(port, 2);
+	axis.revLimit_.configure(port, 3);
+	platform.axis('U', axis);
+	ac = platform.axisCommand('U');
+	st_setup_axis(&ac);
 }
