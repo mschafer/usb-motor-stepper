@@ -34,12 +34,12 @@ void gpioInit(void) {
     SCB_SYSAHBCLKCTRL |= (SCB_SYSAHBCLKCTRL_GPIO);
 }
 
-void gpioSetPinFunction(uint_fast8_t port, uint_fast8_t pin, gpioPinFunction_t func, uint_fast8_t val)
+uint8_t gpioSetPinFunction(uint_fast8_t port, uint_fast8_t pin, gpioPinFunction_t func)
 {
     volatile uint32_t *iocon = gpioIOCON[port][pin];
     if (iocon == &RESERVED_PIN) {
         //\todo error here
-        return;
+        return 1;
     }
 
     // set the function to 0 which selects i/o for all the allowed pins
@@ -69,6 +69,7 @@ void gpioSetPinFunction(uint_fast8_t port, uint_fast8_t pin, gpioPinFunction_t f
             break;
         }
     }
+    return 0;
 }
 
 void gpioSetPin(uint_fast8_t port, uint_fast8_t pin, uint_fast8_t val)

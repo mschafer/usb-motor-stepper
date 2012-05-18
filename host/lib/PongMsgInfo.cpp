@@ -23,6 +23,6 @@ public:
 
 };
 
-PongMsgInfo thePong;
+PongMsgInfo thePongMsgInfo;
 
 }

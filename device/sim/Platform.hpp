@@ -11,8 +11,6 @@
 #include "ILink.hpp"
 #include "platform.h"
 
-///\todo default axis configuration of all 4 axes, each w/ different pin inverted
-
 /**
  * \file Platform specific implementation of ums functions for simulator.
  */

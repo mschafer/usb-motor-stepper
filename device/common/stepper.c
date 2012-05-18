@@ -1,5 +1,6 @@
 #include "stepper.h"
 #include "platform.h"
+#include "messages.h"
 #include <stdlib.h>
 
 typedef struct
@@ -123,8 +124,6 @@ uint8_t st_line_next_step()
     Line.count++;
     return step;
 }
-
-///\todo move default pin config into pf_axis_init
 
 void st_init( )
 {
@@ -275,31 +274,59 @@ void st_run_once()
 	}
 }
 
+void st_pin_config_error(uint8_t port, uint8_t pin)
+{
+	// error message to send if any of the configuration calls fail
+	struct ErrorMsg emsg;
+	emsg.msgId = ErrorMsg_ID;
+	emsg.errorId = UMS_ERROR_CONFIGURE_PIN;
+	emsg.data[0] = port;
+	emsg.data[1] = pin;
+	pf_send_bytes((uint8_t*)&emsg, ErrorMsg_LENGTH);
+}
+
 void st_setup_axis(struct AxisCmd *c)
 {
+	uint8_t e = 0;
 	Axis_t *axis = getAxis(c->name);
+
+	if (axis == NULL) {
+		struct ErrorMsg emsg;
+		emsg.msgId = ErrorMsg_ID;
+		emsg.errorId = UMS_ERROR_BAD_AXIS;
+		emsg.data[0] = c->name;
+		pf_send_bytes((uint8_t*)&emsg, ErrorMsg_LENGTH);
+		return;
+	}
+
 	axis->stepPort = c->stepPort;
 	axis->stepPin  = c->stepPin;
-	pf_configure_port_pin(axis->stepPort, axis->stepPin & ~UMS_INVERT_PIN, UMS_OUTPUT_PIN);
+	e = pf_configure_port_pin(axis->stepPort, axis->stepPin & ~UMS_INVERT_PIN, UMS_OUTPUT_PIN);
+	if (e != 0) st_pin_config_error(axis->stepPort, axis->stepPin);
 
 	axis->dirPort  = c->dirPort;
 	axis->dirPin   = c->dirPin;
-    pf_configure_port_pin(axis->stepPort, axis->stepPin & ~UMS_INVERT_PIN, UMS_OUTPUT_PIN);
+    e = pf_configure_port_pin(axis->dirPort, axis->dirPin & ~UMS_INVERT_PIN, UMS_OUTPUT_PIN);
+	if (e != 0) st_pin_config_error(axis->dirPort, axis->dirPin);
 
     // configure the limit pins with a pullup or pulldown to be inactive when disconnected
     axis->fwdPort  = c->fwdPort;
 	axis->fwdPin   = c->fwdPin;
 	if (axis->fwdPin & UMS_INVERT_PIN) {
-	    pf_configure_port_pin(axis->fwdPort, axis->fwdPin & ~UMS_INVERT_PIN, UMS_INPUT_PULLUP_PIN);
+	    e = pf_configure_port_pin(axis->fwdPort, axis->fwdPin & ~UMS_INVERT_PIN, UMS_INPUT_PULLUP_PIN);
 	} else {
-        pf_configure_port_pin(axis->fwdPort, axis->fwdPin & ~UMS_INVERT_PIN, UMS_INPUT_PULLDOWN_PIN);
+        e = pf_configure_port_pin(axis->fwdPort, axis->fwdPin & ~UMS_INVERT_PIN, UMS_INPUT_PULLDOWN_PIN);
 	}
+	if (e != 0) st_pin_config_error(axis->fwdPort, axis->fwdPin);
 
 	axis->revPort  = c->revPort;
 	axis->revPin   = c->revPin;
     if (axis->revPin & UMS_INVERT_PIN) {
-        pf_configure_port_pin(axis->revPort, axis->revPin & ~UMS_INVERT_PIN, UMS_INPUT_PULLUP_PIN);
+        e = pf_configure_port_pin(axis->revPort, axis->revPin & ~UMS_INVERT_PIN, UMS_INPUT_PULLUP_PIN);
     } else {
-        pf_configure_port_pin(axis->revPort, axis->revPin & ~UMS_INVERT_PIN, UMS_INPUT_PULLDOWN_PIN);
+        e = pf_configure_port_pin(axis->revPort, axis->revPin & ~UMS_INVERT_PIN, UMS_INPUT_PULLDOWN_PIN);
     }
+	if (e != 0) st_pin_config_error(axis->revPort, axis->revPin);
+
+	st_clear_steps();
 }

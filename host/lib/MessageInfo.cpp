@@ -39,7 +39,7 @@ MessageInfo::findById(uint8_t id)
 void
 MessageInfo::receiveMessage(buffer_t &msgBuff, ILink *link)
 {
-	static size_t rxOffset;
+	static size_t rxOffset = 0;
 	static buffer_t rxBuff;
 
 	boost::optional<uint8_t> rx;
@@ -67,7 +67,20 @@ MessageInfo::receiveMessage(buffer_t &msgBuff, ILink *link)
 			rxBuff.push_back(rx.get());
 		}
 		msgBuff.swap(rxBuff);
+		rxOffset = 0;
 		rxBuff.clear();
+	}
+}
+
+std::string
+MessageInfo::toString(const buffer_t &b)
+{
+	if (b.empty()) throw (std::runtime_error("can't translate empty message buffer to string"));
+	const MessageInfo *minfo = findById(b[0]);
+	if (minfo == NULL) {
+		throw (std::runtime_error("can't translate unknown message id"));
+	} else {
+		return minfo->translate(b);
 	}
 }
 

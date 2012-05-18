@@ -34,8 +34,9 @@ public:
 
 	static const MessageInfo *findByName(const std::string &name);
 	static const MessageInfo *findById(uint8_t id);
-
 	static void receiveMessage(buffer_t &msgBuff, ILink *);
+	static std::string toString(const buffer_t &b);
+
 protected:
 	std::string name_;
 	uint8_t id_;

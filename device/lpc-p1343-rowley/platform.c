@@ -18,6 +18,23 @@ uint8_t pf_receive_byte(uint8_t *rxByte)
 	return CDC_ReadByte(rxByte);
 }
 
+uint8_t pf_configure_port_pin(uint8_t port, uint8_t pin, enum ums_pin_func func)
+{
+	uint8_t ret = 1;
+	switch (func) {
+	case UMS_OUTPUT_PIN:
+		ret = gpioSetPinFunction(port, pin, GPIO_OUTPUT_PIN);
+		break;
+	case UMS_INPUT_PULLUP_PIN:
+		ret = gpioSetPinFunction(port, pin, GPIO_INPUT_PULLUP_PIN);
+		break;
+	case UMS_INPUT_PULLDOWN_PIN:
+		ret = gpioSetPinFunction(port, pin, GPIO_INPUT_PULLDOWN_PIN);
+		break;
+	}
+	return ret;
+}
+
 void pf_set_port_pin(uint8_t port, uint8_t pin, uint8_t val)
 {
     gpioSetPin(port, pin, val);

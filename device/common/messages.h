@@ -8,6 +8,8 @@
  */
 
 #define UMS_ERROR_UNKNOWN_CMD_ID 0      ///\< Error Id for an unrecognized cmd Id.
+#define UMS_ERROR_CONFIGURE_PIN  1      ///\< Error Id for failure to configure a port/pin
+#define UMS_ERROR_BAD_AXIS       2      ///\< Error Id for axis name that is not x,y,z, or u
 
 static const uint8_t PongMsg_ID = 0;
 #define PongMsg_LENGTH (sizeof(struct PongMsg))

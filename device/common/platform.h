@@ -27,8 +27,9 @@ enum ums_pin_func {
 
 /**
  * Configure an i/o pin to have the desired functionality.
+ * \return 0 on success, otherwise the pin was not configured because it is reserved.
  */
-void pf_configure_port_pin(uint8_t port, uint8_t pin, enum ums_pin_func func);
+uint8_t pf_configure_port_pin(uint8_t port, uint8_t pin, enum ums_pin_func func);
 
 /**
  * Set the value of an output pin.

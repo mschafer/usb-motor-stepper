@@ -10,9 +10,6 @@ Platform *Platform::thePlatform_ = NULL;
 
 Platform::Platform() : t_(0)
 {
-	fromHost_.clear();
-	toHost_.clear();
-	ums_init();
 }
 
 Platform &
@@ -20,6 +17,7 @@ Platform::instance()
 {
 	if (thePlatform_ == NULL) {
 	    thePlatform_ = new Platform();
+		ums_init();
 	}
 	return *thePlatform_;
 }
@@ -182,10 +180,22 @@ uint8_t pf_receive_byte(uint8_t *rxByte)
 	}
 }
 
-void pf_configure_port_pin(uint8_t port, uint8_t pin, enum ums_pin_func func)
+uint8_t pf_configure_port_pin(uint8_t port, uint8_t pin, enum ums_pin_func func)
 {
-	// simulator pins all behave as outputs for now (writable and readable).
-	///\todo set initial value of pins based on pullup/pulldown for inputs and invert for outputs.
+	// port 6 is reserved to test error messages
+	if (port == 6 || pin > 15) return 1;
+
+	Platform &platform = Platform::instance();
+	uint8_t addr = (port << 4) | pin;
+	switch (func) {
+	case UMS_INPUT_PULLUP_PIN:
+		platform.portPin(addr, true);
+		break;
+	case UMS_INPUT_PULLDOWN_PIN:
+		platform.portPin(addr, false);
+		break;
+	}
+	return 0;
 }
 
 void pf_set_port_pin(uint8_t port, uint8_t pin, uint8_t val)

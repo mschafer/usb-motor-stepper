@@ -15,8 +15,9 @@ typedef enum {
 /**
  * Configure an i/o pin as input or output,
  * \param val The initial value for an ouput pin. 0 is low.
+ * \return 0 on success, 1 if the pin reserved
  */
-void gpioSetPinFunction(uint_fast8_t port, uint_fast8_t pin, gpioPinFunction_t func, uint_fast8_t val);
+uint8_t gpioSetPinFunction(uint_fast8_t port, uint_fast8_t pin, gpioPinFunction_t func);
 
 void gpioSetPin(uint_fast8_t port, uint_fast8_t pin, uint_fast8_t val);
 
