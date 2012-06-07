@@ -77,7 +77,7 @@ private:
 
 /** Simulates a single axis as a stepper motor connected to physical pins. */
 struct Axis {
-	Axis() : maxFwdPos_(INT_MAX), maxRevPos_(INT_MIN), lastStep_(false), position_(0)
+	Axis() : maxFwdPos_(INT_MAX), maxRevPos_(INT_MIN), lastStep_(false), position_(0), enabled_(true)
 	{}
 
 	Pin step_;
@@ -88,6 +88,7 @@ struct Axis {
 	ptrdiff_t maxRevPos_;
 	bool lastStep_;
 	ptrdiff_t position_;
+	bool enabled_;
 
 	/**
 	 * Called whenever the pins change.  Updates the position if necessary;

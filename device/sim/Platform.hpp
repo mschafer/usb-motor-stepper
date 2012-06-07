@@ -23,11 +23,14 @@ namespace ums { namespace sim {
  */
 class Platform : public ILink {
 public:
+
+
 	void runOnce();
 
+	const Axis &axis(char name) const;
+	Axis &axis(char name);
 	void axis(char name, Axis &a);
-	boost::optional<Axis> axis(char name) const;
-	void removeAxis(char name);
+	void disableAxis(char name);
 	AxisCmd axisCommand(char name);
 
 	void portPin(uint8_t addr, uint8_t val);
@@ -54,6 +57,10 @@ private:
 	friend uint8_t ::pf_send_bytes(uint8_t*, uint16_t);
 	friend uint8_t ::pf_receive_byte(uint8_t*);
 
+	enum AxisIdx {
+		X_IDX=0, Y_IDX=1, Z_IDX=2, U_IDX=3, END_AXIS=4
+	};
+
 	Platform();
 
 	static Platform *thePlatform_;
@@ -63,10 +70,9 @@ private:
 	boost::optional<uint16_t> delay_;
 	size_t t_;
 	boost::array<bool, 256> pins_;
-
-	typedef boost::container::flat_map<char, Axis> axis_map_t;
-	axis_map_t axes_;
 	boost::mutex hostCommMutex_;
+	Axis axes_[4];
+
 
 };
 

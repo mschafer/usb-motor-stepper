@@ -7,6 +7,8 @@ extern "C" {
 
 /**
  * Sends bytes back to the host from the device.
+ * Non-blocking, returns immediately.
+ * Queues all the bytes for sending or none if there isn't room.
  * \return non-zero on success, 0 on error
  */
 uint8_t pf_send_bytes(uint8_t *data, uint16_t size);

@@ -9,6 +9,14 @@
 
 using ums::sim::Platform;
 
+BOOST_AUTO_TEST_CASE ( line_test )
+{
+	ums::Host host;
+	host.enableDevice();
+
+
+}
+
 BOOST_AUTO_TEST_CASE ( ping_test )
 {
 	ums::Host host;
@@ -69,5 +77,5 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(30));
 
-	BOOST_CHECK(Platform::instance().axis('X').position_ == 1);
+	BOOST_CHECK(Platform::instance().axis('X').get().position_ == 1);
 }

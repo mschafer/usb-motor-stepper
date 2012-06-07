@@ -42,47 +42,26 @@ Platform::runOnce()
 	}
 }
 
-boost::optional<Axis>
-Platform::axis(char name) const
-{
-	boost::optional<Axis> ret;
-	axis_map_t::const_iterator it = axes_.find(name);
-	if (it != axes_.end()) {
-		ret = it->second;
-	}
-	return ret;
-}
-
 void
 Platform::axis(char name, Axis &a)
 {
-	if (name != 'X' && name != 'Y' && name != 'Z' && name != 'U') {
-		throw std::range_error("Axis name must be X,Y,Z, or U");
-	}
-	Axis &v = axes_[name];
-	v.zeroPins(pins_);
-	v = a;
-	v.update(pins_);
+	Axis &old = axis(name);
+
+	old.zeroPins(pins_);
+	old = a;
+	old.update(pins_);
 }
 
 void
-Platform::removeAxis(char name)
+Platform::disableAxis(char name)
 {
-	axis_map_t::iterator it = axes_.find(name);
-	if (it != axes_.end()) {
-		it->second.zeroPins(pins_);
-		axes_.erase(it);
-	}
+	axis(name).enabled_ = false;
 }
 
 AxisCmd
 Platform::axisCommand(char name)
 {
-	if (name != 'X' && name != 'Y' && name != 'Z' && name != 'U') {
-		throw std::range_error("Axis name must be X,Y,Z, or U");
-	}
-	Axis &a = axes_.at(name);
-	AxisCmd ac = a.command();
+	AxisCmd ac = axis(name).command();
 	ac.name = name;
 	return ac;
 }
@@ -91,10 +70,10 @@ void
 Platform::portPin(uint8_t addr, uint8_t val)
 {
 	pins_[addr] = (val != 0);
-	axis_map_t::iterator  it = axes_.begin();
-	while (it != axes_.end()) {
-		it->second.update(pins_);
-		it++;
+	for (size_t i=0; i<END_AXIS; i++) {
+		if (axes_[i].enabled_) {
+			axes_[i].update(pins_);
+		}
 	}
 }
 
@@ -149,6 +128,48 @@ Platform::readByte()
 		toHost_.pop_front();
 	}
 	return ret;
+}
+
+Axis &
+Platform::axis(char name)
+{
+	switch (name) {
+	case 'X':
+		return axes_[X_IDX];
+		break;
+	case 'Y':
+		return axes_[Y_IDX];
+		break;
+	case 'Z':
+		return axes_[Z_IDX];
+		break;
+	case 'U':
+		return axes_[U_IDX];
+		break;
+	default:
+		throw std::range_error("Axis name must be X,Y,Z, or U");
+	}
+}
+
+const Axis &
+Platform::axis(char name) const
+{
+	switch (name) {
+	case 'X':
+		return axes_[X_IDX];
+		break;
+	case 'Y':
+		return axes_[Y_IDX];
+		break;
+	case 'Z':
+		return axes_[Z_IDX];
+		break;
+	case 'U':
+		return axes_[U_IDX];
+		break;
+	default:
+		throw std::range_error("Axis name must be X,Y,Z, or U");
+	}
 }
 
 }}
