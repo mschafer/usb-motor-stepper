@@ -37,8 +37,14 @@ Platform::runOnce()
 	ums_idle();
 	if (timerRunning()) {
 		t_ += delay_.get();
-		st_run_once();
 		delay_.reset();
+		st_run_once();
+
+		position_t p;
+		for (size_t i=0; i<END_AXIS; i++) {
+			p[i] = axes_[i].position_;
+		}
+		positionLog_.push_back(p);
 	}
 }
 
@@ -173,6 +179,14 @@ Platform::axis(char name) const
 }
 
 }}
+
+std::ostream &operator<<(std::ostream &out, const ums::sim::Platform::position_t &pos)
+{
+	BOOST_FOREACH(ptrdiff_t d, pos) {
+		out << d << " ";
+	}
+	return out;
+}
 
 ///////////////////////////////////////// C API //////////////////////////////////////////
 

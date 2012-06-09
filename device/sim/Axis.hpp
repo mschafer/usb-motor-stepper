@@ -23,7 +23,7 @@ struct Pin {
 	 */
 	void configure(uint8_t port, int8_t pin) {
 		port_ = port;
-		if (pin > UMS_INVERT_PIN) {
+		if ((pin & UMS_INVERT_PIN) != 0) {
 			pin_ = pin - UMS_INVERT_PIN;
 			inverted_ = true;
 		} else {
@@ -107,6 +107,7 @@ struct Axis {
 			if (position_ < maxRevPos_) {
 				position_ = maxRevPos_;
 				revLimit_(pins, true);
+				std::cout << "limited\n";
 			} else {
 				revLimit_(pins, false);
 			}
@@ -115,10 +116,12 @@ struct Axis {
 			if (position_ > maxFwdPos_) {
 				position_ = maxFwdPos_;
 				fwdLimit_(pins, true);
+				std::cout << "limited\n";
 			} else {
 				fwdLimit_(pins, false);
 			}
 		}
+		lastStep_ = step_(pins);
 	}
 
 	void zeroPins(boost::array<bool, 256> &pins)

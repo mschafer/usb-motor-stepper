@@ -2,8 +2,8 @@
 
 add_executable(test-usb-motor-stepper
 	hello_test.cpp
-	ping_test.cpp
 	serial_test.cpp
+	sim_test.cpp
 )
 
 include_directories ( 

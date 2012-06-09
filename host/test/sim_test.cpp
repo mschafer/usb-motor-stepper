@@ -9,14 +9,6 @@
 
 using ums::sim::Platform;
 
-BOOST_AUTO_TEST_CASE ( line_test )
-{
-	ums::Host host;
-	host.enableDevice();
-
-
-}
-
 BOOST_AUTO_TEST_CASE ( ping_test )
 {
 	ums::Host host;
@@ -53,20 +45,11 @@ BOOST_AUTO_TEST_CASE( bad_pin_test )
 
 }
 
-
-
-BOOST_AUTO_TEST_CASE( one_step_test )
+BOOST_AUTO_TEST_CASE( simple_step_test )
 {
 	ums::Host host;
 	host.enableDevice();
-
-	ums::Axis x;
-	x.step_.configure(0, 0);
-	x.dir_.configure(0, 1);
-	Platform::instance().axis('X', x);
-
-	AxisCmd ac = Platform::instance().axisCommand('X');
-	host.sendCommand(&ac, sizeof(ac));
+	Platform &p = Platform::instance();
 
 	StepCmd sc;
 	sc.cmdId = StepCmd_ID;
@@ -75,7 +58,57 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 	sc.stepDir = UMS_X_STEP | UMS_X_DIR;
 	host.sendCommand(&sc, sizeof(sc));
 
-	boost::this_thread::sleep(boost::posix_time::milliseconds(30));
+	boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
-	BOOST_CHECK(Platform::instance().axis('X').get().position_ == 1);
+	BOOST_CHECK(p.positionLog_.size() == 2);
+	BOOST_CHECK(p.positionLog_.back()[0] == 1);
+}
+
+BOOST_AUTO_TEST_CASE( one_step_test )
+{
+	ums::Host host;
+	host.enableDevice();
+	Platform &p = Platform::instance();
+
+	StepCmd sc;
+	sc.cmdId = StepCmd_ID;
+	sc.delay_lo = 100;
+	sc.delay_hi = 0;
+	sc.stepDir = UMS_X_STEP | UMS_X_DIR | UMS_Y_STEP | UMS_Y_DIR | UMS_U_STEP;
+	host.sendCommand(&sc, sizeof(sc));
+
+	boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+
+	Platform::position_t pos = p.positionLog_.back();
+	BOOST_CHECK(p.positionLog_.size() == 2);
+	BOOST_CHECK(pos[0] ==  1);
+	BOOST_CHECK(pos[1] ==  1);
+	BOOST_CHECK(pos[2] ==  0);
+	BOOST_CHECK(pos[3] == -1);
+}
+
+BOOST_AUTO_TEST_CASE( short_line_test )
+{
+	ums::Host host;
+	host.enableDevice();
+	Platform &p = Platform::instance();
+
+	LineCmd lc;
+	lc.cmdId = LineCmd_ID;
+	lc.deltaX = 10;
+	lc.deltaY = 5;
+	lc.deltaZ = 0;
+	lc.deltaU = -1;
+	lc.delay_lo = 100;
+	lc.delay_hi = 0;
+	host.sendCommand(&lc, sizeof(lc));
+
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+	Platform::position_t pos = p.positionLog_.back();
+	BOOST_CHECK(p.positionLog_.size() == 11);
+	BOOST_CHECK(pos[0] == 10);
+	BOOST_CHECK(pos[1] ==  5);
+	BOOST_CHECK(pos[2] ==  0);
+	BOOST_CHECK(pos[3] == -1);
 }

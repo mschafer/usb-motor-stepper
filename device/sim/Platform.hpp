@@ -5,7 +5,9 @@
 #include <boost/optional.hpp>
 #include <boost/array.hpp>
 #include <boost/thread.hpp>
+#include <boost/foreach.hpp>
 #include <stdint.h>
+#include <iostream>
 #include <boost/container/flat_map.hpp>
 #include "Axis.hpp"
 #include "ILink.hpp"
@@ -52,6 +54,8 @@ public:
 	virtual std::deque<uint8_t> read();
 	virtual boost::optional<uint8_t> readByte();
 
+	typedef boost::array<ptrdiff_t, 4> position_t;
+	std::deque<position_t> positionLog_;
 
 private:
 	friend uint8_t ::pf_send_bytes(uint8_t*, uint16_t);
@@ -64,7 +68,6 @@ private:
 	Platform();
 
 	static Platform *thePlatform_;
-
 	std::deque<uint8_t> toHost_;
 	std::deque<uint8_t> fromHost_;
 	boost::optional<uint16_t> delay_;
@@ -77,4 +80,7 @@ private:
 };
 
 }}
+
+std::ostream &operator<<(std::ostream &out, const ums::sim::Platform::position_t &pos);
+
 #endif

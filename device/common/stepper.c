@@ -122,6 +122,7 @@ uint8_t st_line_next_step()
     }
 
     Line.count++;
+
     return step;
 }
 
@@ -269,7 +270,7 @@ void st_run_once()
 		st_do_step(&Axes.z, stepDir >> 4);
 		st_do_step(&Axes.u, stepDir >> 6);
 
-		// wait a little, then clear the steps
+		///\todo  wait a little, then clear the steps
 		st_clear_steps();
 	}
 }
