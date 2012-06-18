@@ -112,3 +112,31 @@ BOOST_AUTO_TEST_CASE( short_line_test )
 	BOOST_CHECK(pos[2] ==  0);
 	BOOST_CHECK(pos[3] == -1);
 }
+
+BOOST_AUTO_TEST_CASE( line_limit_test )
+{
+	ums::Host host;
+	host.enableDevice();
+	Platform &p = Platform::instance();
+	ums::Axis &xax = p.axis('X');
+	xax.maxFwdPos_ = 5;
+
+	LineCmd lc;
+	lc.cmdId = LineCmd_ID;
+	lc.deltaX = 10;
+	lc.deltaY = 10;
+	lc.deltaZ = 0;
+	lc.deltaU = 0;
+	lc.delay_lo = 100;
+	lc.delay_hi = 0;
+	host.sendCommand(&lc, sizeof(lc));
+
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+	Platform::position_t pos = p.positionLog_.back();
+	BOOST_CHECK(p.positionLog_.size() == 11);
+	BOOST_CHECK(pos[0] ==  5);
+	BOOST_CHECK(pos[1] == 10);
+	BOOST_CHECK(pos[2] ==  0);
+	BOOST_CHECK(pos[3] ==  0);
+}
