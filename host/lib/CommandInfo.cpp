@@ -32,11 +32,11 @@ CommandInfo::findById(uint8_t id)
 	else { return *idit; }
 }
 
-std::auto_ptr<MaxCmdBuff>
+CommandInfo::buffer_t
 CommandInfo::parseLine(const std::string &line)
 {
-    std::auto_ptr<MaxCmdBuff> ret;
     std::string tl = boost::algorithm::trim_left_copy(boost::algorithm::trim_right_copy(line));
+    buffer_t ret;
 
     // ignore comments
     if (boost::starts_with(tl, "#")) {
@@ -46,8 +46,11 @@ CommandInfo::parseLine(const std::string &line)
         std::string cmdName = *tok.begin();
         const CommandInfo *ci = findByName(cmdName);
         if (ci != NULL) {
-            ret.reset(new MaxCmdBuff(ci->compile(tl)));
+            ci->compile(tl).swap(ret);
+        } else {
+        	throw std::runtime_error("Unrecognized command " + cmdName);
         }
+
     }
 
     return ret;

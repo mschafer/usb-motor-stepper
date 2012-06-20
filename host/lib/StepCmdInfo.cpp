@@ -60,7 +60,7 @@ public:
 		addToRegistry();
 	}
 
-	 MaxCmdBuff compile(const std::string &input) const {
+	 buffer_t compile(const std::string &input) const {
 		 typedef std::string::const_iterator iterator;
 		 StepParser<iterator> grammar;
 		 iterator iter = input.begin();
@@ -70,8 +70,8 @@ public:
 		 if (!r || iter != end) {
 			 throw (std::runtime_error("parse Step failed"));
 		 } else {
-			 MaxCmdBuff ret;
-			 fillCmdBuff(&ret, step);
+			 buffer_t ret;
+			 fillCmdBuff(ret, step);
 			 return ret;
 		 }
 	}
@@ -80,11 +80,12 @@ public:
 		return std::string("generated");
 	}
 
-	static void fillCmdBuff(MaxCmdBuff *m, const ParsedStepCmd &p)
+	static void fillCmdBuff(buffer_t &m, const ParsedStepCmd &p)
 	{
 	    using boost::fusion::at_c;
 
-	    StepCmd *s = reinterpret_cast<StepCmd*>(m);
+	    m.resize(StepCmd_LENGTH);
+	    StepCmd *s = reinterpret_cast<StepCmd*>(&m[0]);
 	    s->cmdId = StepCmd_ID;
 
 	    unsigned int delay = p.get<1>();

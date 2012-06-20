@@ -17,6 +17,8 @@ namespace ums {
 class CommandInfo
 {
 public:
+	typedef std::vector<uint8_t> buffer_t;
+
 	virtual ~CommandInfo() {}
 
 	const std::string &name() const { return name_; }
@@ -26,7 +28,7 @@ public:
 	/**
 	 * Compile a string version of the command into a binary version suitable for transmission to the device.
 	 */
-	virtual MaxCmdBuff compile(const std::string &input) const = 0;
+	virtual buffer_t compile(const std::string &input) const = 0;
 
 	static const CommandInfo *findByName(const std::string &name);
 	static const CommandInfo *findById(uint8_t id);
@@ -38,7 +40,7 @@ public:
 	 * Finds the correct CommandInfo subclass by extracting the command name from
 	 * line and searching the registry for it.
 	 */
-	static std::auto_ptr<MaxCmdBuff> parseLine(const std::string &line);
+	static buffer_t parseLine(const std::string &line);
 
 protected:
 	std::string name_;
@@ -54,11 +56,10 @@ protected:
 		>
 	> CommandInfo_set;
 
-	template <typename T> void fillCmdBuff(MaxCmdBuff &buff, const T &cmd) const {
-		uint8_t *pbuff = &buff.cmdId;
-		std::fill(pbuff, pbuff+sizeof(MaxCmdBuff), 0);
+	template <typename T> void fillCmdBuff(buffer_t &buff, const T &cmd) const {
+		buff.resize(sizeof(T));
 		const uint8_t *pcmd = &cmd.cmdId;
-		std::copy(pcmd, pcmd+sizeof(T), pbuff);
+		std::copy(pcmd, pcmd+sizeof(T), buff.begin());
 	}
 
 	void addToRegistry();

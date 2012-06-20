@@ -3,6 +3,7 @@
 #include <string>
 #include <boost/foreach.hpp>
 #include "SerialLink.hpp"
+#include "CommandInfo.hpp"
 #include "ums.h"
 
 namespace ums {
@@ -52,6 +53,20 @@ Host::enableDevice() const
 		bytes.push_back(c);
 	}
 	link_->write(bytes);
+}
+
+void
+Host::commandStream(std::istream &in)
+{
+	using namespace std;
+	string line;
+	while (!in.eof()) {
+		getline(in, line);
+		CommandInfo::buffer_t cb = CommandInfo::parseLine(line);
+		if (!cb.empty()) {
+			sendCommand(&cb[0], cb.size());
+		}
+	}
 }
 
 void

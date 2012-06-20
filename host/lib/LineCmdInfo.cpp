@@ -59,7 +59,7 @@ public:
         addToRegistry();
     }
 
-    MaxCmdBuff compile(const std::string &input) const {
+    buffer_t compile(const std::string &input) const {
         typedef std::string::const_iterator iterator;
         LineParser<iterator> grammar;
         iterator iter = input.begin();
@@ -69,8 +69,8 @@ public:
         if (!r || iter != end) {
             throw (std::runtime_error("parse Line failed"));
         } else {
-            MaxCmdBuff ret;
-            fillCmdBuff(&ret, line);
+            buffer_t ret;
+            fillCmdBuff(ret, line);
             return ret;
         }
     }
@@ -79,11 +79,11 @@ public:
         return std::string("generated");
     }
 
-    static void fillCmdBuff(MaxCmdBuff *m, const ParsedLineCmd &p)
+    static void fillCmdBuff(buffer_t &m, const ParsedLineCmd &p)
     {
         using boost::fusion::at_c;
-
-        LineCmd *l = reinterpret_cast<LineCmd *>(m);
+        m.resize(LineCmd_LENGTH);
+        LineCmd *l = reinterpret_cast<LineCmd *>(&m[0]);
         l->cmdId = LineCmd_ID;
 
         unsigned int delay = p.get<1>();

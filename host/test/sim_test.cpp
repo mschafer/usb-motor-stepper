@@ -17,8 +17,7 @@ BOOST_AUTO_TEST_CASE ( ping_test )
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 
-	ums::MessageInfo::buffer_t pongBuff;
-	host.receiveMessage(pongBuff);
+	ums::MessageInfo::buffer_t pongBuff = host.receiveMessage();
 
 	BOOST_CHECK(pongBuff.size() == PongMsg_LENGTH && pongBuff[0] == PongMsg_ID);
 }
@@ -38,8 +37,7 @@ BOOST_AUTO_TEST_CASE( bad_pin_test )
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 
-	ums::MessageInfo::buffer_t pongBuff;
-	host.receiveMessage(pongBuff);
+	ums::MessageInfo::buffer_t pongBuff = host.receiveMessage();
 
 	BOOST_CHECK(pongBuff.size() == ErrorMsg_LENGTH && pongBuff[0] == ErrorMsg_ID);
 

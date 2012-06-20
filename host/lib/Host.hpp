@@ -40,6 +40,12 @@ public:
 	}
 
 	/**
+	 * Send commands read from an input stream until eof.
+	 * Uses getline and assumes there is one command to parse per line of input.
+	 */
+	void commandStream(std::istream &in);
+
+	/**
 	 * Send a command to the device.
 	 * Commands are transmitted asynchronously via the link.  This routine returns immediately,
 	 * but the command may not be sent for some time.
@@ -48,9 +54,11 @@ public:
 		link_->write(cmdBuff, cmdSize);
 	}
 
-	void receiveMessage(MessageInfo::buffer_t &msgBuff) const {
-		msgBuff.clear();
-		MessageInfo::receiveMessage(msgBuff, link_);
+	/**
+	 * Receive a message from the device if one is available.
+	 */
+	MessageInfo::buffer_t receiveMessage() const {
+		return MessageInfo::receiveMessage(link_);
 	}
 
 private:

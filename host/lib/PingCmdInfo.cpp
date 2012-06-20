@@ -39,7 +39,7 @@ public:
 		addToRegistry();
 	}
 
-	 MaxCmdBuff compile(const std::string &input) const {
+	 buffer_t compile(const std::string &input) const {
 		 typedef std::string::const_iterator iterator;
 		 PingParser<iterator> grammar;
 		 iterator iter = input.begin();
@@ -49,7 +49,7 @@ public:
 		 if (!r || iter != end) {
 			 throw (std::runtime_error("parse Ping failed"));
 		 } else {
-			 MaxCmdBuff ret;
+			 buffer_t ret;
 			 fillCmdBuff(ret, ping);
 			 return ret;
 		 }

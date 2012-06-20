@@ -36,11 +36,12 @@ MessageInfo::findById(uint8_t id)
 	}
 }
 
-void
-MessageInfo::receiveMessage(buffer_t &msgBuff, ILink *link)
+MessageInfo::buffer_t
+MessageInfo::receiveMessage(ILink *link)
 {
 	static size_t rxOffset = 0;
 	static buffer_t rxBuff;
+	buffer_t ret;
 
 	boost::optional<uint8_t> rx;
 
@@ -50,7 +51,7 @@ MessageInfo::receiveMessage(buffer_t &msgBuff, ILink *link)
 			rxOffset = 1;
 			rxBuff.push_back(rx.get());
 		} else {
-			return;
+			return ret;
 		}
 	}
 
@@ -63,12 +64,13 @@ MessageInfo::receiveMessage(buffer_t &msgBuff, ILink *link)
 		size_t size = minfo->size();
 		while (rxBuff.size() < size) {
 			rx = link->readByte();
-			if (!rx) return;
+			if (!rx) return ret;
 			rxBuff.push_back(rx.get());
 		}
-		msgBuff.swap(rxBuff);
+		ret.swap(rxBuff);
 		rxOffset = 0;
 		rxBuff.clear();
+		return ret;
 	}
 }
 

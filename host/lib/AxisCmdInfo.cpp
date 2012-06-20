@@ -93,7 +93,7 @@ public:
 		addToRegistry();
 	}
 
-	 MaxCmdBuff compile(const std::string &input) const {
+	 buffer_t compile(const std::string &input) const {
 		 typedef std::string::const_iterator iterator;
 		 AxisParser<iterator> grammar;
 		 iterator iter = input.begin();
@@ -103,17 +103,18 @@ public:
 		 if (!r || iter != end) {
 			 throw (std::runtime_error("parse Axis failed"));
 		 } else {
-			 MaxCmdBuff ret;
-			 createCmd(&ret, pa);
+			 buffer_t ret;
+			 createCmd(ret, pa);
 			 return ret;
 		 }
 	}
 
-	static void createCmd(MaxCmdBuff *cmd, const ParsedAxis &pa)
+	static void createCmd(buffer_t &cmd, const ParsedAxis &pa)
 	{
 	    using boost::fusion::at_c;
 
-	    AxisCmd &ac = *reinterpret_cast<AxisCmd *>(cmd);
+	    cmd.resize(AxisCmd_LENGTH);
+	    AxisCmd &ac = *reinterpret_cast<AxisCmd *>(&cmd[0]);
 	    ac.cmdId = AxisCmd_ID;
 	    ac.name = at_c<0>(pa);
 	    PinVec_t pinvec = at_c<1>(pa);
