@@ -56,7 +56,7 @@ Host::enableDevice() const
 }
 
 void
-Host::commandStream(std::istream &in)
+Host::execute(std::istream &in)
 {
 	using namespace std;
 	string line;
@@ -64,7 +64,7 @@ Host::commandStream(std::istream &in)
 		getline(in, line);
 		CommandInfo::buffer_t cb = CommandInfo::parseLine(line);
 		if (!cb.empty()) {
-			sendCommand(&cb[0], cb.size());
+			sendCommand(cb);
 		}
 	}
 }

@@ -14,8 +14,7 @@ public:
 	SerialLink(const std::string &portName);
 	virtual ~SerialLink();
 
-	virtual void write(std::vector<uint8_t> &bytes);
-	virtual void write(void *bytes, size_t nBytes);
+	virtual void write(const std::vector<uint8_t> &bytes);
 	virtual std::deque<uint8_t> read();
 	virtual boost::optional<uint8_t> readByte();
 

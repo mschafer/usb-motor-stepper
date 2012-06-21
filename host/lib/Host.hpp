@@ -4,6 +4,7 @@
 #include <boost/utility.hpp>
 #include "ILink.hpp"
 #include "MessageInfo.hpp"
+#include "CommandInfo.hpp"
 #include "commands.h"
 #include "messages.h"
 #include <boost/thread.hpp>
@@ -36,22 +37,22 @@ public:
 	void pingDevice() const {
 		PingCmd pc;
 		pc.cmdId = PingCmd_ID;
-		sendCommand(&pc, PingCmd_LENGTH);
+		sendCommand(makeCmdBuff(pc));
 	}
 
 	/**
 	 * Send commands read from an input stream until eof.
 	 * Uses getline and assumes there is one command to parse per line of input.
 	 */
-	void commandStream(std::istream &in);
+	void execute(std::istream &in);
 
 	/**
 	 * Send a command to the device.
 	 * Commands are transmitted asynchronously via the link.  This routine returns immediately,
 	 * but the command may not be sent for some time.
 	 */
-	void sendCommand(void *cmdBuff, size_t cmdSize) const {
-		link_->write(cmdBuff, cmdSize);
+	void sendCommand(const CommandInfo::buffer_t &cmd) const {
+		link_->write(cmd);
 	}
 
 	/**

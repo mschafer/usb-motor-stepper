@@ -19,9 +19,7 @@ public:
 	 * This method returns immediately and the write is handled asynchronously.
 	 * Note that vector is used instead of deque because some implementations require contiguous memory.
 	 */
-	virtual void write(std::vector<uint8_t> &bytes) = 0;
-
-	virtual void write(void *bytes, size_t nBytes) = 0;
+	virtual void write(const std::vector<uint8_t> &bytes) = 0;
 
 	/**
 	 * Read a sequence of bytes from the device.

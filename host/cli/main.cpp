@@ -1,5 +1,7 @@
 
 #include <boost/program_options.hpp>
+#include <boost/foreach.hpp>
+#include <fstream>
 #include <stdio.h>
 #include "Host.hpp"
 
@@ -24,7 +26,17 @@ connectToPort(const string &port)
 	return auto_ptr<ums::Host>(new ums::Host(port));
 }
 
-
+void prompt()
+{
+	string line;
+	while(1) {
+		cout << "stepper > ";
+		getline(cin, line);
+		if (line.compare("exit") == 0) {
+			break;
+		}
+	}
+}
 
 /**
  * commands:
@@ -75,13 +87,17 @@ int main(int argc, char *argv[])
 		host.reset(new ums::Host());
 	}
 
+	// process input files
     if (vm.count("input-file"))
     {
     	const vector<string> &infiles = vm["input-file"].as<vector<string> >();
-
+    	BOOST_FOREACH(string fname, infiles) {
+    		fstream fin(fname.c_str(), ios_base::in);
+    		host->execute(fin);
+    	}
+    } else {
+    	prompt();
     }
 
-
-
-
+    return 0;
 }

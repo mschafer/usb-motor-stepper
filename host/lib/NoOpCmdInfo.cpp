@@ -49,9 +49,7 @@ public:
 		 if (!r || iter != end) {
 			 throw (std::runtime_error("parse NoOp failed"));
 		 } else {
-			 buffer_t ret;
-			 fillCmdBuff(ret, noop);
-			 return ret;
+			 return makeCmdBuff(noop);
 		 }
 	}
 

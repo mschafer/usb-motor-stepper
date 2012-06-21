@@ -56,17 +56,20 @@ protected:
 		>
 	> CommandInfo_set;
 
-	template <typename T> void fillCmdBuff(buffer_t &buff, const T &cmd) const {
-		buff.resize(sizeof(T));
-		const uint8_t *pcmd = &cmd.cmdId;
-		std::copy(pcmd, pcmd+sizeof(T), buff.begin());
-	}
-
 	void addToRegistry();
 
 private:
 	static CommandInfo_set &registry();
 };
+
+template <typename T> CommandInfo::buffer_t
+makeCmdBuff(const T &cmd) {
+	CommandInfo::buffer_t buff;
+	buff.resize(sizeof(T));
+	const uint8_t *pcmd = &cmd.cmdId;
+	std::copy(pcmd, pcmd+sizeof(T), buff.begin());
+	return buff;
+}
 
 }
 

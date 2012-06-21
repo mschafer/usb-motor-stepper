@@ -38,21 +38,12 @@ SerialLink::~SerialLink()
 }
 
 void
-SerialLink::write(std::vector<uint8_t> &bytes)
+SerialLink::write(const std::vector<uint8_t> &bytes)
 {
 	boost::lock_guard<boost::mutex> guard(mutex_);
 	writeQueue_.insert(writeQueue_.end(), bytes.begin(), bytes.end());
 	writeImpl();
 
-}
-
-void
-SerialLink::write(void *bytes, size_t nBytes)
-{
-	uint8_t *pBytes = reinterpret_cast<uint8_t*>(bytes);
-	boost::lock_guard<boost::mutex> guard(mutex_);
-	writeQueue_.insert(writeQueue_.end(), pBytes, pBytes+nBytes);
-	writeImpl();
 }
 
 void SerialLink::writeImpl() {

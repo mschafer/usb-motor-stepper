@@ -49,9 +49,7 @@ public:
 		 if (!r || iter != end) {
 			 throw (std::runtime_error("parse Ping failed"));
 		 } else {
-			 buffer_t ret;
-			 fillCmdBuff(ret, ping);
-			 return ret;
+			 return makeCmdBuff(ping);
 		 }
 	}
 

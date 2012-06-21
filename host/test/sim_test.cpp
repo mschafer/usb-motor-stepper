@@ -6,8 +6,10 @@
 #include "Axis.hpp"
 #include "Platform.hpp"
 #include "Host.hpp"
+#include "CommandInfo.hpp"
 
 using ums::sim::Platform;
+using ums::makeCmdBuff;
 
 BOOST_AUTO_TEST_CASE ( ping_test )
 {
@@ -33,7 +35,7 @@ BOOST_AUTO_TEST_CASE( bad_pin_test )
 
 	AxisCmd ac = ax.command();
 	ac.name = 'X';
-	host.sendCommand(&ac, sizeof(ac));
+	host.sendCommand(makeCmdBuff(ac));
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 
@@ -54,7 +56,7 @@ BOOST_AUTO_TEST_CASE( simple_step_test )
 	sc.delay_lo = 100;
 	sc.delay_hi = 0;
 	sc.stepDir = UMS_X_STEP | UMS_X_DIR;
-	host.sendCommand(&sc, sizeof(sc));
+	host.sendCommand(makeCmdBuff(sc));
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
@@ -73,7 +75,7 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 	sc.delay_lo = 100;
 	sc.delay_hi = 0;
 	sc.stepDir = UMS_X_STEP | UMS_X_DIR | UMS_Y_STEP | UMS_Y_DIR | UMS_U_STEP;
-	host.sendCommand(&sc, sizeof(sc));
+	host.sendCommand(makeCmdBuff(sc));
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
@@ -99,7 +101,7 @@ BOOST_AUTO_TEST_CASE( short_line_test )
 	lc.deltaU = -1;
 	lc.delay_lo = 100;
 	lc.delay_hi = 0;
-	host.sendCommand(&lc, sizeof(lc));
+	host.sendCommand(makeCmdBuff(lc));
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
@@ -127,7 +129,7 @@ BOOST_AUTO_TEST_CASE( line_limit_test )
 	lc.deltaU = 0;
 	lc.delay_lo = 100;
 	lc.delay_hi = 0;
-	host.sendCommand(&lc, sizeof(lc));
+	host.sendCommand(makeCmdBuff(lc));
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 

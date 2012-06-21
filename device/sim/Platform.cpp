@@ -101,18 +101,10 @@ void Platform::timerDelay(uint16_t delay)
 }
 
 void
-Platform::write(std::vector<uint8_t> &bytes)
+Platform::write(const std::vector<uint8_t> &bytes)
 {
 	boost::lock_guard<boost::mutex> guard(hostCommMutex_);
 	fromHost_.insert(fromHost_.end(), bytes.begin(), bytes.end());
-}
-
-void
-Platform::write(void *bytes, size_t nBytes)
-{
-	boost::lock_guard<boost::mutex> guard(hostCommMutex_);
-	uint8_t *pBytes = reinterpret_cast<uint8_t*>(bytes);
-	fromHost_.insert(fromHost_.end(), pBytes, pBytes+nBytes);
 }
 
 std::deque<uint8_t>
