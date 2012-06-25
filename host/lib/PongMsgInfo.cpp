@@ -17,7 +17,7 @@ public:
 	std::string translate(const buffer_t &b) const
 	{	std::stringstream ss;
 		const PongMsg *pm = reinterpret_cast<const PongMsg*>(&b[0]);
-		ss << "Pong: version is " << (int)(pm->majorVersion) << "." << (int)(pm->minorVersion);
+		ss << "Pong";
 		return ss.str();
 	}
 

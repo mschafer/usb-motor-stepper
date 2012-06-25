@@ -30,6 +30,7 @@ public:
 	 * Send enable code to the device through the link.
 	 * The device starts in a disabled state where it will ignore all commands until it is enabled.
 	 * It may also transition to a disabled state when a fatal error occurs.
+	 * The device should respond to the enable code with an AcceptMsg that contains the firmware version number.
 	 */
 	void enableDevice() const;
 
@@ -55,13 +56,6 @@ public:
 		link_->write(cmd);
 	}
 
-	/**
-	 * Receive a message from the device if one is available.
-	 */
-	MessageInfo::buffer_t receiveMessage() const {
-		return MessageInfo::receiveMessage(link_);
-	}
-
 private:
 	/**
 	 * The C code for the simulator uses global variables and so there can be only 1 in use at a time.
@@ -72,10 +66,13 @@ private:
 	bool ownsSim_;
 	ILink *link_;
 	std::auto_ptr<ILink> ownedLink_;
-	std::vector<uint8_t> rxMessage_;
-	size_t rxOffset_;
-	boost::thread simExec_;
+	boost::optional<AcceptMsg> accept_;
 
+	bool msgRun_;
+	void msgThread();
+	boost::thread msgExec_;
+
+	/** Runs the simulator. */
 	struct SimThread
 	{
 		bool run_;
@@ -83,6 +80,7 @@ private:
 		SimThread() : run_(true) {}
 		void operator()();
 	} simThread_;
+	boost::thread simExec_;
 };
 
 }

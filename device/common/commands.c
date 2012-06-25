@@ -19,8 +19,6 @@ void handle_PingCmd(uint8_t *cmdData)
 {
 	struct PongMsg pong;
 	pong.msgId = PongMsg_ID;
-	pong.majorVersion = UMS_MAJOR_VERSION;
-	pong.minorVersion = UMS_MINOR_VERSION;
 	pf_send_bytes((uint8_t*)&pong, PongMsg_LENGTH);
 }
 

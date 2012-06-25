@@ -1,6 +1,8 @@
 #ifndef ums_h
 #define ums_h
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -12,6 +14,7 @@ extern "C" {
 #endif
 
 EXTERN const char UMS_ENABLE[];
+EXTERN uint32_t umsStepCounter;
 
 #define UMS_MAJOR_VERSION 0
 #define UMS_MINOR_VERSION 0

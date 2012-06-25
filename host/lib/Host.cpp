@@ -11,7 +11,7 @@ namespace ums {
 const std::string Host::SIMULATOR_NAME("simulator");
 boost::mutex Host::uniqueSim_;
 
-Host::Host(const std::string &linkName) : ownsSim_(false), rxOffset_(0)
+Host::Host(const std::string &linkName) : ownsSim_(false)
 {
 	if (linkName.compare(SIMULATOR_NAME)==0) {
 		// take unique ownership of the simulator because device C code uses globals
@@ -27,6 +27,11 @@ Host::Host(const std::string &linkName) : ownsSim_(false), rxOffset_(0)
 		ownedLink_.reset(new SerialLink(linkName));
 		link_ = ownedLink_.get();
 	}
+
+	// link is up, start thread to handle received messages
+	msgRun_ = true;
+	boost::thread t(boost::bind(&Host::msgThread, this));
+	msgExec_.swap(t);
 }
 
 Host::~Host()
@@ -34,6 +39,10 @@ Host::~Host()
 	try {
 		if (ownsSim_) {
 			uniqueSim_.unlock();
+		}
+		if (msgExec_.joinable()) {
+			msgRun_ = false;
+			msgExec_.join();
 		}
 		if (simExec_.joinable()) {
 			simThread_.run_ = false;
@@ -53,6 +62,8 @@ Host::enableDevice() const
 		bytes.push_back(c);
 	}
 	link_->write(bytes);
+
+	///\todo wait and then check for accept or error
 }
 
 void
@@ -70,12 +81,31 @@ Host::execute(std::istream &in)
 }
 
 void
+Host::msgThread()
+{
+	while (msgRun_) {
+		MessageInfo::buffer_t m;
+		do {
+			m = MessageInfo::receiveMessage(link_);
+			if (!m.empty()) {
+				switch (m[0]) {
+				case AcceptMsg_ID:
+					accept_ = *(AcceptMsg *)(&m[0]);
+					break;
+				default:
+					break;
+				}
+			}
+		} while (!m.empty());
+		boost::this_thread::sleep(boost::posix_time::milliseconds(10));
+	}
+}
+
+void
 Host::Host::SimThread::operator()()
 {
 	while (run_) {
-		{
-			sim::Platform::instance().runOnce();
-		}
+		sim::Platform::instance().runOnce();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1));
 	}
 }

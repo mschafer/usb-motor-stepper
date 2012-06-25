@@ -1,6 +1,7 @@
 #include "stepper.h"
 #include "platform.h"
 #include "messages.h"
+#include "ums.h"
 #include <stdlib.h>
 
 typedef struct
@@ -135,6 +136,8 @@ void st_init( )
 
     // no active line
     st_line_setup(0, 0, 0, 0, 1000);
+
+    umsStepCounter = 0;
 }
 
 uint8_t st_full()
@@ -256,6 +259,7 @@ void st_run_once()
 {
 	// nothing to do if the FIFO is empty
 	if (stepTail != stepHead) {
+		umsStepCounter++;
 		// read the next step from FIFO and increment tail
 		uint8_t stepDir = stepFIFO[stepTail];
 		pf_set_step_timer(delayFIFO[stepTail]);
@@ -270,7 +274,6 @@ void st_run_once()
 		st_do_step(&Axes.z, stepDir >> 4);
 		st_do_step(&Axes.u, stepDir >> 6);
 
-		///\todo  wait a little, then clear the steps
 		st_clear_steps();
 	}
 }
