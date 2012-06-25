@@ -26,18 +26,6 @@ connectToPort(const string &port)
 	return auto_ptr<ums::Host>(new ums::Host(port));
 }
 
-void prompt()
-{
-	string line;
-	while(1) {
-		cout << "stepper > ";
-		getline(cin, line);
-		if (line.compare("exit") == 0) {
-			break;
-		}
-	}
-}
-
 /**
  * commands:
  * step
@@ -61,6 +49,7 @@ int main(int argc, char *argv[])
 	desc.add_options()
 		("help", "produce help message")
 		("port,P", program_options::value<string>(), "communications port")
+		("output,O", program_options::value<string>(), "output file for simulation results")
 		("input-file", program_options::value<vector<string> >(), "input file")
 		;
 
@@ -80,11 +69,17 @@ int main(int argc, char *argv[])
 	// attempt to connect to a port if one was specified, otherwise connect to sim
 	// terminate if an error occurs
 	auto_ptr<ums::Host> host;
+	auto_ptr<ofstream> out;
 	if (vm.count("port")) {
 		cout << "Connecting to port " << vm["port"].as<string>() << endl;
 		host =  connectToPort(vm["port"].as<string>());
 	} else {
 		host.reset(new ums::Host());
+		if (vm.count("output")) {
+			string outName = vm["output"].as<string>();
+			out.reset(new ofstream(outName.c_str(), ios_base::out));
+			*(out.get()) << "hello output file" << endl;
+		}
 	}
 
 	// process input files
@@ -96,7 +91,17 @@ int main(int argc, char *argv[])
     		host->execute(fin);
     	}
     } else {
-    	prompt();
+    	string line;
+    	while(1) {
+    		cout << "stepper > ";
+    		getline(cin, line);
+    		if (line.compare("exit") == 0) {
+    			break;
+    		} else {
+    			stringstream sline(line);
+    			host->execute(sline);
+    		}
+    	}
     }
 
     return 0;

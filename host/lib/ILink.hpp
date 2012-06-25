@@ -8,6 +8,10 @@
 
 namespace ums {
 
+/**
+ * Interface definition for the communications link between the host and device.
+ * The implementation must support writing and reading from different threads.
+ */
 class ILink : public boost::noncopyable
 {
 public:

@@ -95,7 +95,12 @@ SerialLink::read()
 boost::optional<uint8_t>
 SerialLink::readByte()
 {
+	boost::lock_guard<boost::mutex> guard(mutex_);
 	boost::optional<uint8_t> ret;
+	if (!bytesRead_.empty()) {
+		ret = bytesRead_.front();
+		bytesRead_.pop_front();
+	}
 	return ret;
 }
 
