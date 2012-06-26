@@ -56,12 +56,12 @@ static const uint8_t StatusMsg_ID = 4;
 struct StatusMsg {
 	uint8_t msgId;
 	uint8_t stepCounter_hi;
-	uint8_t stepCounter_mh;
-	uint8_t stepCounter_ml;
+	uint8_t stepCounter_hm;
+	uint8_t stepCounter_lm;
 	uint8_t stepCounter_lo;
 	uint8_t commandCounter_hi;
-	uint8_t commandCounter_mh;
-	uint8_t commandCounter_ml;
+	uint8_t commandCounter_hm;
+	uint8_t commandCounter_lm;
 	uint8_t commandCounter_lo;
 };
 

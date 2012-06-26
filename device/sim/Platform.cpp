@@ -44,6 +44,7 @@ Platform::runOnce()
 		for (size_t i=0; i<END_AXIS; i++) {
 			p[i] = axes_[i].position_;
 		}
+		p[END_AXIS] = t_;
 		positionLog_.push_back(p);
 	}
 }

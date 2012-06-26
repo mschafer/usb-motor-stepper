@@ -27,12 +27,12 @@ void ums_send_status()
 	struct StatusMsg sm;
 	sm.msgId = StatusMsg_ID;
 	sm.commandCounter_hi = (umsCommandCounter >> 24) & 0xFF;
-	sm.commandCounter_mh = (umsCommandCounter >> 16) & 0xFF;
-	sm.commandCounter_ml = (umsCommandCounter >> 8)  & 0xFF;
+	sm.commandCounter_hm = (umsCommandCounter >> 16) & 0xFF;
+	sm.commandCounter_lm = (umsCommandCounter >> 8)  & 0xFF;
 	sm.commandCounter_lo =  umsCommandCounter        & 0xFF;
 	sm.stepCounter_hi = (umsStepCounter >> 24) & 0xFF;
-	sm.stepCounter_mh = (umsStepCounter >> 16) & 0xFF;
-	sm.stepCounter_ml = (umsStepCounter >> 8)  & 0xFF;
+	sm.stepCounter_hm = (umsStepCounter >> 16) & 0xFF;
+	sm.stepCounter_lm = (umsStepCounter >> 8)  & 0xFF;
 	sm.stepCounter_lo =  umsStepCounter        & 0xFF;
 	pf_send_bytes((uint8_t*)&sm, StatusMsg_LENGTH);
 }

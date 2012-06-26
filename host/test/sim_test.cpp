@@ -20,8 +20,6 @@ BOOST_AUTO_TEST_CASE ( ping_test )
 	boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 
 	ums::MessageInfo::buffer_t msgBuff = host.receiveMessage();
-	BOOST_CHECK(msgBuff.size() == AcceptMsg_LENGTH && msgBuff[0] == AcceptMsg_ID);
-	msgBuff = host.receiveMessage();
 	BOOST_CHECK(msgBuff.size() == PongMsg_LENGTH && msgBuff[0] == PongMsg_ID);
 }
 
@@ -41,7 +39,6 @@ BOOST_AUTO_TEST_CASE( bad_pin_test )
 	boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 
 	ums::MessageInfo::buffer_t pongBuff = host.receiveMessage();
-
 	BOOST_CHECK(pongBuff.size() == ErrorMsg_LENGTH && pongBuff[0] == ErrorMsg_ID);
 
 }
@@ -80,8 +77,9 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
-	Platform::position_t pos = p.positionLog_.back();
-	BOOST_CHECK(p.positionLog_.size() == 2);
+	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
+	Platform::position_t pos = posLog.back();
+	BOOST_CHECK(posLog.size() == 2);
 	BOOST_CHECK(pos[0] ==  1);
 	BOOST_CHECK(pos[1] ==  1);
 	BOOST_CHECK(pos[2] ==  0);
@@ -106,8 +104,9 @@ BOOST_AUTO_TEST_CASE( short_line_test )
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
-	Platform::position_t pos = p.positionLog_.back();
-	BOOST_CHECK(p.positionLog_.size() == 11);
+	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
+	Platform::position_t pos = posLog.back();
+	BOOST_CHECK(posLog.size() == 11);
 	BOOST_CHECK(pos[0] == 10);
 	BOOST_CHECK(pos[1] ==  5);
 	BOOST_CHECK(pos[2] ==  0);
@@ -134,8 +133,9 @@ BOOST_AUTO_TEST_CASE( line_limit_test )
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
-	Platform::position_t pos = p.positionLog_.back();
-	BOOST_CHECK(p.positionLog_.size() == 11);
+	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
+	Platform::position_t pos = posLog.back();
+	BOOST_CHECK(posLog.size() == 11);
 	BOOST_CHECK(pos[0] ==  5);
 	BOOST_CHECK(pos[1] == 10);
 	BOOST_CHECK(pos[2] ==  0);

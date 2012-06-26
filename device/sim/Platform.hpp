@@ -26,7 +26,6 @@ namespace ums { namespace sim {
 class Platform : public ILink {
 public:
 
-
 	void runOnce();
 
 	const Axis &axis(char name) const;
@@ -53,7 +52,11 @@ public:
 	virtual std::deque<uint8_t> read();
 	virtual boost::optional<uint8_t> readByte();
 
-	typedef boost::array<ptrdiff_t, 4> position_t;
+	/**
+	 * Position records have x, y, z, and u position followed by time.
+	 * time += delay after each step or delay command.
+	 */
+	typedef boost::array<ptrdiff_t, 5> position_t;
 	std::deque<position_t> positionLog_;
 
 private:
@@ -65,6 +68,7 @@ private:
 	};
 
 	Platform();
+
 
 	static Platform *thePlatform_;
 	std::deque<uint8_t> toHost_;

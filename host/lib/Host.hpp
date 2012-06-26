@@ -5,6 +5,7 @@
 #include "ILink.hpp"
 #include "MessageInfo.hpp"
 #include "CommandInfo.hpp"
+#include "Platform.hpp"
 #include "commands.h"
 #include "messages.h"
 #include <boost/thread.hpp>
@@ -32,10 +33,10 @@ public:
 	 * It may also transition to a disabled state when a fatal error occurs.
 	 * The device should respond to the enable code with an AcceptMsg that contains the firmware version number.
 	 */
-	void enableDevice() const;
+	void enableDevice();
 
 	/** Send PingCmd to the device. */
-	void pingDevice() const {
+	void pingDevice() {
 		PingCmd pc;
 		pc.cmdId = PingCmd_ID;
 		sendCommand(makeCmdBuff(pc));
@@ -52,9 +53,14 @@ public:
 	 * Commands are transmitted asynchronously via the link.  This routine returns immediately,
 	 * but the command may not be sent for some time.
 	 */
-	void sendCommand(const CommandInfo::buffer_t &cmd) const {
+	void sendCommand(const CommandInfo::buffer_t &cmd) {
 		link_->write(cmd);
 	}
+
+	MessageInfo::buffer_t receiveMessage();
+
+	std::deque<sim::Platform::position_t> simulatorPositionLog();
+
 
 private:
 	/**
@@ -67,20 +73,19 @@ private:
 	ILink *link_;
 	std::auto_ptr<ILink> ownedLink_;
 	boost::optional<AcceptMsg> accept_;
+	boost::optional<StatusMsg> status_;
 
 	bool msgRun_;
 	void msgThread();
 	boost::thread msgExec_;
+	boost::mutex msgLock_;
+	std::deque<MessageInfo::buffer_t> msgQ_;
 
-	/** Runs the simulator. */
-	struct SimThread
-	{
-		bool run_;
 
-		SimThread() : run_(true) {}
-		void operator()();
-	} simThread_;
+	bool simRun_;
+	void simThread();
 	boost::thread simExec_;
+	boost::mutex simLock_;
 };
 
 }

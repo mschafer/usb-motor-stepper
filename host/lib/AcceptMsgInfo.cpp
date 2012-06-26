@@ -23,6 +23,6 @@ public:
 
 };
 
-PongMsgInfo thePongMsgInfo;
+AcceptMsgInfo theAcceptMsgInfo;
 
 }
