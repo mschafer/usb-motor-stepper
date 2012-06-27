@@ -38,8 +38,8 @@ BOOST_AUTO_TEST_CASE( bad_pin_test )
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 
-	ums::MessageInfo::buffer_t pongBuff = host.receiveMessage();
-	BOOST_CHECK(pongBuff.size() == ErrorMsg_LENGTH && pongBuff[0] == ErrorMsg_ID);
+	ums::MessageInfo::buffer_t msg = host.receiveMessage();
+	BOOST_CHECK(msg.size() == WarnMsg_LENGTH && msg[0] == WarnMsg_ID);
 
 }
 
@@ -56,10 +56,14 @@ BOOST_AUTO_TEST_CASE( simple_step_test )
 	sc.stepDir = UMS_X_STEP | UMS_X_DIR;
 	host.sendCommand(makeCmdBuff(sc));
 
-	boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+	while (!(host.status_ && host.status_.get().commandCounter_lo == 1)) {
+		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+	}
 
 	BOOST_CHECK(p.positionLog_.size() == 2);
 	BOOST_CHECK(p.positionLog_.back()[0] == 1);
+	BOOST_CHECK(p.positionLog_[1][4] - p.positionLog_[0][4]== 100);
+
 }
 
 BOOST_AUTO_TEST_CASE( one_step_test )
@@ -84,6 +88,8 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 	BOOST_CHECK(pos[1] ==  1);
 	BOOST_CHECK(pos[2] ==  0);
 	BOOST_CHECK(pos[3] == -1);
+
+
 }
 
 BOOST_AUTO_TEST_CASE( short_line_test )

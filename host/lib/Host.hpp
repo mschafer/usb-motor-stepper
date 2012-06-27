@@ -58,9 +58,13 @@ public:
 	}
 
 	MessageInfo::buffer_t receiveMessage();
+	static std::string translate(const MessageInfo::buffer_t &msgBuff) {
+		return MessageInfo::toString(msgBuff);
+	}
 
 	std::deque<sim::Platform::position_t> simulatorPositionLog();
 
+	boost::optional<StatusMsg> status_;
 
 private:
 	/**
@@ -73,7 +77,6 @@ private:
 	ILink *link_;
 	std::auto_ptr<ILink> ownedLink_;
 	boost::optional<AcceptMsg> accept_;
-	boost::optional<StatusMsg> status_;
 
 	bool msgRun_;
 	void msgThread();

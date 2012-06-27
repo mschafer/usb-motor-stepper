@@ -10,26 +10,35 @@
 
 const char UMS_ENABLE[] = "ums enable";
 #define UMS_ENABLE_LEN (sizeof(UMS_ENABLE)-1)   // exclude trailing '\0'
+const uint32_t UMS_STATUS_INTERVAL = 1000000;
 
 uint32_t umsEnabled;
-
-uint32_t umsCommandCounter;
+uint32_t commandCounter;
+uint8_t previousLimits;
+uint32_t nextStatusTime;
 
 void ums_init()
 {
     st_init();
     umsEnabled = 0;
-    umsCommandCounter = 0;
+    commandCounter = 0;
+    previousLimits = 0;
+    nextStatusTime = UMS_STATUS_INTERVAL;
+    umsLimits = 0;
+    umsRunTime = 0;
+    umsStatusRequest = 0;
+
 }
 
 void ums_send_status()
 {
 	struct StatusMsg sm;
 	sm.msgId = StatusMsg_ID;
-	sm.commandCounter_hi = (umsCommandCounter >> 24) & 0xFF;
-	sm.commandCounter_hm = (umsCommandCounter >> 16) & 0xFF;
-	sm.commandCounter_lm = (umsCommandCounter >> 8)  & 0xFF;
-	sm.commandCounter_lo =  umsCommandCounter        & 0xFF;
+	sm.limits = umsLimits;
+	sm.commandCounter_hi = (commandCounter >> 24) & 0xFF;
+	sm.commandCounter_hm = (commandCounter >> 16) & 0xFF;
+	sm.commandCounter_lm = (commandCounter >> 8)  & 0xFF;
+	sm.commandCounter_lo =  commandCounter        & 0xFF;
 	sm.stepCounter_hi = (umsStepCounter >> 24) & 0xFF;
 	sm.stepCounter_hm = (umsStepCounter >> 16) & 0xFF;
 	sm.stepCounter_lm = (umsStepCounter >> 8)  & 0xFF;
@@ -48,8 +57,9 @@ void ums_send_accept()
 
 void ums_idle()
 {
-    // disabled until complete enable string is received
     uint8_t nextByte;
+
+    // disabled until complete enable string is received
     while (umsEnabled < UMS_ENABLE_LEN && pf_receive_byte(&nextByte) != 0) {
         if (nextByte == UMS_ENABLE[umsEnabled]) {
             ++umsEnabled;
@@ -67,11 +77,20 @@ void ums_idle()
         while (!st_full()) {
             uint8_t *rx = cmd_receive();
             if (rx != NULL) {
-            	umsCommandCounter++;
+            	commandCounter++;
                 cmd_handler(rx);
             } else {
                 break;
             }
         }
+    }
+
+    // send a status when limit switches change or ~1e6 stepper delay ticks have elapsed
+    if (umsLimits != previousLimits || umsRunTime > nextStatusTime || umsStatusRequest != 0) {
+    	previousLimits = umsLimits;
+    	umsStatusRequest = 0;
+    	nextStatusTime += UMS_STATUS_INTERVAL;
+
+    	ums_send_status();
     }
 }

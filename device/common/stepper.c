@@ -208,12 +208,13 @@ uint8_t st_read_ipin(uint8_t port, uint8_t ipin)
 /**
  * Generate a step in the specified direction on the specified axis.
  * \param stepDir bit0 is step, bit 1 is dir.
+ * \return 0 for normal step, 1 for forward limit, 2 for reverse limit
  */
-void st_do_step(Axis_t *a, uint8_t stepDir)
+uint8_t st_do_step(Axis_t *a, uint8_t stepDir)
 {
 	// do nothing if this axis has no step dir pins assigned
 	if (a->dirPin == UMS_UNASSIGNED_PORT || a->stepPin == UMS_UNASSIGNED_PORT)
-		return;
+		return 0;
 
 	// set direction bit first
 	st_set_ipin(a->dirPort, a->dirPin, stepDir & UMS_DIR_BIT);
@@ -224,18 +225,23 @@ void st_do_step(Axis_t *a, uint8_t stepDir)
 			uint8_t limit = st_read_ipin(a->fwdPort, a->fwdPin);
 			if (limit != 0) {
 				// limit activated, don't step
-				return;
+				return 1;
 			}
-		} else if (a->revPort != UMS_UNASSIGNED_PORT) { // moving reverse
+		}
+
+		// moving reverse
+		else if (a->revPort != UMS_UNASSIGNED_PORT) {
 			uint8_t limit = st_read_ipin(a->revPort, a->revPin);
 			if (limit != 0) {
 				// limit activated, don't step
-				return;
+				return 2;
 			}
 		}
 
 		st_set_ipin(a->stepPort, a->stepPin, 1);
+		return 0;
 	}
+	return 0;
 }
 
 /**
@@ -262,6 +268,7 @@ void st_run_once()
 		umsStepCounter++;
 		// read the next step from FIFO and increment tail
 		uint8_t stepDir = stepFIFO[stepTail];
+		umsRunTime += delayFIFO[stepTail];
 		pf_set_step_timer(delayFIFO[stepTail]);
 		uint8_t p = stepTail + 1;
 		if (p == STEP_FIFO_SIZE)
@@ -269,24 +276,30 @@ void st_run_once()
 		else
 			stepTail = p;
 
-		st_do_step(&Axes.x, stepDir);
-		st_do_step(&Axes.y, stepDir >> 2);
-		st_do_step(&Axes.z, stepDir >> 4);
-		st_do_step(&Axes.u, stepDir >> 6);
+		umsLimits = 0;
+		umsLimits |= st_do_step(&Axes.x, stepDir);
+		umsLimits |= (st_do_step(&Axes.y, stepDir >> 2) << 2);
+		umsLimits |= (st_do_step(&Axes.z, stepDir >> 4) << 4);
+		umsLimits |= (st_do_step(&Axes.u, stepDir >> 6) << 6);
 
 		st_clear_steps();
+	}
+
+	// done, cause a status to be sent
+	else {
+		umsStatusRequest = 1;
 	}
 }
 
 void st_pin_config_error(uint8_t port, uint8_t pin)
 {
 	// error message to send if any of the configuration calls fail
-	struct ErrorMsg emsg;
-	emsg.msgId = ErrorMsg_ID;
-	emsg.errorId = UMS_ERROR_CONFIGURE_PIN;
-	emsg.data[0] = port;
-	emsg.data[1] = pin;
-	pf_send_bytes((uint8_t*)&emsg, ErrorMsg_LENGTH);
+	struct WarnMsg wmsg;
+	wmsg.msgId = WarnMsg_ID;
+	wmsg.warnId = UMS_WARN_CONFIGURE_PIN;
+	wmsg.data[0] = port;
+	wmsg.data[1] = pin;
+	pf_send_bytes((uint8_t*)&wmsg, WarnMsg_LENGTH);
 }
 
 void st_setup_axis(struct AxisCmd *c)
@@ -295,11 +308,11 @@ void st_setup_axis(struct AxisCmd *c)
 	Axis_t *axis = getAxis(c->name);
 
 	if (axis == NULL) {
-		struct ErrorMsg emsg;
-		emsg.msgId = ErrorMsg_ID;
-		emsg.errorId = UMS_ERROR_BAD_AXIS;
-		emsg.data[0] = c->name;
-		pf_send_bytes((uint8_t*)&emsg, ErrorMsg_LENGTH);
+		struct WarnMsg wmsg;
+		wmsg.msgId = ErrorMsg_ID;
+		wmsg.warnId = UMS_WARN_BAD_AXIS;
+		wmsg.data[0] = c->name;
+		pf_send_bytes((uint8_t*)&wmsg, WarnMsg_LENGTH);
 		return;
 	}
 

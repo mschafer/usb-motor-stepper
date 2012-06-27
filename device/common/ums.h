@@ -14,7 +14,18 @@ extern "C" {
 #endif
 
 EXTERN const char UMS_ENABLE[];
+
+/** Counter of steps taken since last init. */
 EXTERN uint32_t umsStepCounter;
+
+/** Bit field of limit switches, 1 indicates stopped motion. */
+EXTERN uint8_t umsLimits;
+
+/** Cumulative sum of delays from step timer. */
+EXTERN uint32_t umsRunTime;
+
+/** Setting this to 1 will cause main to send a status and then clear it. */
+EXTERN uint8_t umsStatusRequest;
 
 #define UMS_MAJOR_VERSION 0
 #define UMS_MINOR_VERSION 0
