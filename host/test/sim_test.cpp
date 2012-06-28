@@ -47,7 +47,6 @@ BOOST_AUTO_TEST_CASE( simple_step_test )
 {
 	ums::Host host;
 	host.enableDevice();
-	Platform &p = Platform::instance();
 
 	StepCmd sc;
 	sc.cmdId = StepCmd_ID;
@@ -56,13 +55,23 @@ BOOST_AUTO_TEST_CASE( simple_step_test )
 	sc.stepDir = UMS_X_STEP | UMS_X_DIR;
 	host.sendCommand(makeCmdBuff(sc));
 
-	while (!(host.status_ && host.status_.get().commandCounter_lo == 1)) {
-		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+	while(1) {
+		ums::MessageInfo::buffer_t msg = host.receiveMessage();
+		if (!msg.empty() && msg[0] == StatusMsg_ID) {
+			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
+			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
+					m->commandCounter_lo == 1) {
+				boost::this_thread::sleep(boost::posix_time::milliseconds(20));
+				break;
+			}
+		}
+		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 	}
 
-	BOOST_CHECK(p.positionLog_.size() == 2);
-	BOOST_CHECK(p.positionLog_.back()[0] == 1);
-	BOOST_CHECK(p.positionLog_[1][4] - p.positionLog_[0][4]== 100);
+	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
+	BOOST_CHECK(posLog.size() == 2);
+	BOOST_CHECK(posLog.back()[0] == 1);
+	BOOST_CHECK(posLog[1][4] - posLog[0][4]== 100);
 
 }
 
@@ -70,7 +79,6 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 {
 	ums::Host host;
 	host.enableDevice();
-	Platform &p = Platform::instance();
 
 	StepCmd sc;
 	sc.cmdId = StepCmd_ID;
@@ -79,24 +87,34 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 	sc.stepDir = UMS_X_STEP | UMS_X_DIR | UMS_Y_STEP | UMS_Y_DIR | UMS_U_STEP;
 	host.sendCommand(makeCmdBuff(sc));
 
-	boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+	while(1) {
+		ums::MessageInfo::buffer_t msg = host.receiveMessage();
+		if (!msg.empty() && msg[0] == StatusMsg_ID) {
+			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
+			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
+					m->commandCounter_lo == 1) {
+				boost::this_thread::sleep(boost::posix_time::milliseconds(20));
+				break;
+			}
+		}
+		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
+	}
 
 	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
 	Platform::position_t pos = posLog.back();
 	BOOST_CHECK(posLog.size() == 2);
 	BOOST_CHECK(pos[0] ==  1);
+	if (pos[0] != 1) std::cout << "pos[0] " << pos[0] << std::endl;
 	BOOST_CHECK(pos[1] ==  1);
 	BOOST_CHECK(pos[2] ==  0);
 	BOOST_CHECK(pos[3] == -1);
-
-
+	BOOST_CHECK(pos[4] == 101);
 }
 
 BOOST_AUTO_TEST_CASE( short_line_test )
 {
 	ums::Host host;
 	host.enableDevice();
-	Platform &p = Platform::instance();
 
 	LineCmd lc;
 	lc.cmdId = LineCmd_ID;
@@ -108,12 +126,24 @@ BOOST_AUTO_TEST_CASE( short_line_test )
 	lc.delay_hi = 0;
 	host.sendCommand(makeCmdBuff(lc));
 
-	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	while(1) {
+		ums::MessageInfo::buffer_t msg = host.receiveMessage();
+		if (!msg.empty() && msg[0] == StatusMsg_ID) {
+			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
+			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
+					m->commandCounter_lo == 1) {
+				boost::this_thread::sleep(boost::posix_time::milliseconds(20));
+				break;
+			}
+		}
+		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
+	}
 
 	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
 	Platform::position_t pos = posLog.back();
 	BOOST_CHECK(posLog.size() == 11);
 	BOOST_CHECK(pos[0] == 10);
+	if (pos[0] != 10) std::cout << "pos[0] " << pos[0] << "\t" << posLog[0][0] << std::endl;
 	BOOST_CHECK(pos[1] ==  5);
 	BOOST_CHECK(pos[2] ==  0);
 	BOOST_CHECK(pos[3] == -1);
@@ -137,7 +167,22 @@ BOOST_AUTO_TEST_CASE( line_limit_test )
 	lc.delay_hi = 0;
 	host.sendCommand(makeCmdBuff(lc));
 
-	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	///\todo add a check for status showing limit
+	bool limitDetect = false;
+	while(1) {
+		ums::MessageInfo::buffer_t msg = host.receiveMessage();
+		if (!msg.empty() && msg[0] == StatusMsg_ID) {
+			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
+			limitDetect |= (m->limits != 0);
+			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
+					m->commandCounter_lo == 1) {
+				boost::this_thread::sleep(boost::posix_time::milliseconds(200));
+				break;
+			}
+		}
+		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
+	}
+	BOOST_CHECK(limitDetect);
 
 	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
 	Platform::position_t pos = posLog.back();

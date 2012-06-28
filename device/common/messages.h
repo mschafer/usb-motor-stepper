@@ -56,6 +56,7 @@ static const uint8_t StatusMsg_ID = 4;
 struct StatusMsg {
 	uint8_t msgId;
 	uint8_t limits;
+	uint8_t flags;
 	uint8_t stepCounter_hi;
 	uint8_t stepCounter_hm;
 	uint8_t stepCounter_lm;

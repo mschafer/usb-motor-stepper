@@ -26,7 +26,7 @@ void ums_init()
     nextStatusTime = UMS_STATUS_INTERVAL;
     umsLimits = 0;
     umsRunTime = 0;
-    umsStatusRequest = 0;
+    umsStatus = 0;
 
 }
 
@@ -35,6 +35,7 @@ void ums_send_status()
 	struct StatusMsg sm;
 	sm.msgId = StatusMsg_ID;
 	sm.limits = umsLimits;
+	sm.flags = umsStatus;
 	sm.commandCounter_hi = (commandCounter >> 24) & 0xFF;
 	sm.commandCounter_hm = (commandCounter >> 16) & 0xFF;
 	sm.commandCounter_lm = (commandCounter >> 8)  & 0xFF;
@@ -77,8 +78,8 @@ void ums_idle()
         while (!st_full()) {
             uint8_t *rx = cmd_receive();
             if (rx != NULL) {
-            	commandCounter++;
                 cmd_handler(rx);
+            	commandCounter++;
             } else {
                 break;
             }
@@ -86,11 +87,11 @@ void ums_idle()
     }
 
     // send a status when limit switches change or ~1e6 stepper delay ticks have elapsed
-    if (umsLimits != previousLimits || umsRunTime > nextStatusTime || umsStatusRequest != 0) {
+    if (umsLimits != previousLimits || umsRunTime > nextStatusTime ||
+    		(umsStatus & UMS_SEND_STATUS_NOW) != 0) {
     	previousLimits = umsLimits;
-    	umsStatusRequest = 0;
     	nextStatusTime += UMS_STATUS_INTERVAL;
-
     	ums_send_status();
+    	umsStatus &= ~UMS_SEND_STATUS_NOW;
     }
 }

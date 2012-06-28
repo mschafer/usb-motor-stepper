@@ -24,8 +24,11 @@ EXTERN uint8_t umsLimits;
 /** Cumulative sum of delays from step timer. */
 EXTERN uint32_t umsRunTime;
 
-/** Setting this to 1 will cause main to send a status and then clear it. */
-EXTERN uint8_t umsStatusRequest;
+#define UMS_SEND_STATUS_NOW 0x01	///\< This bit causes a status message to be sent on the next call to main
+#define UMS_STEPPER_RUNNING 0x02    ///\< This bit indicates that the stepper is currently running
+
+/** Status bits. */
+EXTERN uint8_t umsStatus;
 
 #define UMS_MAJOR_VERSION 0
 #define UMS_MINOR_VERSION 0

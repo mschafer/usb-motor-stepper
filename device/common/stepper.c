@@ -175,6 +175,7 @@ void st_add_step(uint8_t stepDir, uint32_t delay)
 	// need to start the timer if it isn't already running so this step will happen
 	if (pf_is_timer_running() == 0) {
 		pf_set_step_timer(1);
+		umsStatus |= UMS_STEPPER_RUNNING;
 	}
 }
 
@@ -285,9 +286,10 @@ void st_run_once()
 		st_clear_steps();
 	}
 
-	// done, cause a status to be sent
+	// done, cause a status to be sent and clear running status
 	else {
-		umsStatusRequest = 1;
+		umsStatus |= UMS_SEND_STATUS_NOW;
+		umsStatus &= ~UMS_STEPPER_RUNNING;
 	}
 }
 

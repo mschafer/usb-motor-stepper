@@ -64,8 +64,6 @@ public:
 
 	std::deque<sim::Platform::position_t> simulatorPositionLog();
 
-	boost::optional<StatusMsg> status_;
-
 private:
 	/**
 	 * The C code for the simulator uses global variables and so there can be only 1 in use at a time.

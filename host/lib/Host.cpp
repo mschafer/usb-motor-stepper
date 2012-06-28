@@ -134,10 +134,6 @@ Host::msgThread()
 					accept_ = *(AcceptMsg *)(&m[0]);
 					break;
 
-				case StatusMsg_ID:
-					status_ = *(StatusMsg *)(&m[0]);
-					break;
-
 				default:
 					msgQ_.push_back(MessageInfo::buffer_t());
 					msgQ_.back().swap(m);
