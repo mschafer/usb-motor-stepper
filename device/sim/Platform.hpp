@@ -38,7 +38,7 @@ public:
 	uint8_t portPin(uint8_t addr);
 
 	bool timerRunning();
-	void timerDelay(uint16_t delay);
+	void timerDelay(uint32_t delay);
 
 	/**
 	 * Deletes the singleton and creates a new one.
@@ -73,7 +73,7 @@ private:
 	static Platform *thePlatform_;
 	std::deque<uint8_t> toHost_;
 	std::deque<uint8_t> fromHost_;
-	boost::optional<uint16_t> delay_;
+	boost::optional<uint32_t> delay_;
 	size_t t_;
 	boost::array<bool, 256> pins_;
 	boost::mutex hostCommMutex_;

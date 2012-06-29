@@ -183,3 +183,40 @@ BOOST_AUTO_TEST_CASE( line_limit_test )
 	BOOST_CHECK(pos[2] ==  0);
 	BOOST_CHECK(pos[3] ==  0);
 }
+
+BOOST_AUTO_TEST_CASE( simple_stream_test )
+{
+	std::stringstream ss;
+	ss << "step x+ y- 100" << std::endl;
+	ss << "step x+ y- 100" << std::endl;
+	ss << "step x+ y- z+ 100" << std::endl;
+	ss << "delay 123000" << std::endl;
+	ss << "step x+ y- u+ 100" << std::endl;
+
+	ums::Host host;
+	host.enableDevice();
+	host.execute(ss);
+
+	int iter = 200;
+	while(iter > 0) {
+		ums::MessageInfo::buffer_t msg = host.receiveMessage();
+		if (!msg.empty() && msg[0] == StatusMsg_ID) {
+			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
+			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
+					m->commandCounter_lo == 5) {
+				break;
+			}
+		}
+		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
+		iter--;
+	}
+
+	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
+	Platform::position_t pos = posLog.back();
+	BOOST_CHECK(pos[0] == 4);
+	BOOST_CHECK(pos[1] == -4);
+	BOOST_CHECK(pos[2] == 1);
+	BOOST_CHECK(pos[3] == 1);
+	BOOST_CHECK(pos[4] == 123401);
+
+}

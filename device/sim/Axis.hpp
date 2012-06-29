@@ -107,7 +107,6 @@ struct Axis {
 			if (position_ < maxRevPos_) {
 				position_ = maxRevPos_;
 				revLimit_(pins, true);
-				std::cout << "limited\n";
 			} else {
 				revLimit_(pins, false);
 			}
@@ -116,7 +115,6 @@ struct Axis {
 			if (position_ > maxFwdPos_) {
 				position_ = maxFwdPos_;
 				fwdLimit_(pins, true);
-				std::cout << "limited\n";
 			} else {
 				fwdLimit_(pins, false);
 			}

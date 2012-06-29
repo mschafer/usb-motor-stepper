@@ -3,6 +3,16 @@
 
 namespace ums {
 
+std::string bits(uint8_t v) {
+	std::string b;
+	for (int i=7; i>=0; i--) {
+		uint8_t mask = 1 << i;
+		if ((mask & v) != 0) b += "1";
+		else b += "0";
+	}
+	return b;
+}
+
 class StatusMsgInfo : public MessageInfo
 {
 public:
@@ -22,13 +32,9 @@ public:
 		size_t stepCount = m->stepCounter_lo +        (m->stepCounter_lm << 8) +
 				          (m->stepCounter_hm << 16) + (m->stepCounter_hi << 24);
 		std::string limitBits;
-		ss << "Status:\tlimit: ";
-		for (int i=7; i>=0; i--) {
-			uint8_t mask = 1 << i;
-			if (mask & m->limits) limitBits += "1";
-			else limitBits += "0";
-		}
-		ss << limitBits << "\tcmdCount: " << cmdCount << "\tstepCount: " << stepCount;
+		ss << "Status:\tlimit: " << bits(m->limits);
+		ss << "\tflags: " << bits(m->flags);
+		ss << "\tcmdCount: " << cmdCount << "\tstepCount: " << stepCount;
 		return ss.str();
 	}
 

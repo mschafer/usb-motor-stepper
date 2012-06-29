@@ -43,6 +43,9 @@ CommandInfo::parseLine(const std::string &line)
         return ret;
     } else {
         boost::tokenizer<> tok(tl);
+        // ignore empty line
+        if (tok.begin() == tok.end()) return ret;
+
         std::string cmdName = *tok.begin();
         const CommandInfo *ci = findByName(cmdName);
         if (ci != NULL) {

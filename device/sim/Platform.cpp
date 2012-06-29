@@ -96,7 +96,7 @@ Platform::timerRunning()
 	return (bool)delay_;
 }
 
-void Platform::timerDelay(uint16_t delay)
+void Platform::timerDelay(uint32_t delay)
 {
 	delay_ = delay;
 }

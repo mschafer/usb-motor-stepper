@@ -108,7 +108,6 @@ struct LongLineCmd {
     uint8_t delay_lo;
 };
 
-#define MAX_CMD_ID LongLineCmd_ID
 #define MAX_CMD_LENGTH LongLineCmd_LENGTH
 struct MaxCmdBuff {
 	uint8_t cmdId;
@@ -124,6 +123,8 @@ struct DelayCmd {
 	uint8_t delay_lm;
 	uint8_t delay_lo;
 };
+
+#define MAX_CMD_ID DelayCmd_ID
 
 /** This function dispatches received commands to the appropriate handler based on the id in buff. */
 void cmd_handler(uint8_t *buff);
