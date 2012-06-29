@@ -10,6 +10,7 @@ Platform *Platform::thePlatform_ = NULL;
 
 Platform::Platform() : t_(0)
 {
+	std::fill(pins_.begin(), pins_.end(), false);
 }
 
 Platform &
@@ -39,7 +40,6 @@ Platform::runOnce()
 		t_ += delay_.get();
 		delay_.reset();
 		st_run_once();
-
 		position_t p;
 		for (size_t i=0; i<END_AXIS; i++) {
 			p[i] = axes_[i].position_;
@@ -295,4 +295,12 @@ void pf_init_axes()
 	platform.axis('U', axis);
 	ac = platform.axisCommand('U');
 	st_setup_axis(&ac);
+
+	// st_setup_axis initializes pins which cause accidental step
+	platform.positionLog_.clear();
+	platform.axis('X').position_ = 0;
+	platform.axis('Y').position_ = 0;
+	platform.axis('Z').position_ = 0;
+	platform.axis('U').position_ = 0;
+
 }

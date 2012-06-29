@@ -40,7 +40,6 @@ BOOST_AUTO_TEST_CASE( bad_pin_test )
 
 	ums::MessageInfo::buffer_t msg = host.receiveMessage();
 	BOOST_CHECK(msg.size() == WarnMsg_LENGTH && msg[0] == WarnMsg_ID);
-
 }
 
 BOOST_AUTO_TEST_CASE( simple_step_test )
@@ -61,7 +60,6 @@ BOOST_AUTO_TEST_CASE( simple_step_test )
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
 			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
 					m->commandCounter_lo == 1) {
-				boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 				break;
 			}
 		}
@@ -72,7 +70,6 @@ BOOST_AUTO_TEST_CASE( simple_step_test )
 	BOOST_CHECK(posLog.size() == 2);
 	BOOST_CHECK(posLog.back()[0] == 1);
 	BOOST_CHECK(posLog[1][4] - posLog[0][4]== 100);
-
 }
 
 BOOST_AUTO_TEST_CASE( one_step_test )
@@ -93,7 +90,6 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
 			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
 					m->commandCounter_lo == 1) {
-				boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 				break;
 			}
 		}
@@ -104,7 +100,6 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 	Platform::position_t pos = posLog.back();
 	BOOST_CHECK(posLog.size() == 2);
 	BOOST_CHECK(pos[0] ==  1);
-	if (pos[0] != 1) std::cout << "pos[0] " << pos[0] << std::endl;
 	BOOST_CHECK(pos[1] ==  1);
 	BOOST_CHECK(pos[2] ==  0);
 	BOOST_CHECK(pos[3] == -1);
@@ -132,7 +127,6 @@ BOOST_AUTO_TEST_CASE( short_line_test )
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
 			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
 					m->commandCounter_lo == 1) {
-				boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 				break;
 			}
 		}
@@ -143,7 +137,6 @@ BOOST_AUTO_TEST_CASE( short_line_test )
 	Platform::position_t pos = posLog.back();
 	BOOST_CHECK(posLog.size() == 11);
 	BOOST_CHECK(pos[0] == 10);
-	if (pos[0] != 10) std::cout << "pos[0] " << pos[0] << "\t" << posLog[0][0] << std::endl;
 	BOOST_CHECK(pos[1] ==  5);
 	BOOST_CHECK(pos[2] ==  0);
 	BOOST_CHECK(pos[3] == -1);
@@ -167,7 +160,6 @@ BOOST_AUTO_TEST_CASE( line_limit_test )
 	lc.delay_hi = 0;
 	host.sendCommand(makeCmdBuff(lc));
 
-	///\todo add a check for status showing limit
 	bool limitDetect = false;
 	while(1) {
 		ums::MessageInfo::buffer_t msg = host.receiveMessage();
@@ -176,7 +168,6 @@ BOOST_AUTO_TEST_CASE( line_limit_test )
 			limitDetect |= (m->limits != 0);
 			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
 					m->commandCounter_lo == 1) {
-				boost::this_thread::sleep(boost::posix_time::milliseconds(200));
 				break;
 			}
 		}

@@ -10,7 +10,7 @@ namespace ums {
 struct Pin {
 
 	/** Default constructor creates an unassigned pin. */
-	Pin() : port_(UMS_UNASSIGNED_PORT) {}
+	Pin() : port_(UMS_UNASSIGNED_PORT), pin_(0), inverted_(false) {}
 
 	/**
 	 * Configure a pin.  Assign to the specified port and pin.
