@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE( line_limit_test )
 	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
 	Platform::position_t pos = posLog.back();
 	BOOST_CHECK(posLog.size() == 11);
-	BOOST_CHECK(pos[0] ==  5);
+	BOOST_CHECK(pos[0] ==  6);
 	BOOST_CHECK(pos[1] == 10);
 	BOOST_CHECK(pos[2] ==  0);
 	BOOST_CHECK(pos[3] ==  0);

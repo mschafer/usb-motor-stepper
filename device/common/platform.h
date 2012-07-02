@@ -49,7 +49,9 @@ uint8_t pf_read_port_pin(uint8_t port, uint8_t pin);
 
 /**
  * Set the value for the countdown timer before the next call to \sa st_run_once
- * \param val The time delay in microseconds.
+ * \param val The time delay in microseconds.  If val is 0, then the timer should
+ * be disabled if it is running or ignored if it isn't.  Setting val to 0 should ensure
+ * that another interrupt does not occur.
  */
 void pf_set_step_timer(uint32_t val);
 

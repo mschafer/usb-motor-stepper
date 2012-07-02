@@ -27,7 +27,7 @@ void ums_init()
     umsLimits = 0;
     umsRunTime = 0;
     umsStatus = 0;
-
+    umsXPos = umsYPos = umsZPos = umsUPos = 0;
 }
 
 void ums_send_status()
@@ -56,7 +56,7 @@ void ums_send_accept()
 	pf_send_bytes((uint8_t*)&am, AcceptMsg_LENGTH);
 }
 
-void ums_idle()
+void ums_run_once()
 {
     uint8_t nextByte;
 

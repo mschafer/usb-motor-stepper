@@ -35,16 +35,25 @@ Platform::reset()
 void
 Platform::runOnce()
 {
-	ums_idle();
+	ums_run_once();
 	if (timerRunning()) {
 		t_ += delay_.get();
 		delay_.reset();
 		st_run_once();
 		position_t p;
+		p[0] = umsXPos;
+		p[1] = umsYPos;
+		p[2] = umsZPos;
+		p[3] = umsUPos;
+		p[4] = umsRunTime;
+
+#if 0
 		for (size_t i=0; i<END_AXIS; i++) {
 			p[i] = axes_[i].position_;
 		}
 		p[END_AXIS] = t_;
+#endif
+
 		positionLog_.push_back(p);
 	}
 }
@@ -98,7 +107,10 @@ Platform::timerRunning()
 
 void Platform::timerDelay(uint32_t delay)
 {
-	delay_ = delay;
+	if (delay != 0)
+		delay_ = delay;
+	else
+		delay_.reset();
 }
 
 void

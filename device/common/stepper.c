@@ -53,7 +53,7 @@ Axis_t *getAxis(char axisName)
 uint8_t stepFIFO[STEP_FIFO_SIZE];
 uint32_t delayFIFO[STEP_FIFO_SIZE];
 uint8_t stepHead, stepTail;
-
+uint32_t prevDelay;
 struct
 {
     int adx, ady, adz, adu;
@@ -174,6 +174,7 @@ void st_add_step(uint8_t stepDir, uint32_t delay)
 
 	// need to start the timer if it isn't already running so this step will happen
 	if (pf_is_timer_running() == 0) {
+		prevDelay = 1;
 		pf_set_step_timer(1);
 		umsStatus |= UMS_STEPPER_RUNNING;
 	}
@@ -206,43 +207,52 @@ uint8_t st_read_ipin(uint8_t port, uint8_t ipin)
 
 #define UMS_STEP_BIT 0x01
 #define UMS_DIR_BIT  0x02
+#define UMS_NORMAL_STEP 0
+#define UMS_FWD_LIMIT   1
+#define UMS_REV_LIMIT   2
 /**
  * Generate a step in the specified direction on the specified axis.
  * \param stepDir bit0 is step, bit 1 is dir.
- * \return 0 for normal step, 1 for forward limit, 2 for reverse limit
+ * \return UMS_NORMAL_STEP for normal step, UMS_FWD_LIMIT for forward limit, UMS_REV_LIMIT for reverse limit
  */
-uint8_t st_do_step(Axis_t *a, uint8_t stepDir)
+uint8_t st_do_step(Axis_t *a, uint8_t stepDir, int32_t *counter)
 {
-	// do nothing if this axis has no step dir pins assigned
-	if (a->dirPin == UMS_UNASSIGNED_PORT || a->stepPin == UMS_UNASSIGNED_PORT)
-		return 0;
+	int8_t counterDir = 0;
+
+	// do nothing if this axis has no step dir pins assigned or step is not set
+	if (a->dirPin == UMS_UNASSIGNED_PORT || a->stepPin == UMS_UNASSIGNED_PORT || (stepDir & UMS_STEP_BIT) == 0)
+		return UMS_NORMAL_STEP;
 
 	// set direction bit first
 	st_set_ipin(a->dirPort, a->dirPin, stepDir & UMS_DIR_BIT);
 
-	if ( (stepDir & UMS_STEP_BIT) != 0) {
-		// moving forward
-		if (a->fwdPort != UMS_UNASSIGNED_PORT && (stepDir & UMS_DIR_BIT) != 0) {
+	// moving forward
+	if ((stepDir & UMS_DIR_BIT) != 0) {
+		counterDir = 1;
+		// read limit pin if there is one
+		if (a->fwdPort != UMS_UNASSIGNED_PORT) {
 			uint8_t limit = st_read_ipin(a->fwdPort, a->fwdPin);
 			if (limit != 0) {
-				// limit activated, don't step
-				return 1;
+				// limit activated, no step
+				return UMS_FWD_LIMIT;
 			}
 		}
-
-		// moving reverse
-		else if (a->revPort != UMS_UNASSIGNED_PORT) {
+	} else {
+		counterDir = -1;
+		// read limit pin if there is one
+		if (a->revPort != UMS_UNASSIGNED_PORT) {
 			uint8_t limit = st_read_ipin(a->revPort, a->revPin);
 			if (limit != 0) {
-				// limit activated, don't step
-				return 2;
+				// limit activated, no step
+				return UMS_REV_LIMIT;
 			}
 		}
-
-		st_set_ipin(a->stepPort, a->stepPin, 1);
-		return 0;
 	}
-	return 0;
+
+	// no limit so activate step pin and increment counter
+	st_set_ipin(a->stepPort, a->stepPin, 1);
+	*counter += counterDir;
+	return UMS_NORMAL_STEP;
 }
 
 /**
@@ -261,15 +271,16 @@ void st_clear_steps()
 		st_set_ipin(Axes.u.stepPort, Axes.u.stepPin, 0);
 }
 
-
 void st_run_once()
 {
+	umsRunTime += prevDelay;
+
 	// nothing to do if the FIFO is empty
 	if (stepTail != stepHead) {
 		umsStepCounter++;
 		// read the next step from FIFO and increment tail
 		uint8_t stepDir = stepFIFO[stepTail];
-		umsRunTime += delayFIFO[stepTail];
+		prevDelay = delayFIFO[stepTail];
 		pf_set_step_timer(delayFIFO[stepTail]);
 		uint8_t p = stepTail + 1;
 		if (p == STEP_FIFO_SIZE)
@@ -278,10 +289,10 @@ void st_run_once()
 			stepTail = p;
 
 		umsLimits = 0;
-		umsLimits |= st_do_step(&Axes.x, stepDir);
-		umsLimits |= (st_do_step(&Axes.y, stepDir >> 2) << 2);
-		umsLimits |= (st_do_step(&Axes.z, stepDir >> 4) << 4);
-		umsLimits |= (st_do_step(&Axes.u, stepDir >> 6) << 6);
+		umsLimits |= st_do_step(&Axes.x, stepDir,       &umsXPos);
+		umsLimits |= (st_do_step(&Axes.y, stepDir >> 2, &umsYPos) << 2);
+		umsLimits |= (st_do_step(&Axes.z, stepDir >> 4, &umsZPos) << 4);
+		umsLimits |= (st_do_step(&Axes.u, stepDir >> 6, &umsUPos) << 6);
 
 		st_clear_steps();
 	}

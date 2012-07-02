@@ -50,7 +50,8 @@ void handle_bad_cmd(uint8_t *cmdData)
     e.data[0] = cmdData[0];
     pf_send_bytes((uint8_t*)&e, ErrorMsg_LENGTH);
 
-    // reinitialize, back to disabled state
+    // stop timer and reinitialize, back to disabled state
+    pf_set_step_timer(0);
     ums_init();
 }
 

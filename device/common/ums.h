@@ -24,6 +24,9 @@ EXTERN uint8_t umsLimits;
 /** Cumulative sum of delays from step timer. */
 EXTERN uint32_t umsRunTime;
 
+/** Counters that indicate the relative position of each axis since reset. */
+EXTERN int32_t umsXPos, umsYPos, umsZPos, umsUPos;
+
 #define UMS_SEND_STATUS_NOW 0x01	///\< This bit causes a status message to be sent on the next call to main
 #define UMS_STEPPER_RUNNING 0x02    ///\< This bit indicates that the stepper is currently running
 
@@ -40,9 +43,9 @@ EXTERN uint8_t umsStatus;
 void ums_init();
 
 /**
- * This function executes the idle thread once and should be called as often as possible.
+ * This function executes the main message handling loop once and should be called as often as possible.
  */
-void ums_idle();
+void ums_run_once();
 
 #ifdef __cplusplus
 }
