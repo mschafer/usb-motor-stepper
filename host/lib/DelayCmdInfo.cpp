@@ -13,6 +13,7 @@
 #include <boost/spirit/include/qi_no_case.hpp>
 #include <boost/foreach.hpp>
 #include "CommandInfo.hpp"
+#include "ums.h"
 
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
@@ -68,10 +69,7 @@ public:
     	m.resize(DelayCmd_LENGTH);
     	DelayCmd *d = reinterpret_cast<DelayCmd *>(&m[0]);
     	d->cmdId = DelayCmd_ID;
-    	d->delay_hi = (uint8_t)((delayVal >> 24) & 0xFF);
-    	d->delay_hm = (uint8_t)((delayVal >> 16) & 0xFF);
-    	d->delay_lm = (uint8_t)((delayVal >>  8) & 0xFF);
-    	d->delay_lo = (uint8_t)( delayVal        & 0xFF);
+    	UMS_PACK_32(delayVal, d->delay);
     }
 
 };

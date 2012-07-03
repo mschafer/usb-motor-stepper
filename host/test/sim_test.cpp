@@ -49,8 +49,7 @@ BOOST_AUTO_TEST_CASE( simple_step_test )
 
 	StepCmd sc;
 	sc.cmdId = StepCmd_ID;
-	sc.delay_lo = 100;
-	sc.delay_hi = 0;
+	UMS_PACK_16(100, sc.delay);
 	sc.stepDir = UMS_X_STEP | UMS_X_DIR;
 	host.sendCommand(makeCmdBuff(sc));
 
@@ -59,7 +58,7 @@ BOOST_AUTO_TEST_CASE( simple_step_test )
 		if (!msg.empty() && msg[0] == StatusMsg_ID) {
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
 			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
-					m->commandCounter_lo == 1) {
+					UMS_UNPACK_U32(m->commandCounter) == 1) {
 				break;
 			}
 		}
@@ -79,8 +78,7 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 
 	StepCmd sc;
 	sc.cmdId = StepCmd_ID;
-	sc.delay_lo = 100;
-	sc.delay_hi = 0;
+	UMS_PACK_16(100, sc.delay);
 	sc.stepDir = UMS_X_STEP | UMS_X_DIR | UMS_Y_STEP | UMS_Y_DIR | UMS_U_STEP;
 	host.sendCommand(makeCmdBuff(sc));
 
@@ -89,7 +87,7 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 		if (!msg.empty() && msg[0] == StatusMsg_ID) {
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
 			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
-					m->commandCounter_lo == 1) {
+					UMS_UNPACK_U32(m->commandCounter) == 1) {
 				break;
 			}
 		}
@@ -117,8 +115,7 @@ BOOST_AUTO_TEST_CASE( short_line_test )
 	lc.deltaY = 5;
 	lc.deltaZ = 0;
 	lc.deltaU = -1;
-	lc.delay_lo = 100;
-	lc.delay_hi = 0;
+	UMS_PACK_16(100, lc.delay);
 	host.sendCommand(makeCmdBuff(lc));
 
 	while(1) {
@@ -126,7 +123,7 @@ BOOST_AUTO_TEST_CASE( short_line_test )
 		if (!msg.empty() && msg[0] == StatusMsg_ID) {
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
 			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
-					m->commandCounter_lo == 1) {
+					UMS_UNPACK_U32(m->commandCounter) == 1) {
 				break;
 			}
 		}
@@ -156,8 +153,7 @@ BOOST_AUTO_TEST_CASE( line_limit_test )
 	lc.deltaY = 10;
 	lc.deltaZ = 0;
 	lc.deltaU = 0;
-	lc.delay_lo = 100;
-	lc.delay_hi = 0;
+	UMS_PACK_16(100, lc.delay);
 	host.sendCommand(makeCmdBuff(lc));
 
 	bool limitDetect = false;
@@ -167,7 +163,7 @@ BOOST_AUTO_TEST_CASE( line_limit_test )
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
 			limitDetect |= (m->limits != 0);
 			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
-					m->commandCounter_lo == 1) {
+					UMS_UNPACK_U32(m->commandCounter) == 1) {
 				break;
 			}
 		}
@@ -203,7 +199,7 @@ BOOST_AUTO_TEST_CASE( simple_stream_test )
 		if (!msg.empty() && msg[0] == StatusMsg_ID) {
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
 			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
-					m->commandCounter_lo == 5) {
+					UMS_UNPACK_U32(m->commandCounter) == 5) {
 				break;
 			}
 		}

@@ -13,6 +13,7 @@
 #include <boost/spirit/include/qi_no_case.hpp>
 #include <boost/foreach.hpp>
 #include "CommandInfo.hpp"
+#include "ums.h"
 
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
@@ -89,8 +90,7 @@ public:
 	    s->cmdId = StepCmd_ID;
 
 	    unsigned int delay = p.get<1>();
-	    s->delay_lo = delay & 0xFF;
-	    s->delay_hi = (delay >> 8) & 0xFF;
+	    UMS_PACK16(delay, s->delay);
 
 	    ParsedStepDir sd = p.get<0>();
 	    s->stepDir = 0;

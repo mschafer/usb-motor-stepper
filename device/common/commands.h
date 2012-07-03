@@ -76,8 +76,7 @@ static const uint8_t StepCmd_ID = 3;
 struct StepCmd {
 	uint8_t cmdId;
 	uint8_t stepDir;
-    uint8_t delay_hi;
-    uint8_t delay_lo;
+    uint8_t delay[2];
 };
 
 static const uint8_t LineCmd_ID = 4;
@@ -88,24 +87,18 @@ struct LineCmd {
     int8_t deltaY;
     int8_t deltaZ;
     int8_t deltaU;
-    uint8_t delay_hi;
-    uint8_t delay_lo;
+    uint8_t delay[2];
 };
 
 static const uint8_t LongLineCmd_ID = 5;
 #define LongLineCmd_LENGTH (sizeof(struct LongLineCmd))
 struct LongLineCmd {
     uint8_t cmdId;
-    uint8_t deltaX_hi;
-    uint8_t deltaX_lo;
-    uint8_t deltaY_hi;
-    uint8_t deltaY_lo;
-    uint8_t deltaZ_hi;
-    uint8_t deltaZ_lo;
-    uint8_t deltaU_hi;
-    uint8_t deltaU_lo;
-    uint8_t delay_hi;
-    uint8_t delay_lo;
+    uint8_t deltaX[2];
+    uint8_t deltaY[2];
+    uint8_t deltaZ[2];
+    uint8_t deltaU[2];
+    uint8_t delay[2];
 };
 
 #define MAX_CMD_LENGTH LongLineCmd_LENGTH
@@ -118,10 +111,7 @@ static const uint8_t DelayCmd_ID = 6;
 #define DelayCmd_LENGTH (sizeof(struct DelayCmd))
 struct DelayCmd {
 	uint8_t cmdId;
-	uint8_t delay_hi;
-	uint8_t delay_hm;
-	uint8_t delay_lm;
-	uint8_t delay_lo;
+	uint8_t delay[4];
 };
 
 #define MAX_CMD_ID DelayCmd_ID

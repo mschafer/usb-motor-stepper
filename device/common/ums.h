@@ -36,6 +36,21 @@ EXTERN uint8_t umsStatus;
 #define UMS_MAJOR_VERSION 0
 #define UMS_MINOR_VERSION 0
 
+// macros for endian independent packing of integers into byte arrays
+#define UMS_UNPACK_U16(p) ( ((uint16_t)((p)[0]) << 8) + (p)[1] )
+#define UMS_UNPACK_I16(p) ((int16_t)(UMS_UNPACK_U16(p)))
+#define UMS_PACK_16(v, p) \
+		(p)[0] = (uint16_t(v) >> 8) & 0xFF; \
+		(p)[1] =  uint16_t(v) & 0xFF;
+#define UMS_UNPACK_U32(p) ( ((uint32_t)((p)[0]) << 24) + ((uint32_t)((p)[1]) << 16) + ((uint32_t)((p)[2]) << 8) + ((p)[3]) )
+#define UMS_UNPACK_I32(p) ((int32_t)(UMS_UNPACK_U32(p)))
+#define UMS_PACK_32(v, p) \
+		(p)[0] = ((v) >> 24) & 0xFF; \
+		(p)[1] = ((v) >> 16) & 0xFF; \
+		(p)[2] = ((v) >>  8) & 0xFF; \
+		(p)[3] =  (v) & 0xFF;
+
+
 /**
  * This function initializes the ums and clears all data including axis configuration.
  * It is left in a disabled state where all commands are ignored until the enable string is received.

@@ -1,5 +1,6 @@
 #include "MessageInfo.hpp"
 #include "messages.h"
+#include "ums.h"
 
 namespace ums {
 
@@ -27,14 +28,16 @@ public:
 	std::string translate(const buffer_t &b) const
 	{	std::stringstream ss;
 		const StatusMsg *m = reinterpret_cast<const StatusMsg*>(&b[0]);
-		size_t cmdCount = m->commandCounter_lo +        (m->commandCounter_lm << 8) +
-				         (m->commandCounter_hm << 16) + (m->commandCounter_hi << 24);
-		size_t stepCount = m->stepCounter_lo +        (m->stepCounter_lm << 8) +
-				          (m->stepCounter_hm << 16) + (m->stepCounter_hi << 24);
+		size_t cmdCount = UMS_UNPACK_U32(m->commandCounter);
+		size_t stepCount = UMS_UNPACK_U32(m->stepCounter);
 		std::string limitBits;
 		ss << "Status:\tlimit: " << bits(m->limits);
 		ss << "\tflags: " << bits(m->flags);
 		ss << "\tcmdCount: " << cmdCount << "\tstepCount: " << stepCount;
+		ss << "x: " << UMS_UNPACK_I32(m->xPos) << "\t";
+		ss << "y: " << UMS_UNPACK_I32(m->yPos) << "\t";
+		ss << "z: " << UMS_UNPACK_I32(m->zPos) << "\t";
+		ss << "u: " << UMS_UNPACK_I32(m->uPos) << std::endl;
 		return ss.str();
 	}
 

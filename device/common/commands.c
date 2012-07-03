@@ -5,9 +5,6 @@
 #include "stepper.h"
 #include <stdlib.h>
 
-#define MAKE_UINT16(hi, lo) ( ((uint16_t)(hi) << 8) + (lo) )
-#define MAKE_UINT32(hi, hm, lm, lo) ( ((uint32_t)(hi) << 24) + ((uint32_t)(hm) << 16) + ((uint32_t)(lm) << 8) + (lo) )
-
 uint8_t cmdBuff[MAX_CMD_LENGTH];
 uint8_t rxOffset = 0;
 
@@ -31,7 +28,7 @@ void handle_AxisCmd(uint8_t *cmdData)
 void handle_StepCmd(uint8_t *cmdData)
 {
 	struct StepCmd *c = (struct StepCmd*)cmdData;
-	uint16_t delay = MAKE_UINT16(c->delay_hi, c->delay_lo);
+	uint16_t delay = UMS_UNPACK_U16(c->delay);
 	st_add_step(c->stepDir, delay);
 }
 
@@ -58,7 +55,7 @@ void handle_bad_cmd(uint8_t *cmdData)
 void handle_LineCmd(uint8_t *cmdData)
 {
     struct LineCmd *lcmd = (struct LineCmd *)cmdData;
-    uint16_t delay = MAKE_UINT16(lcmd->delay_hi, lcmd->delay_lo);
+    uint16_t delay = UMS_UNPACK_U16(lcmd->delay);
     st_line_setup(lcmd->deltaX, lcmd->deltaY, lcmd->deltaZ, lcmd->deltaU, delay);
     st_full();
 }
@@ -66,18 +63,18 @@ void handle_LineCmd(uint8_t *cmdData)
 void handle_LongLineCmd(uint8_t *cmdData)
 {
     struct LongLineCmd *lcmd = (struct LongLineCmd *)cmdData;
-    st_line_setup( MAKE_UINT16(lcmd->deltaX_hi, lcmd->deltaX_lo),
-            MAKE_UINT16(lcmd->deltaY_hi, lcmd->deltaY_lo),
-            MAKE_UINT16(lcmd->deltaZ_hi, lcmd->deltaZ_lo),
-            MAKE_UINT16(lcmd->deltaU_hi, lcmd->deltaU_lo),
-            MAKE_UINT16(lcmd->delay_hi, lcmd->delay_lo));
+    st_line_setup( UMS_UNPACK_U16(lcmd->deltaX),
+    		UMS_UNPACK_U16(lcmd->deltaY),
+    		UMS_UNPACK_U16(lcmd->deltaZ),
+    		UMS_UNPACK_U16(lcmd->deltaU),
+    		UMS_UNPACK_U16(lcmd->delay));
     st_full();
 }
 
 void handle_DelayCmd(uint8_t *cmdData)
 {
 	struct DelayCmd *dcmd = (struct DelayCmd *)cmdData;
-	uint32_t delay = MAKE_UINT32(dcmd->delay_hi, dcmd->delay_hm, dcmd->delay_lm, dcmd->delay_lo);
+	uint32_t delay = UMS_UNPACK_U32(dcmd->delay);
 	st_add_step(0, delay);
 }
 

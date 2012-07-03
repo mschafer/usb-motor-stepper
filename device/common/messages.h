@@ -57,14 +57,13 @@ struct StatusMsg {
 	uint8_t msgId;
 	uint8_t limits;
 	uint8_t flags;
-	uint8_t stepCounter_hi;
-	uint8_t stepCounter_hm;
-	uint8_t stepCounter_lm;
-	uint8_t stepCounter_lo;
-	uint8_t commandCounter_hi;
-	uint8_t commandCounter_hm;
-	uint8_t commandCounter_lm;
-	uint8_t commandCounter_lo;
+	uint8_t stepCounter[4];
+	uint8_t commandCounter[4];
+	uint8_t xPos[4];
+	uint8_t yPos[4];
+	uint8_t zPos[4];
+	uint8_t uPos[4];
+
 };
 
 static const uint8_t PongMsg_ID = 5;

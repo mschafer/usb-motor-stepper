@@ -13,6 +13,7 @@
 #include <boost/spirit/include/qi_no_case.hpp>
 #include <boost/foreach.hpp>
 #include "CommandInfo.hpp"
+#include "ums.h"
 
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
@@ -82,20 +83,40 @@ public:
     static void fillCmdBuff(buffer_t &m, const ParsedLineCmd &p)
     {
         using boost::fusion::at_c;
-        m.resize(LineCmd_LENGTH);
-        LineCmd *l = reinterpret_cast<LineCmd *>(&m[0]);
-        l->cmdId = LineCmd_ID;
-
-        unsigned int delay = p.get<1>();
-        l->delay_lo = delay & 0xFF;
-        l->delay_hi = (delay >> 8) & 0xFF;
 
         ParsedLineDelta ld = p.get<0>();
-        l->deltaX = at_c<0>(ld).get_value_or(0);
-        l->deltaY = at_c<1>(ld).get_value_or(0);
-        l->deltaZ = at_c<2>(ld).get_value_or(0);
-        l->deltaU = at_c<3>(ld).get_value_or(0);
+        int deltaX = at_c<0>(ld).get_value_or(0);
+        int deltaY = at_c<1>(ld).get_value_or(0);
+        int deltaZ = at_c<2>(ld).get_value_or(0);
+        int deltaU = at_c<3>(ld).get_value_or(0);
 
+        int deltaMax = abs(deltaX);
+        deltaMax = (deltaMax < abs(deltaY)) ? abs(deltaY) : deltaMax;
+        deltaMax = (deltaMax < abs(deltaZ)) ? abs(deltaZ) : deltaMax;
+        deltaMax = (deltaMax < abs(deltaU)) ? abs(deltaU) : deltaMax;
+
+        // if the deltas are too big, then we need a long line instead of a line
+        if (deltaMax > INT8_MAX) {
+            m.resize(LongLineCmd_LENGTH);
+            LongLineCmd *l = reinterpret_cast<LongLineCmd *>(&m[0]);
+            l->cmdId = LongLineCmd_ID;
+            UMS_PACK_16(deltaX, l->deltaX);
+            UMS_PACK_16(deltaY, l->deltaY);
+            UMS_PACK_16(deltaZ, l->deltaZ);
+            UMS_PACK_16(deltaU, l->deltaU);
+            unsigned int delay = p.get<1>();
+            UMS_PACK_16(delay, l->delay);
+        } else {
+            m.resize(LineCmd_LENGTH);
+            LineCmd *l = reinterpret_cast<LineCmd *>(&m[0]);
+            l->cmdId = LineCmd_ID;
+            l->deltaX = (int8_t)deltaX;
+            l->deltaY = (int8_t)deltaY;
+            l->deltaZ = (int8_t)deltaZ;
+            l->deltaU = (int8_t)deltaU;
+            unsigned int delay = p.get<1>();
+            UMS_PACK_16(delay, l->delay);
+        }
     }
 
 };

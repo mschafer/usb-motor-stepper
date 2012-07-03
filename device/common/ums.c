@@ -36,14 +36,12 @@ void ums_send_status()
 	sm.msgId = StatusMsg_ID;
 	sm.limits = umsLimits;
 	sm.flags = umsStatus;
-	sm.commandCounter_hi = (commandCounter >> 24) & 0xFF;
-	sm.commandCounter_hm = (commandCounter >> 16) & 0xFF;
-	sm.commandCounter_lm = (commandCounter >> 8)  & 0xFF;
-	sm.commandCounter_lo =  commandCounter        & 0xFF;
-	sm.stepCounter_hi = (umsStepCounter >> 24) & 0xFF;
-	sm.stepCounter_hm = (umsStepCounter >> 16) & 0xFF;
-	sm.stepCounter_lm = (umsStepCounter >> 8)  & 0xFF;
-	sm.stepCounter_lo =  umsStepCounter        & 0xFF;
+	UMS_PACK_32(commandCounter, sm.commandCounter);
+	UMS_PACK_32(umsStepCounter, sm.stepCounter);
+	UMS_PACK_32(umsXPos, sm.xPos);
+	UMS_PACK_32(umsYPos, sm.yPos);
+	UMS_PACK_32(umsZPos, sm.zPos);
+	UMS_PACK_32(umsUPos, sm.uPos);
 	pf_send_bytes((uint8_t*)&sm, StatusMsg_LENGTH);
 }
 
