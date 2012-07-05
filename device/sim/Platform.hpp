@@ -17,13 +17,13 @@
  * \file Platform specific implementation of ums functions for simulator.
  */
 
-namespace ums { namespace sim {
+namespace ums {
 
 /**
  * Simulation platform implementation.
  * Singleton.
  */
-class Platform : public ILink {
+class Simulator : public ILink {
 public:
 
 	void runOnce();
@@ -46,7 +46,7 @@ public:
 	 */
 	static void reset();
 
-	static Platform &instance();
+	static Simulator &instance();
 
 	virtual void write(const std::vector<uint8_t> &bytes);
 	virtual std::deque<uint8_t> read();
@@ -67,10 +67,10 @@ private:
 		X_IDX=0, Y_IDX=1, Z_IDX=2, U_IDX=3, END_AXIS=4
 	};
 
-	Platform();
+	Simulator();
 
 
-	static Platform *thePlatform_;
+	static Simulator *thePlatform_;
 	std::deque<uint8_t> toHost_;
 	std::deque<uint8_t> fromHost_;
 	boost::optional<uint32_t> delay_;
@@ -82,8 +82,8 @@ private:
 
 };
 
-}}
+}
 
-std::ostream &operator<<(std::ostream &out, const ums::sim::Platform::position_t &pos);
+std::ostream &operator<<(std::ostream &out, const ums::Simulator::position_t &pos);
 
 #endif

@@ -4,27 +4,27 @@
 #include <boost/foreach.hpp>
 
 
-namespace ums { namespace sim {
+namespace ums {
 
-Platform *Platform::thePlatform_ = NULL;
+Simulator *Simulator::thePlatform_ = NULL;
 
-Platform::Platform() : t_(0)
+Simulator::Simulator() : t_(0)
 {
 	std::fill(pins_.begin(), pins_.end(), false);
 }
 
-Platform &
-Platform::instance()
+Simulator &
+Simulator::instance()
 {
 	if (thePlatform_ == NULL) {
-	    thePlatform_ = new Platform();
+	    thePlatform_ = new Simulator();
 		ums_init();
 	}
 	return *thePlatform_;
 }
 
 void
-Platform::reset()
+Simulator::reset()
 {
     if (thePlatform_ != NULL) {
         delete (thePlatform_);
@@ -33,7 +33,7 @@ Platform::reset()
 }
 
 void
-Platform::runOnce()
+Simulator::runOnce()
 {
 	ums_run_once();
 	if (timerRunning()) {
@@ -59,7 +59,7 @@ Platform::runOnce()
 }
 
 void
-Platform::axis(char name, Axis &a)
+Simulator::axis(char name, Axis &a)
 {
 	Axis &old = axis(name);
 
@@ -69,13 +69,13 @@ Platform::axis(char name, Axis &a)
 }
 
 void
-Platform::disableAxis(char name)
+Simulator::disableAxis(char name)
 {
 	axis(name).enabled_ = false;
 }
 
 AxisCmd
-Platform::axisCommand(char name)
+Simulator::axisCommand(char name)
 {
 	AxisCmd ac = axis(name).command();
 	ac.name = name;
@@ -83,7 +83,7 @@ Platform::axisCommand(char name)
 }
 
 void
-Platform::portPin(uint8_t addr, uint8_t val)
+Simulator::portPin(uint8_t addr, uint8_t val)
 {
 	pins_[addr] = (val != 0);
 	for (size_t i=0; i<END_AXIS; i++) {
@@ -94,18 +94,18 @@ Platform::portPin(uint8_t addr, uint8_t val)
 }
 
 uint8_t
-Platform::portPin(uint8_t addr)
+Simulator::portPin(uint8_t addr)
 {
 	return pins_[addr];
 }
 
 bool
-Platform::timerRunning()
+Simulator::timerRunning()
 {
 	return (bool)delay_;
 }
 
-void Platform::timerDelay(uint32_t delay)
+void Simulator::timerDelay(uint32_t delay)
 {
 	if (delay != 0)
 		delay_ = delay;
@@ -114,14 +114,14 @@ void Platform::timerDelay(uint32_t delay)
 }
 
 void
-Platform::write(const std::vector<uint8_t> &bytes)
+Simulator::write(const std::vector<uint8_t> &bytes)
 {
 	boost::lock_guard<boost::mutex> guard(hostCommMutex_);
 	fromHost_.insert(fromHost_.end(), bytes.begin(), bytes.end());
 }
 
 std::deque<uint8_t>
-Platform::read()
+Simulator::read()
 {
 	boost::lock_guard<boost::mutex> guard(hostCommMutex_);
 	std::deque<uint8_t> ret;
@@ -130,7 +130,7 @@ Platform::read()
 }
 
 boost::optional<uint8_t>
-Platform::readByte()
+Simulator::readByte()
 {
 	boost::lock_guard<boost::mutex> guard(hostCommMutex_);
 	boost::optional<uint8_t> ret;
@@ -142,7 +142,7 @@ Platform::readByte()
 }
 
 Axis &
-Platform::axis(char name)
+Simulator::axis(char name)
 {
 	switch (name) {
 	case 'X':
@@ -163,7 +163,7 @@ Platform::axis(char name)
 }
 
 const Axis &
-Platform::axis(char name) const
+Simulator::axis(char name) const
 {
 	switch (name) {
 	case 'X':
@@ -183,9 +183,9 @@ Platform::axis(char name) const
 	}
 }
 
-}}
+}
 
-std::ostream &operator<<(std::ostream &out, const ums::sim::Platform::position_t &pos)
+std::ostream &operator<<(std::ostream &out, const ums::Simulator::position_t &pos)
 {
 	BOOST_FOREACH(ptrdiff_t d, pos) {
 		out << d << " ";
@@ -195,27 +195,27 @@ std::ostream &operator<<(std::ostream &out, const ums::sim::Platform::position_t
 
 ///////////////////////////////////////// C API //////////////////////////////////////////
 
-using ums::sim::Platform;
+using ums::Simulator;
 
 uint8_t pf_send_bytes(uint8_t *data, uint16_t size)
 {
-	Platform &platform = Platform::instance();
-	boost::lock_guard<boost::mutex> guard(platform.hostCommMutex_);
+	Simulator &sim = Simulator::instance();
+	boost::lock_guard<boost::mutex> guard(sim.hostCommMutex_);
 	for (size_t i=0; i<size; i++) {
-		platform.toHost_.push_back(data[i]);
+		sim.toHost_.push_back(data[i]);
 	}
 	return 1;
 }
 
 uint8_t pf_receive_byte(uint8_t *rxByte)
 {
-	Platform &platform = Platform::instance();
-	boost::lock_guard<boost::mutex> guard(platform.hostCommMutex_);
-	if (platform.fromHost_.empty()) {
+	Simulator &sim = Simulator::instance();
+	boost::lock_guard<boost::mutex> guard(sim.hostCommMutex_);
+	if (sim.fromHost_.empty()) {
 		return 0;
 	} else {
-		*rxByte = platform.fromHost_.front();
-		platform.fromHost_.pop_front();
+		*rxByte = sim.fromHost_.front();
+		sim.fromHost_.pop_front();
 		return 1;
 	}
 }
@@ -225,14 +225,14 @@ uint8_t pf_configure_port_pin(uint8_t port, uint8_t pin, enum ums_pin_func func)
 	// port 6 is reserved to test error messages
 	if (port == 6 || pin > 15) return 1;
 
-	Platform &platform = Platform::instance();
+	Simulator &sim = Simulator::instance();
 	uint8_t addr = (port << 4) | pin;
 	switch (func) {
 	case UMS_INPUT_PULLUP_PIN:
-		platform.portPin(addr, true);
+		sim.portPin(addr, true);
 		break;
 	case UMS_INPUT_PULLDOWN_PIN:
-		platform.portPin(addr, false);
+		sim.portPin(addr, false);
 		break;
 	}
 	return 0;
@@ -240,28 +240,28 @@ uint8_t pf_configure_port_pin(uint8_t port, uint8_t pin, enum ums_pin_func func)
 
 void pf_set_port_pin(uint8_t port, uint8_t pin, uint8_t val)
 {
-	Platform &platform = Platform::instance();
+	Simulator &sim = Simulator::instance();
 	uint8_t addr = (port << 4) | pin;
-	platform.portPin(addr, val != 0);
+	sim.portPin(addr, val != 0);
 }
 
 uint8_t pf_read_port_pin(uint8_t port, uint8_t pin)
 {
-	Platform &platform = Platform::instance();
+	Simulator &sim = Simulator::instance();
 	uint8_t addr = (port << 4) | pin;
-	return platform.portPin(addr);
+	return sim.portPin(addr);
 }
 
 void pf_set_step_timer(uint32_t delay)
 {
-	Platform &platform = Platform::instance();
-	platform.timerDelay(delay);
+	Simulator &sim = Simulator::instance();
+	sim.timerDelay(delay);
 }
 
 uint8_t pf_is_timer_running()
 {
-	Platform &platform = Platform::instance();
-	if (platform.timerRunning())
+	Simulator &sim = Simulator::instance();
+	if (sim.timerRunning())
 		return 1;
 	else
 		return 0;
@@ -269,7 +269,7 @@ uint8_t pf_is_timer_running()
 
 void pf_init_axes()
 {
-	Platform &platform = Platform::instance();
+	Simulator &sim = Simulator::instance();
 
 	uint8_t port = 0;
 	ums::Axis axis;
@@ -277,8 +277,8 @@ void pf_init_axes()
 	axis.dir_.configure(port, 1);
 	axis.fwdLimit_.configure(port, 2);
 	axis.revLimit_.configure(port, 3 + UMS_INVERT_PIN);
-	platform.axis('X', axis);
-	struct AxisCmd ac = platform.axisCommand('X');
+	sim.axis('X', axis);
+	struct AxisCmd ac = sim.axisCommand('X');
 	st_setup_axis(&ac);
 
 	port = 1;
@@ -286,8 +286,8 @@ void pf_init_axes()
 	axis.dir_.configure(port, 1);
 	axis.fwdLimit_.configure(port, 2 + UMS_INVERT_PIN);
 	axis.revLimit_.configure(port, 3);
-	platform.axis('Y', axis);
-	ac = platform.axisCommand('Y');
+	sim.axis('Y', axis);
+	ac = sim.axisCommand('Y');
 	st_setup_axis(&ac);
 
 	port = 2;
@@ -295,8 +295,8 @@ void pf_init_axes()
 	axis.dir_.configure(port, 1 + UMS_INVERT_PIN);
 	axis.fwdLimit_.configure(port, 2);
 	axis.revLimit_.configure(port, 3);
-	platform.axis('Z', axis);
-	ac = platform.axisCommand('Z');
+	sim.axis('Z', axis);
+	ac = sim.axisCommand('Z');
 	st_setup_axis(&ac);
 
 	port = 3;
@@ -304,15 +304,15 @@ void pf_init_axes()
 	axis.dir_.configure(port, 1);
 	axis.fwdLimit_.configure(port, 2);
 	axis.revLimit_.configure(port, 3);
-	platform.axis('U', axis);
-	ac = platform.axisCommand('U');
+	sim.axis('U', axis);
+	ac = sim.axisCommand('U');
 	st_setup_axis(&ac);
 
 	// st_setup_axis initializes pins which cause accidental step
-	platform.positionLog_.clear();
-	platform.axis('X').position_ = 0;
-	platform.axis('Y').position_ = 0;
-	platform.axis('Z').position_ = 0;
-	platform.axis('U').position_ = 0;
+	sim.positionLog_.clear();
+	sim.axis('X').position_ = 0;
+	sim.axis('Y').position_ = 0;
+	sim.axis('Z').position_ = 0;
+	sim.axis('U').position_ = 0;
 
 }

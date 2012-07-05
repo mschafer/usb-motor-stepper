@@ -8,7 +8,7 @@
 #include "Host.hpp"
 #include "CommandInfo.hpp"
 
-using ums::sim::Platform;
+using ums::Simulator;
 using ums::makeCmdBuff;
 
 BOOST_AUTO_TEST_CASE ( ping_test )
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE( simple_step_test )
 		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 	}
 
-	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
+	std::deque<Simulator::position_t> posLog = host.simulatorPositionLog();
 	BOOST_CHECK(posLog.size() == 2);
 	BOOST_CHECK(posLog.back()[0] == 1);
 	BOOST_CHECK(posLog[1][4] - posLog[0][4]== 100);
@@ -94,8 +94,8 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 	}
 
-	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
-	Platform::position_t pos = posLog.back();
+	std::deque<Simulator::position_t> posLog = host.simulatorPositionLog();
+	Simulator::position_t pos = posLog.back();
 	BOOST_CHECK(posLog.size() == 2);
 	BOOST_CHECK(pos[0] ==  1);
 	BOOST_CHECK(pos[1] ==  1);
@@ -130,8 +130,8 @@ BOOST_AUTO_TEST_CASE( short_line_test )
 		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 	}
 
-	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
-	Platform::position_t pos = posLog.back();
+	std::deque<Simulator::position_t> posLog = host.simulatorPositionLog();
+	Simulator::position_t pos = posLog.back();
 	BOOST_CHECK(posLog.size() == 11);
 	BOOST_CHECK(pos[0] == 10);
 	BOOST_CHECK(pos[1] ==  5);
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE( line_limit_test )
 {
 	ums::Host host;
 	host.enableDevice();
-	Platform &p = Platform::instance();
+	Simulator &p = Simulator::instance();
 	ums::Axis &xax = p.axis('X');
 	xax.maxFwdPos_ = 5;
 
@@ -171,8 +171,8 @@ BOOST_AUTO_TEST_CASE( line_limit_test )
 	}
 	BOOST_CHECK(limitDetect);
 
-	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
-	Platform::position_t pos = posLog.back();
+	std::deque<Simulator::position_t> posLog = host.simulatorPositionLog();
+	Simulator::position_t pos = posLog.back();
 	BOOST_CHECK(posLog.size() == 11);
 	BOOST_CHECK(pos[0] ==  6);
 	BOOST_CHECK(pos[1] == 10);
@@ -207,8 +207,8 @@ BOOST_AUTO_TEST_CASE( simple_stream_test )
 		iter--;
 	}
 
-	std::deque<Platform::position_t> posLog = host.simulatorPositionLog();
-	Platform::position_t pos = posLog.back();
+	std::deque<Simulator::position_t> posLog = host.simulatorPositionLog();
+	Simulator::position_t pos = posLog.back();
 	BOOST_CHECK(pos[0] == 4);
 	BOOST_CHECK(pos[1] == -4);
 	BOOST_CHECK(pos[2] == 1);

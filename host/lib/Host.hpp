@@ -62,7 +62,7 @@ public:
 		return MessageInfo::toString(msgBuff);
 	}
 
-	std::deque<sim::Platform::position_t> simulatorPositionLog();
+	std::deque<Simulator::position_t> simulatorPositionLog();
 
 private:
 	/**

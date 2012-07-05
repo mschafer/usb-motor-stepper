@@ -18,8 +18,8 @@ Host::Host(const std::string &linkName) : ownsSim_(false)
 		if (!ownsSim_) {
 			throw std::runtime_error("Simulator already in use");
 		}
-		sim::Platform::reset();
-		link_ = &sim::Platform::instance();
+		Simulator::reset();
+		link_ = &Simulator::instance();
 		simRun_ = true;
 		boost::thread t(boost::bind(&Host::simThread, this));
 		simExec_.swap(t);
@@ -105,12 +105,12 @@ Host::receiveMessage()
 	return ret;
 }
 
-std::deque<sim::Platform::position_t>
+std::deque<Simulator::position_t>
 Host::simulatorPositionLog()
 {
-	std::deque<sim::Platform::position_t> ret;
+	std::deque<Simulator::position_t> ret;
 	boost::lock_guard<boost::mutex> guard(simLock_);
-	ret.swap(sim::Platform::instance().positionLog_);
+	ret.swap(Simulator::instance().positionLog_);
 	return ret;
 }
 
@@ -151,7 +151,7 @@ Host::simThread()
 	while (simRun_) {
 		{
 			boost::lock_guard<boost::mutex> guard(simLock_);
-			sim::Platform::instance().runOnce();
+			Simulator::instance().runOnce();
 		}
 		boost::this_thread::sleep(boost::posix_time::milliseconds(2));
 	}
