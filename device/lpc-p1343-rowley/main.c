@@ -43,6 +43,7 @@
 #include "core/systick/systick.h"
 #include "core/usbcdc/cdcuser.h"
 #include "step_timer.h"
+#include "ums.h"
 
 uint8_t buffer[64];
 /**************************************************************************/
@@ -57,20 +58,37 @@ int main(void) {
 
     step_timer_init();
 
+    //ums_init();
+
     uint32_t currentSecond, lastSecond;
     currentSecond = lastSecond = 0;
 
     // led 0 on LPC-P1343
-    gpioSetPinFunction(3, 0, GPIO_OUTPUT_PIN, 1);
+    gpioSetPinFunction(3, 0, GPIO_OUTPUT_PIN);
 
     uint32_t chars = 0;
     while (1) {
-        uint32_t cnt = CDC_GetOutEpBuff(buffer);
-        chars += cnt;
+        ///\todo run ums
+        //ums_run_once();
 
+        uint32_t cnt;
+#if 0
+        cnt = CDC_GetOutEpBuff(buffer);
+#else
+        CDC_PollOutEp();
+        uint8_t *p = buffer;
+        cnt = 0;
+        while (CDC_ReadByte(p) == 0) {
+            ++cnt;
+            ++p;
+        }
+
+#endif
+
+        chars += cnt;
         for (uint32_t i=0; i<cnt; i++) {
             if (buffer[i] == 'x') {
-                step_timer_start(10000);
+                step_timer_start(100);
             }
         }
 

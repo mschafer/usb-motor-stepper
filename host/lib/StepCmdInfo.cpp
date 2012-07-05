@@ -90,7 +90,7 @@ public:
 	    s->cmdId = StepCmd_ID;
 
 	    unsigned int delay = p.get<1>();
-	    UMS_PACK16(delay, s->delay);
+	    UMS_PACK_16(delay, s->delay);
 
 	    ParsedStepDir sd = p.get<0>();
 	    s->stepDir = 0;

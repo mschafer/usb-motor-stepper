@@ -2,6 +2,7 @@
 #include "core/usbcdc/cdcuser.h"
 #include "step_timer.h"
 #include "platform.h"
+#include "commands.h"
 
 /**
  * \file Implementation of ums platform specific functions for LPC-P1343 with Rowley

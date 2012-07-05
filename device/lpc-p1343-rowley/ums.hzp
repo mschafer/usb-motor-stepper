@@ -28,6 +28,13 @@
           <file file_name="core/systick/systick.c"/>
         </folder>
       </folder>
+      <folder Name="ums">
+        <file file_name="../common/commands.c"/>
+        <file file_name="../common/messages.c"/>
+        <file file_name="../common/stepper.c"/>
+        <file file_name="../common/ums.c"/>
+      </folder>
+      <file file_name="asap2.c"/>
     </folder>
     <folder Name="System Files">
       <file file_name="$(StudioDir)/source/thumb_crt0.s"/>
@@ -51,4 +58,5 @@
   <configuration Name="THUMB Flash Debug" inherited_configurations="THUMB;Flash;Debug"/>
   <configuration Name="Flash" c_preprocessor_definitions="__FLASH_BUILD" hidden="Yes"/>
   <configuration Name="THUMB Flash Release" inherited_configurations="THUMB;Flash;Release"/>
+  <configuration Name="Common" arm_instruction_set="ARM"/>
 </solution>

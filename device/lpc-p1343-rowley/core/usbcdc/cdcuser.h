@@ -72,7 +72,9 @@ uint32_t CDC_GetOutEpBuff(uint8_t *buff);
 void CDC_PollOutEp();
 
 /**
- *
+ * Reads a single byte from the CDC buffer and puts it into rxByte.
+ * \param rxByte A pointer to the address that will hold the byte that is read.
+ * \return 0 on success, -1 if no byte is available.
  */
 uint8_t CDC_ReadByte(uint8_t *rxByte);
 

@@ -1,5 +1,6 @@
 #include "lpc134x.h"
 #include "core/gpio/gpio.h"
+#include "stepper.h"
 
 void step_timer_init()
 {
@@ -23,7 +24,7 @@ void step_timer_init()
     NVIC_EnableIRQ(TIMER_32_0_IRQn);
 
     /** \todo debug */
-    gpioSetPinFunction(2, 7, GPIO_OUTPUT_PIN, 1);
+    gpioSetPinFunction(2, 7, GPIO_OUTPUT_PIN);
 }
 
 void step_timer_start(uint32_t val)
@@ -41,6 +42,9 @@ void TIMER32_0_IRQHandler(void)
 {
     /* clear the interrupt flag */
     TMR_TMR32B0IR = TMR_TMR32B0IR_MR0;
+
+    ///\todo run the stepper
+    //st_run_once();
 
     uint8_t v = gpioGetPin(2, 7);
     v = (v == 0) ? 1 : 0;
