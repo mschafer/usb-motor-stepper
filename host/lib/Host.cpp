@@ -37,6 +37,7 @@ Host::Host(const std::string &linkName) : ownsSim_(false)
 Host::~Host()
 {
 	try {
+		ownedLink_.reset();
 		if (ownsSim_) {
 			uniqueSim_.unlock();
 		}
@@ -53,9 +54,28 @@ Host::~Host()
 	}
 }
 
+bool
+Host::pingDevice()
+{
+	PingCmd pc;
+	pc.cmdId = PingCmd_ID;
+	pong_.reset();
+	sendCommand(makeCmdBuff(pc));
+	int iter = 10;
+	while (iter > 0) {
+		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
+		iter--;
+		if (pong_) return true;
+	}
+	return false;
+}
+
 void
 Host::enableDevice()
 {
+	// check for an already enabled device
+	if (pingDevice()) return;
+
 	std::vector<uint8_t> bytes;
 	std::string enableStr(UMS_ENABLE);
 	BOOST_FOREACH(char c, enableStr) {
@@ -76,7 +96,6 @@ Host::enableDevice()
 		if (i == 9)
 			throw std::runtime_error("connection to device failed");
 	}
-
 }
 
 void
@@ -132,6 +151,10 @@ Host::msgThread()
 				switch (m[0]) {
 				case AcceptMsg_ID:
 					accept_ = *(AcceptMsg *)(&m[0]);
+					break;
+
+				case PongMsg_ID:
+					pong_ =*(PongMsg *)(&m[0]);
 					break;
 
 				default:

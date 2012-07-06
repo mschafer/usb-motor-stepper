@@ -43,10 +43,12 @@ void TIMER32_0_IRQHandler(void)
     /* clear the interrupt flag */
     TMR_TMR32B0IR = TMR_TMR32B0IR_MR0;
 
-    ///\todo run the stepper
-    //st_run_once();
+#ifdef CFG_UMS
+    st_run_once();
 
+#else
     uint8_t v = gpioGetPin(2, 7);
     v = (v == 0) ? 1 : 0;
     gpioSetPin(2, 7, v);
+#endif
 }

@@ -572,4 +572,9 @@
 #endif
 #endif
 
+// UMS specific additions
+
+/// undef this to turn off ums and enable some test code
+#define CFG_UMS
+
 #endif

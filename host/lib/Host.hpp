@@ -35,12 +35,11 @@ public:
 	 */
 	void enableDevice();
 
-	/** Send PingCmd to the device. */
-	void pingDevice() {
-		PingCmd pc;
-		pc.cmdId = PingCmd_ID;
-		sendCommand(makeCmdBuff(pc));
-	}
+	/**
+	 * Send PingCmd to the device and waits ~200 msec for a pong.
+	 * \return True if response received from device, false otherwise
+	 */
+	bool pingDevice();
 
 	/**
 	 * Send commands read from an input stream until eof.
@@ -58,6 +57,7 @@ public:
 	}
 
 	MessageInfo::buffer_t receiveMessage();
+
 	static std::string translate(const MessageInfo::buffer_t &msgBuff) {
 		return MessageInfo::toString(msgBuff);
 	}
@@ -75,6 +75,7 @@ private:
 	ILink *link_;
 	std::auto_ptr<ILink> ownedLink_;
 	boost::optional<AcceptMsg> accept_;
+	boost::optional<PongMsg> pong_;
 
 	bool msgRun_;
 	void msgThread();

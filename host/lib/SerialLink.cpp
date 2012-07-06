@@ -33,7 +33,10 @@ SerialLink::~SerialLink()
 	if (open()) {
 		try {
 			close();
-		} catch(...) {}
+			background_.join();
+		} catch(...) {
+			std::cout << "something bad happend in SerialLink dtor" << std::endl;
+		}
 	}
 }
 

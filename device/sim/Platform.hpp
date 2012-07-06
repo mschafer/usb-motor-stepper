@@ -69,7 +69,6 @@ private:
 
 	Simulator();
 
-
 	static Simulator *thePlatform_;
 	std::deque<uint8_t> toHost_;
 	std::deque<uint8_t> fromHost_;
@@ -78,8 +77,6 @@ private:
 	boost::array<bool, 256> pins_;
 	boost::mutex hostCommMutex_;
 	Axis axes_[4];
-
-
 };
 
 }

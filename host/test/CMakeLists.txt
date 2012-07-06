@@ -1,6 +1,7 @@
 # usb-motor-stepper/host/test
 
 add_executable(test-usb-motor-stepper
+	device_test.cpp
 	hello_test.cpp
 	serial_test.cpp
 	sim_test.cpp

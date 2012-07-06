@@ -55,11 +55,16 @@ uint8_t buffer[64];
 int main(void) {
     // Configure cpu and mandatory peripherals
     systemInit();
-
     step_timer_init();
 
-    //ums_init();
+#ifdef CFG_UMS
+    ums_init();
+    while(1) {
+    	CDC_PollOutEp();
+    	ums_run_once();
+    }
 
+#else
     uint32_t currentSecond, lastSecond;
     currentSecond = lastSecond = 0;
 
@@ -68,22 +73,14 @@ int main(void) {
 
     uint32_t chars = 0;
     while (1) {
-        ///\todo run ums
-        //ums_run_once();
-
         uint32_t cnt;
-#if 0
-        cnt = CDC_GetOutEpBuff(buffer);
-#else
         CDC_PollOutEp();
         uint8_t *p = buffer;
         cnt = 0;
-        while (CDC_ReadByte(p) == 0) {
-            ++cnt;
-            ++p;
+        for (cnt=0; cnt<sizeof(buffer); cnt++) {
+        	if (CDC_ReadByte(&buffer[cnt]) != 0) break;
+        	++cnt;
         }
-
-#endif
 
         chars += cnt;
         for (uint32_t i=0; i<cnt; i++) {
@@ -103,5 +100,6 @@ int main(void) {
             NVIC_EnableIRQ(USB_IRQn);
         }
     }
+#endif
     return 0;
 }

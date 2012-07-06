@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE ( serial_test )
 		}
 
 	} catch (...) {
-		// failed to open ports
+		std::cout << "ports /dev/master and /dev/slave failed to open, skipping test" << std::endl;
 		return;
 	}
 

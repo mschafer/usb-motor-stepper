@@ -16,7 +16,9 @@ uint8_t pf_send_bytes(uint8_t *data, uint16_t size)
 
 uint8_t pf_receive_byte(uint8_t *rxByte)
 {
-	return CDC_ReadByte(rxByte);
+    uint8_t ret = CDC_ReadByte(rxByte);
+    ///\todo ums and lpc code have inverted notion of return value for success
+    return (ret == 0) ? 1 : 0;
 }
 
 uint8_t pf_configure_port_pin(uint8_t port, uint8_t pin, enum ums_pin_func func)
