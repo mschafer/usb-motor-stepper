@@ -157,6 +157,8 @@ Host::msgThread()
 					pong_ =*(PongMsg *)(&m[0]);
 					break;
 
+					///\todo add case for ErrorMsg and track enabled/disabled state in host
+
 				default:
 					msgQ_.push_back(MessageInfo::buffer_t());
 					msgQ_.back().swap(m);
