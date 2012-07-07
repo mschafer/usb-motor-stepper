@@ -13,21 +13,19 @@ using ums::makeCmdBuff;
 
 const char *LINK_NAME = "/dev/tty.usbmodem411";
 
+#if 0
+
 BOOST_AUTO_TEST_CASE ( device_ping_test )
 {
-	ums::Host *host = new ums::Host(LINK_NAME);
 	try {
-		host->enableDevice();
-		//bool ret = host->pingDevice();
-		BOOST_CHECK(host->pingDevice());
-		delete(host);
+		ums::Host host(LINK_NAME);
+		host.enableDevice();
+		BOOST_CHECK(host.pingDevice());
 	} catch (std::exception &e) {
 		std::cout << "device ping failed: " << e.what() << std::endl;
-		delete(host);
 	}
 }
 
-#if 0
 
 BOOST_AUTO_TEST_CASE( bad_pin_test )
 {

@@ -11,7 +11,7 @@ extern "C" {
  * Queues all the bytes for sending or none if there isn't room.
  * \return non-zero on success, 0 on error
  */
-uint8_t pf_send_bytes(uint8_t *data, uint16_t size);
+uint8_t pf_send_bytes(const uint8_t *data, uint16_t size);
 
 /**
  * Receives a single byte from the host.

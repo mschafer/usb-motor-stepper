@@ -72,8 +72,7 @@ private:
 	static boost::mutex uniqueSim_;
 
 	bool ownsSim_;
-	ILink *link_;
-	std::auto_ptr<ILink> ownedLink_;
+	boost::shared_ptr<ILink> link_;
 	boost::optional<AcceptMsg> accept_;
 	boost::optional<PongMsg> pong_;
 

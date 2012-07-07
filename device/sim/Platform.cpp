@@ -8,7 +8,8 @@ namespace ums {
 
 Simulator *Simulator::thePlatform_ = NULL;
 
-Simulator::Simulator() : t_(0)
+Simulator::Simulator(ILink::handle link) :
+		link_(link), t_(0)
 {
 	std::fill(pins_.begin(), pins_.end(), false);
 }
@@ -17,19 +18,19 @@ Simulator &
 Simulator::instance()
 {
 	if (thePlatform_ == NULL) {
-	    thePlatform_ = new Simulator();
-		ums_init();
+		throw std::runtime_error("Simulator has not been reset");
 	}
 	return *thePlatform_;
 }
 
 void
-Simulator::reset()
+Simulator::reset(ILink::handle link)
 {
     if (thePlatform_ != NULL) {
         delete (thePlatform_);
-        thePlatform_ = NULL;
     }
+    thePlatform_ = new Simulator(link);
+	ums_init();
 }
 
 void
@@ -113,34 +114,6 @@ void Simulator::timerDelay(uint32_t delay)
 		delay_.reset();
 }
 
-void
-Simulator::write(const std::vector<uint8_t> &bytes)
-{
-	boost::lock_guard<boost::mutex> guard(hostCommMutex_);
-	fromHost_.insert(fromHost_.end(), bytes.begin(), bytes.end());
-}
-
-std::deque<uint8_t>
-Simulator::read()
-{
-	boost::lock_guard<boost::mutex> guard(hostCommMutex_);
-	std::deque<uint8_t> ret;
-	ret.swap(toHost_);
-	return ret;
-}
-
-boost::optional<uint8_t>
-Simulator::readByte()
-{
-	boost::lock_guard<boost::mutex> guard(hostCommMutex_);
-	boost::optional<uint8_t> ret;
-	if (!toHost_.empty()) {
-		ret = toHost_.front();
-		toHost_.pop_front();
-	}
-	return ret;
-}
-
 Axis &
 Simulator::axis(char name)
 {
@@ -183,6 +156,20 @@ Simulator::axis(char name) const
 	}
 }
 
+void
+Simulator::writeToHost(const uint8_t *data, uint16_t size)
+{
+	std::vector<uint8_t> bytes;
+	bytes.insert(bytes.end(), data, data+size);
+	link_->write(bytes);
+}
+
+boost::optional<uint8_t>
+Simulator::readHostByte()
+{
+	return link_->readByte();
+}
+
 }
 
 std::ostream &operator<<(std::ostream &out, const ums::Simulator::position_t &pos)
@@ -197,26 +184,22 @@ std::ostream &operator<<(std::ostream &out, const ums::Simulator::position_t &po
 
 using ums::Simulator;
 
-uint8_t pf_send_bytes(uint8_t *data, uint16_t size)
+uint8_t pf_send_bytes(const uint8_t *data, uint16_t size)
 {
 	Simulator &sim = Simulator::instance();
-	boost::lock_guard<boost::mutex> guard(sim.hostCommMutex_);
-	for (size_t i=0; i<size; i++) {
-		sim.toHost_.push_back(data[i]);
-	}
+	sim.writeToHost(data, size);
 	return 1;
 }
 
 uint8_t pf_receive_byte(uint8_t *rxByte)
 {
 	Simulator &sim = Simulator::instance();
-	boost::lock_guard<boost::mutex> guard(sim.hostCommMutex_);
-	if (sim.fromHost_.empty()) {
-		return 0;
-	} else {
-		*rxByte = sim.fromHost_.front();
-		sim.fromHost_.pop_front();
+	boost::optional<uint8_t> o = sim.readHostByte();
+	if (o) {
+		*rxByte = o.get();
 		return 1;
+	} else {
+		return 0;
 	}
 }
 

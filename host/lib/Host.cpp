@@ -3,6 +3,7 @@
 #include <boost/foreach.hpp>
 #include "SerialLink.hpp"
 #include "CommandInfo.hpp"
+#include "MemoryLink.hpp"
 #include "ums.h"
 
 namespace ums {
@@ -18,14 +19,26 @@ Host::Host(const std::string &linkName) : ownsSim_(false)
 		if (!ownsSim_) {
 			throw std::runtime_error("Simulator already in use");
 		}
-		Simulator::reset();
-		link_ = &Simulator::instance();
+
+		// use virtual comm port pair for simulator if they exist
+		ILink::handle simLink;
+		ILink::handle hostLink;
+		try {
+			hostLink.reset(new SerialLink("/dev/master"));
+			simLink.reset( new SerialLink("/dev/slave"));
+		} catch(...) {
+			std::pair<MemoryLink::handle, MemoryLink::handle> linkPair = MemoryLink::createPair();
+			hostLink = linkPair.first;
+			simLink = linkPair.second;
+		}
+
+		link_ = hostLink;
+		Simulator::reset(simLink);
 		simRun_ = true;
 		boost::thread t(boost::bind(&Host::simThread, this));
 		simExec_.swap(t);
 	} else {
-		ownedLink_.reset(new SerialLink(linkName));
-		link_ = ownedLink_.get();
+		link_.reset(new SerialLink(linkName));
 	}
 
 	// link is up, start thread to handle received messages
@@ -37,7 +50,6 @@ Host::Host(const std::string &linkName) : ownsSim_(false)
 Host::~Host()
 {
 	try {
-		ownedLink_.reset();
 		if (ownsSim_) {
 			uniqueSim_.unlock();
 		}
@@ -141,7 +153,7 @@ Host::msgThread()
 		bool empty = false;
 		do {
 			try {
-				m = MessageInfo::receiveMessage(link_);
+				m = MessageInfo::receiveMessage(link_.get());
 			} catch (...) {
 				std::cout << "received bogus data\n";
 			}

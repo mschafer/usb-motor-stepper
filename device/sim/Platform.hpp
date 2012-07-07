@@ -23,9 +23,8 @@ namespace ums {
  * Simulation platform implementation.
  * Singleton.
  */
-class Simulator : public ILink {
+class Simulator : boost::noncopyable {
 public:
-
 	void runOnce();
 
 	const Axis &axis(char name) const;
@@ -44,13 +43,9 @@ public:
 	 * Deletes the singleton and creates a new one.
 	 * Used to simulate a hard reset of embedded controller.
 	 */
-	static void reset();
+	static void reset(ILink::handle);
 
 	static Simulator &instance();
-
-	virtual void write(const std::vector<uint8_t> &bytes);
-	virtual std::deque<uint8_t> read();
-	virtual boost::optional<uint8_t> readByte();
 
 	/**
 	 * Position records have x, y, z, and u position followed by time.
@@ -59,23 +54,23 @@ public:
 	typedef boost::array<ptrdiff_t, 5> position_t;
 	std::deque<position_t> positionLog_;
 
-private:
-	friend uint8_t ::pf_send_bytes(uint8_t*, uint16_t);
-	friend uint8_t ::pf_receive_byte(uint8_t*);
+	void writeToHost(const uint8_t *data, uint16_t size);
+	boost::optional<uint8_t> readHostByte();
 
+private:
 	enum AxisIdx {
 		X_IDX=0, Y_IDX=1, Z_IDX=2, U_IDX=3, END_AXIS=4
 	};
 
-	Simulator();
+	Simulator(ILink::handle);
 
 	static Simulator *thePlatform_;
+	ILink::handle link_;
 	std::deque<uint8_t> toHost_;
 	std::deque<uint8_t> fromHost_;
 	boost::optional<uint32_t> delay_;
 	size_t t_;
 	boost::array<bool, 256> pins_;
-	boost::mutex hostCommMutex_;
 	Axis axes_[4];
 };
 

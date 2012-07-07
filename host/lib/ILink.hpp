@@ -5,6 +5,7 @@
 #include <vector>
 #include <boost/optional.hpp>
 #include <boost/utility.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace ums {
 
@@ -15,6 +16,8 @@ namespace ums {
 class ILink : public boost::noncopyable
 {
 public:
+	typedef boost::shared_ptr<ILink> handle;
+
 	ILink() {}
 	virtual ~ILink() {}
 
