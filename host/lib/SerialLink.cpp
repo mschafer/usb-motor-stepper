@@ -35,7 +35,7 @@ SerialLink::~SerialLink()
 			close();
 			background_.join();
 		} catch(...) {
-			std::cout << "something bad happend in SerialLink dtor" << std::endl;
+			std::cout << "SerialLink dtor threw something" << std::endl;
 		}
 	}
 }

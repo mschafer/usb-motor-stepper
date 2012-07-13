@@ -63,46 +63,53 @@ int main(int argc, char *argv[])
 
 	if (vm.count("help")) {
 		cout << desc << endl;
-		return 0;
+		exit(0);
 	}
 
 	// attempt to connect to a port if one was specified, otherwise connect to sim
 	// terminate if an error occurs
 	auto_ptr<ums::Host> host;
 	auto_ptr<ofstream> out;
+	string outName("sim.out");
 	if (vm.count("port")) {
 		cout << "Connecting to port " << vm["port"].as<string>() << endl;
 		host =  connectToPort(vm["port"].as<string>());
 	} else {
 		host.reset(new ums::Host());
 		if (vm.count("output")) {
-			string outName = vm["output"].as<string>();
-			out.reset(new ofstream(outName.c_str(), ios_base::out));
-			*(out.get()) << "hello output file" << endl;
+			outName = vm["output"].as<string>();
 		}
+		out.reset(new ofstream(outName.c_str(), ios_base::out));
+		*out << "X\tY\tZ\tU\ttime" << endl;
+	}
+
+	// error if no input files were provided
+	if (vm.count("input-file") == 0) {
+		cerr << "error: no input files" << endl;
+		exit(-1);
 	}
 
 	// process input files
-    if (vm.count("input-file"))
-    {
-    	const vector<string> &infiles = vm["input-file"].as<vector<string> >();
-    	BOOST_FOREACH(string fname, infiles) {
-    		fstream fin(fname.c_str(), ios_base::in);
-    		host->execute(fin);
-    	}
-    } else {
-    	string line;
-    	while(1) {
-    		cout << "stepper > ";
-    		getline(cin, line);
-    		if (line.compare("exit") == 0) {
-    			break;
-    		} else {
-    			stringstream sline(line);
-    			host->execute(sline);
-    		}
-    	}
-    }
+	host->enableDevice();
+	const vector<string> &infiles = vm["input-file"].as<vector<string> >();
+	BOOST_FOREACH(string fname, infiles) {
+		cout << "executing " << fname << endl;
+		fstream fin(fname.c_str(), ios_base::in);
+		host->execute(fin);
 
-    return 0;
+		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+
+		// record the simulator log
+		if (out.get() != NULL) {
+			std::deque<ums::Simulator::position_t> simLog = host->simulatorPositionLog();
+			BOOST_FOREACH (ums::Simulator::position_t pos, simLog) {
+				BOOST_FOREACH (ptrdiff_t p, pos) {
+					*out << p << "\t";
+				}
+				*out << endl;
+			}
+		}
+	}
+
+	exit(0);
 }

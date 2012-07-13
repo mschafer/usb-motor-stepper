@@ -11,7 +11,7 @@ namespace ums {
 const std::string Host::SIMULATOR_NAME("simulator");
 boost::mutex Host::uniqueSim_;
 
-Host::Host(const std::string &linkName) : ownsSim_(false)
+Host::Host(const std::string &linkName) : ownsSim_(false), deviceEnabled_(false)
 {
 	if (linkName.compare(SIMULATOR_NAME)==0) {
 		// take unique ownership of the simulator because device C code uses globals
@@ -62,13 +62,17 @@ Host::~Host()
 			simExec_.join();
 		}
 	} catch (...) {
-		std::cerr << "deleting host threw something" << std::endl;
+		std::cout << "Host dtor threw something" << std::endl;
 	}
 }
 
 bool
 Host::pingDevice()
 {
+	if (!deviceEnabled_) {
+		throw std::runtime_error("Error: device not enabled");
+	}
+
 	PingCmd pc;
 	pc.cmdId = PingCmd_ID;
 	pong_.reset();
@@ -108,12 +112,18 @@ Host::enableDevice()
 		if (i == 9)
 			throw std::runtime_error("connection to device failed");
 	}
+	deviceEnabled_ = true;
 }
 
 void
 Host::execute(std::istream &in)
 {
 	using namespace std;
+
+	if (!deviceEnabled_) {
+		throw std::runtime_error("Error: device not enabled");
+	}
+
 	string line;
 	while (!in.eof()) {
 		getline(in, line);
@@ -169,7 +179,8 @@ Host::msgThread()
 					pong_ =*(PongMsg *)(&m[0]);
 					break;
 
-					///\todo add case for ErrorMsg and track enabled/disabled state in host
+				case ErrorMsg_ID:
+					deviceEnabled_ = false;
 
 				default:
 					msgQ_.push_back(MessageInfo::buffer_t());

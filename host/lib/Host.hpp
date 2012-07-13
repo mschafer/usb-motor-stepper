@@ -15,13 +15,6 @@ namespace ums {
 class Host : boost::noncopyable {
 public:
 
-	/** functionality:
-	 * enable()
-	 * sendCommands(istream)
-	 * registerMessageHandler()
-	 *
-	 */
-
 	static const std::string SIMULATOR_NAME;
 
 	Host(const std::string &linkName=SIMULATOR_NAME);
@@ -53,6 +46,9 @@ public:
 	 * but the command may not be sent for some time.
 	 */
 	void sendCommand(const CommandInfo::buffer_t &cmd) {
+		if (!deviceEnabled_) {
+			throw std::runtime_error("Error: device not enabled");
+		}
 		link_->write(cmd);
 	}
 
@@ -62,6 +58,9 @@ public:
 		return MessageInfo::toString(msgBuff);
 	}
 
+	/**
+	 * Pulls the position log from the simulator and resets it.
+	 */
 	std::deque<Simulator::position_t> simulatorPositionLog();
 
 private:
@@ -75,6 +74,7 @@ private:
 	boost::shared_ptr<ILink> link_;
 	boost::optional<AcceptMsg> accept_;
 	boost::optional<PongMsg> pong_;
+	bool deviceEnabled_;
 
 	bool msgRun_;
 	void msgThread();
