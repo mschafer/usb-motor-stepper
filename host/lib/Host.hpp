@@ -47,7 +47,7 @@ public:
 	 */
 	void sendCommand(const CommandInfo::buffer_t &cmd) {
 		if (!deviceEnabled_) {
-			throw std::runtime_error("Error: device not enabled");
+			throw std::runtime_error("Error: device is disabled");
 		}
 		link_->write(cmd);
 	}

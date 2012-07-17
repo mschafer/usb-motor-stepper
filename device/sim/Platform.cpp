@@ -48,13 +48,6 @@ Simulator::runOnce()
 		p[3] = umsUPos;
 		p[4] = umsRunTime;
 
-#if 0
-		for (size_t i=0; i<END_AXIS; i++) {
-			p[i] = axes_[i].position_;
-		}
-		p[END_AXIS] = t_;
-#endif
-
 		positionLog_.push_back(p);
 	}
 }

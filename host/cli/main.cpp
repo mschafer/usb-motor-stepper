@@ -4,6 +4,7 @@
 #include <fstream>
 #include <stdio.h>
 #include "Host.hpp"
+#include "ums.h"
 
 using namespace std;
 using namespace boost;
@@ -26,22 +27,24 @@ connectToPort(const string &port)
 	return auto_ptr<ums::Host>(new ums::Host(port));
 }
 
-/**
- * commands:
- * step
- * line
- * pause
- * file
- * quit
- * port
- */
+struct Executor
+{
+	Executor(ums::Host *host, istream &in) :
+		host_(host), in_(in) {}
 
-/**
- * command line options
- * port
- * file name* (process commands in file, then quit)
- * simulator output file name
- */
+	void operator()() {
+		try {
+			host_->execute(in_);
+		} catch (std::exception &ex) {
+			cerr << ex.what() << endl;
+			throw;
+		}
+	}
+
+	ums::Host *host_;
+	istream &in_;
+};
+
 
 int main(int argc, char *argv[])
 {
@@ -65,6 +68,9 @@ int main(int argc, char *argv[])
 		cout << desc << endl;
 		exit(0);
 	}
+
+	string line;
+	getline(cin, line);
 
 	// attempt to connect to a port if one was specified, otherwise connect to sim
 	// terminate if an error occurs
@@ -95,9 +101,26 @@ int main(int argc, char *argv[])
 	BOOST_FOREACH(string fname, infiles) {
 		cout << "executing " << fname << endl;
 		fstream fin(fname.c_str(), ios_base::in);
-		host->execute(fin);
 
-		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+		boost::thread exe(Executor(host.get(), fin));
+		bool exeDone = false;
+		bool running = true;
+		while (!exeDone || running) {
+			if (!exeDone) {
+				exeDone = exe.timed_join(boost::posix_time::milliseconds(1));
+				cout << "exeDone " << exeDone << endl;
+			}
+
+			ums::MessageInfo::buffer_t msg = host->receiveMessage();
+			if (msg.size() != 0) {
+				cout << "message received" << endl;
+				cout << ums::MessageInfo::toString(msg);
+				if (msg[0] == StatusMsg_ID) {
+					StatusMsg *sm = (StatusMsg*)(&msg[0]);
+					running = (sm->flags & UMS_STEPPER_RUNNING) != 0;
+				}
+			}
+		}
 
 		// record the simulator log
 		if (out.get() != NULL) {

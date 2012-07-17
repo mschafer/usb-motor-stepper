@@ -177,6 +177,8 @@ void st_add_step(uint8_t stepDir, uint32_t delay)
 		prevDelay = 1;
 		pf_set_step_timer(1);
 		umsStatus |= UMS_STEPPER_RUNNING;
+		umsStatus |= UMS_SEND_STATUS_NOW;
+
 	}
 }
 
@@ -299,8 +301,8 @@ void st_run_once()
 
 	// done, cause a status to be sent and clear running status
 	else {
-		umsStatus |= UMS_SEND_STATUS_NOW;
 		umsStatus &= ~UMS_STEPPER_RUNNING;
+		umsStatus |= UMS_SEND_STATUS_NOW;
 	}
 }
 

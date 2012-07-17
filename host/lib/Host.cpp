@@ -90,7 +90,7 @@ void
 Host::enableDevice()
 {
 	// check for an already enabled device
-	if (pingDevice()) return;
+	if (deviceEnabled_ && pingDevice()) return;
 
 	std::vector<uint8_t> bytes;
 	std::string enableStr(UMS_ENABLE);
@@ -125,11 +125,19 @@ Host::execute(std::istream &in)
 	}
 
 	string line;
+	size_t lineNo = 0;
 	while (!in.eof()) {
+		++lineNo;
 		getline(in, line);
-		CommandInfo::buffer_t cb = CommandInfo::parseLine(line);
-		if (!cb.empty()) {
-			sendCommand(cb);
+		try {
+			CommandInfo::buffer_t cb = CommandInfo::parseLine(line);
+			if (!cb.empty()) {
+				sendCommand(cb);
+			}
+		} catch (std::exception &ex) {
+			ostringstream what;
+			what << "Execution error on line " << lineNo << ": " << ex.what();
+			throw std::runtime_error(what.str());
 		}
 	}
 }
