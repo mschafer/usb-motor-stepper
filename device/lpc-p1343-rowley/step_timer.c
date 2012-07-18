@@ -11,7 +11,7 @@ void step_timer_init()
     TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERRESET_ENABLED;
 
     /* leave the timer disabled */
-    TMR_TMR32B0TCR = 0;
+    TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_DISABLED;
 
     /* interrupt on match 0, reset timer on match, stop timer on match */
     TMR_TMR32B0MCR = TMR_TMR32B0MCR_MR0_INT_ENABLED |TMR_TMR32B0MCR_MR0_RESET_ENABLED | TMR_TMR32B0MCR_MR0_STOP_ENABLED;
@@ -29,13 +29,18 @@ void step_timer_init()
 
 void step_timer_start(uint32_t val)
 {
-    TMR_TMR32B0MR0 = val;
-    TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_ENABLED;
+    TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERRESET_ENABLED;
+    if (val != 0) {
+        TMR_TMR32B0MR0 = val;
+        TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_ENABLED;
+    } else {
+        TMR_TMR32B0TCR = TMR_TMR32B0TCR_COUNTERENABLE_DISABLED;
+    }
 }
 
 uint8_t step_timer_enabled()
 {
-	return (TMR_TMR32B0TCR & TMR_TMR32B0TCR_COUNTERENABLE_ENABLED) == 0 ? 0 : 1;
+	return (TMR_TMR32B0TCR & TMR_TMR32B0TCR_COUNTERENABLE_MASK) == 0 ? 0 : 1;
 }
 
 void TIMER32_0_IRQHandler(void)

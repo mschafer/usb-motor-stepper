@@ -11,7 +11,7 @@ namespace ums {
 const std::string Host::SIMULATOR_NAME("simulator");
 boost::mutex Host::uniqueSim_;
 
-Host::Host(const std::string &linkName) : ownsSim_(false), deviceEnabled_(false)
+Host::Host(const std::string &linkName) : ownsSim_(false)
 {
 	if (linkName.compare(SIMULATOR_NAME)==0) {
 		// take unique ownership of the simulator because device C code uses globals
@@ -69,10 +69,6 @@ Host::~Host()
 bool
 Host::pingDevice()
 {
-	if (!deviceEnabled_) {
-		throw std::runtime_error("Error: device not enabled");
-	}
-
 	PingCmd pc;
 	pc.cmdId = PingCmd_ID;
 	pong_.reset();
@@ -86,43 +82,51 @@ Host::pingDevice()
 	return false;
 }
 
-void
+bool
 Host::enableDevice()
 {
-	// check for an already enabled device
-	if (deviceEnabled_ && pingDevice()) return;
-
-	std::vector<uint8_t> bytes;
-	std::string enableStr(UMS_ENABLE);
-	BOOST_FOREACH(char c, enableStr) {
-		bytes.push_back(c);
-	}
-	accept_.reset();
-	link_->write(bytes);
-
-	for (int i=0; i<10; i++) {
-		boost::this_thread::sleep(boost::posix_time::milliseconds(10));
-		if (accept_){
-			if (accept_.get().majorVersion != UMS_MAJOR_VERSION ||
-				accept_.get().minorVersion != UMS_MINOR_VERSION) {
-				throw std::runtime_error("device has incorrect firmware version");
-			}
-			break;
+	int iter = 3;
+	while (iter > 0) {
+		// check for an already enabled device
+		if (pingDevice()) {
+			return true;
 		}
-		if (i == 9)
-			throw std::runtime_error("connection to device failed");
+
+		std::vector<uint8_t> bytes;
+		std::string enableStr(UMS_ENABLE);
+		BOOST_FOREACH(char c, enableStr) {
+			bytes.push_back(c);
+		}
+		accept_.reset();
+		link_->write(bytes);
+
+		for (int i=0; i<10; i++) {
+
+			// drain all the stale messages out of the queue
+			MessageInfo::buffer_t msg;
+			do {
+				msg = receiveMessage();
+			} while (!msg.empty());
+
+			boost::this_thread::sleep(boost::posix_time::milliseconds(10));
+			if (accept_){
+				if (accept_.get().majorVersion != UMS_MAJOR_VERSION ||
+						accept_.get().minorVersion != UMS_MINOR_VERSION) {
+					throw std::runtime_error("device has incorrect firmware version");
+				}
+			}
+		}
+		--iter;
 	}
-	deviceEnabled_ = true;
+
+	// connection failed
+	return false;
 }
 
 void
 Host::execute(std::istream &in)
 {
 	using namespace std;
-
-	if (!deviceEnabled_) {
-		throw std::runtime_error("Error: device not enabled");
-	}
 
 	string line;
 	size_t lineNo = 0;
@@ -173,7 +177,7 @@ Host::msgThread()
 			try {
 				m = MessageInfo::receiveMessage(link_.get());
 			} catch (...) {
-				std::cout << "received bogus data\n";
+				std::cout << "received bogus data, discarding\n";
 			}
 			empty = m.empty();
 			if (!m.empty()) {
@@ -186,9 +190,6 @@ Host::msgThread()
 				case PongMsg_ID:
 					pong_ =*(PongMsg *)(&m[0]);
 					break;
-
-				case ErrorMsg_ID:
-					deviceEnabled_ = false;
 
 				default:
 					msgQ_.push_back(MessageInfo::buffer_t());

@@ -299,10 +299,11 @@ void st_run_once()
 		st_clear_steps();
 	}
 
-	// done, cause a status to be sent and clear running status
+	// done, cause a status to be sent, clear running status, disable timer
 	else {
 		umsStatus &= ~UMS_STEPPER_RUNNING;
 		umsStatus |= UMS_SEND_STATUS_NOW;
+        pf_set_step_timer(0);
 	}
 }
 

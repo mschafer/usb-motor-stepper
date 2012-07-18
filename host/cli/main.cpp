@@ -69,8 +69,11 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
+
+#if 1 // use this to pause long enough to attach xcode
 	string line;
 	getline(cin, line);
+#endif
 
 	// attempt to connect to a port if one was specified, otherwise connect to sim
 	// terminate if an error occurs
@@ -79,7 +82,9 @@ int main(int argc, char *argv[])
 	string outName("sim.out");
 	if (vm.count("port")) {
 		cout << "Connecting to port " << vm["port"].as<string>() << endl;
-		host =  connectToPort(vm["port"].as<string>());
+		string portName = vm["port"].as<string>();
+		cout << "attempting connection to " << portName << endl;
+		host =  connectToPort(portName);
 	} else {
 		host.reset(new ums::Host());
 		if (vm.count("output")) {
@@ -97,6 +102,7 @@ int main(int argc, char *argv[])
 
 	// process input files
 	host->enableDevice();
+	cout << "connection succeeded" << endl;
 	const vector<string> &infiles = vm["input-file"].as<vector<string> >();
 	BOOST_FOREACH(string fname, infiles) {
 		cout << "executing " << fname << endl;

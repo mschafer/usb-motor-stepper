@@ -25,12 +25,14 @@ public:
 	 * The device starts in a disabled state where it will ignore all commands until it is enabled.
 	 * It may also transition to a disabled state when a fatal error occurs.
 	 * The device should respond to the enable code with an AcceptMsg that contains the firmware version number.
+	 * An exception is thrown if the firmware version is incorrect.
+	 * \return true if the device is connected and responds to ping, false otherwise
 	 */
-	void enableDevice();
+	bool enableDevice();
 
 	/**
 	 * Send PingCmd to the device and waits ~200 msec for a pong.
-	 * \return True if response received from device, false otherwise
+	 * \return true if response received from device, false otherwise
 	 */
 	bool pingDevice();
 
@@ -46,9 +48,6 @@ public:
 	 * but the command may not be sent for some time.
 	 */
 	void sendCommand(const CommandInfo::buffer_t &cmd) {
-		if (!deviceEnabled_) {
-			throw std::runtime_error("Error: device is disabled");
-		}
 		link_->write(cmd);
 	}
 
@@ -74,7 +73,6 @@ private:
 	boost::shared_ptr<ILink> link_;
 	boost::optional<AcceptMsg> accept_;
 	boost::optional<PongMsg> pong_;
-	bool deviceEnabled_;
 
 	bool msgRun_;
 	void msgThread();

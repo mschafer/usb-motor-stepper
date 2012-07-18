@@ -57,6 +57,7 @@ void pf_set_step_timer(uint32_t val);
 
 /**
  * Is the timer currently running?
+ * A call to pf_set_timer(0) should cause this function to return 0;
  * \return 0 if the timer is not counting down and non-zero if it is.
  */
 uint8_t pf_is_timer_running();

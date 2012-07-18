@@ -2,4 +2,5 @@
 /.settings
 device/.DS_Store
 device/lpc-p1343-rowley/THUMB Flash Debug
+device/lpc-p1343-rowley/THUMB Flash Release
 *.bak

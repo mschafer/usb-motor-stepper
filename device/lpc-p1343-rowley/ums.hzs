@@ -1,7 +1,11 @@
 <!DOCTYPE CrossStudio_for_ARM_Session_File>
 <session>
  <Bookmarks/>
- <Breakpoints/>
+ <Breakpoints>
+  <BreakpointListItem line="167" action="" hardwareBreakpoint="" trigger="" useHWbreakpoint="false" group="Breakpoints" type="Breakpoint" state="3" counter="0" isFunctionBreakpoint="false" filename="/Users/mschafer/github/usb-motor-stepper/device/common/stepper.c" expression="" />
+  <BreakpointListItem line="278" action="" hardwareBreakpoint="" trigger="" useHWbreakpoint="false" group="Breakpoints" type="Breakpoint" state="3" counter="0" isFunctionBreakpoint="false" filename="/Users/mschafer/github/usb-motor-stepper/device/common/stepper.c" expression="" />
+  <BreakpointListItem line="306" action="" hardwareBreakpoint="" trigger="" useHWbreakpoint="false" group="Breakpoints" type="Breakpoint" state="3" counter="0" isFunctionBreakpoint="false" filename="/Users/mschafer/github/usb-motor-stepper/device/common/stepper.c" expression="" />
+ </Breakpoints>
  <ETMWindow>
   <ETMRegister number="0" value="800" />
   <ETMRegister number="8" value="6f" />
@@ -24,12 +28,10 @@
   <ProjectSessionItem path="ums" name="unnamed" />
   <ProjectSessionItem path="ums;ums" name="unnamed" />
   <ProjectSessionItem path="ums;ums;Source Files" name="unnamed" />
-  <ProjectSessionItem path="ums;ums;Source Files;core" name="unnamed" />
-  <ProjectSessionItem path="ums;ums;Source Files;core;usbcdc" name="unnamed" />
   <ProjectSessionItem path="ums;ums;Source Files;ums" name="unnamed" />
  </Project>
  <Register1>
-  <RegisterWindow openNodes="" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" />
+  <RegisterWindow openNodes="CT32B0;CT32B0/BTCR" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="CT32B0" decimalNodes="" octalNodes="" asciiNodes="" />
  </Register1>
  <Register2>
   <RegisterWindow openNodes="" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" />
@@ -57,18 +59,14 @@
   <Watches active="0" update="Never" />
  </Watch4>
  <Files>
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/main.c" y="54" path="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/main.c" left="0" selected="0" name="unnamed" top="42" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/platform.c" y="21" path="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/platform.c" left="0" selected="0" name="unnamed" top="12" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/step_timer.c" y="45" path="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/step_timer.c" left="0" selected="0" name="unnamed" top="36" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/common/ums.c" y="87" path="/Users/mschafer/github/usb-motor-stepper/device/common/ums.c" left="0" selected="0" name="unnamed" top="76" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/common/ums.h" y="18" path="/Users/mschafer/github/usb-motor-stepper/device/common/ums.h" left="0" selected="0" name="unnamed" top="0" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/asap2.c" y="10" path="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/asap2.c" left="0" selected="0" name="unnamed" top="0" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/sysinit.c" y="0" path="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/sysinit.c" left="0" selected="0" name="unnamed" top="72" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc/cdcuser.c" y="304" path="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc/cdcuser.c" left="0" selected="0" name="unnamed" top="293" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc/cdcuser.h" y="78" path="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc/cdcuser.h" left="0" selected="0" name="unnamed" top="64" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/common/platform.h" y="18" path="/Users/mschafer/github/usb-motor-stepper/device/common/platform.h" left="0" selected="0" name="unnamed" top="9" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/common/stepper.c" y="94" path="/Users/mschafer/github/usb-motor-stepper/device/common/stepper.c" left="0" selected="0" name="unnamed" top="83" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc/usbhw.c" y="161" path="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc/usbhw.c" left="0" selected="1" name="unnamed" top="150" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/common/ums.c" y="81" path="/Users/mschafer/github/usb-motor-stepper/device/common/ums.c" left="0" selected="0" name="unnamed" top="72" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/main.c" y="54" path="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/main.c" left="0" selected="1" name="unnamed" top="63" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc/usbhw.c" y="119" path="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/core/usbcdc/usbhw.c" left="0" selected="0" name="unnamed" top="108" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="projectconfig.h" y="0" path="projectconfig.h" left="0" selected="0" name="unnamed" top="558" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/platform.c" y="53" path="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/platform.c" left="0" selected="0" name="unnamed" top="45" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/common/commands.c" y="31" path="/Users/mschafer/github/usb-motor-stepper/device/common/commands.c" left="0" selected="0" name="unnamed" top="16" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/common/stepper.c" y="160" path="/Users/mschafer/github/usb-motor-stepper/device/common/stepper.c" left="0" selected="0" name="unnamed" top="18" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/step_timer.c" y="32" path="/Users/mschafer/github/usb-motor-stepper/device/lpc-p1343-rowley/step_timer.c" left="0" selected="0" name="unnamed" top="17" />
  </Files>
  <ARMCrossStudioWindow activeProject="ums" autoConnectTarget="Texas Instruments ICDI" debugSearchFileMap="" fileDialogInitialDirectory="/Users/mschafer/github/usb-motor-stepper/device/common" fileDialogDefaultFilter="*.c" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Debug" />
 </session>

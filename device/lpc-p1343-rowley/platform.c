@@ -3,12 +3,13 @@
 #include "step_timer.h"
 #include "platform.h"
 #include "commands.h"
+#include "stepper.h"
 
 /**
  * \file Implementation of ums platform specific functions for LPC-P1343 with Rowley
  */
 
-uint8_t pf_send_bytes(uint8_t *data, uint16_t size)
+uint8_t pf_send_bytes(const uint8_t *data, uint16_t size)
 {
 	CDC_BlockingWriteInEp(data, size);
 	return 0;

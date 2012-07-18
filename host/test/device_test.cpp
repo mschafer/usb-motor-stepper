@@ -13,8 +13,6 @@ using ums::makeCmdBuff;
 
 const char *LINK_NAME = "/dev/tty.usbmodem411";
 
-#if 0
-
 BOOST_AUTO_TEST_CASE ( device_ping_test )
 {
 	try {
@@ -26,7 +24,7 @@ BOOST_AUTO_TEST_CASE ( device_ping_test )
 	}
 }
 
-
+#if 0
 BOOST_AUTO_TEST_CASE( bad_pin_test )
 {
 	ums::Host host;
