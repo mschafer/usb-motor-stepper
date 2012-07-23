@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 	}
 
 
-#if 1 // use this to pause long enough to attach xcode
+#if 0 // use this to pause long enough to attach xcode
 	string line;
 	getline(cin, line);
 #endif
