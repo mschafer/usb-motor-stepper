@@ -55,10 +55,7 @@ BOOST_AUTO_TEST_CASE( simple_step_test )
 		ums::MessageInfo::buffer_t msg = host.receiveMessage();
 		if (!msg.empty() && msg[0] == StatusMsg_ID) {
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
-			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
-					UMS_UNPACK_U32(m->commandCounter) == 1) {
-				break;
-			}
+			if ((m->flags & UMS_STEPPER_RUNNING) == 0) break;
 		}
 		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 	}
@@ -84,10 +81,7 @@ BOOST_AUTO_TEST_CASE( one_step_test )
 		ums::MessageInfo::buffer_t msg = host.receiveMessage();
 		if (!msg.empty() && msg[0] == StatusMsg_ID) {
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
-			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
-					UMS_UNPACK_U32(m->commandCounter) == 1) {
-				break;
-			}
+			if ((m->flags & UMS_STEPPER_RUNNING) == 0) break;
 		}
 		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 	}
@@ -120,10 +114,7 @@ BOOST_AUTO_TEST_CASE( short_line_test )
 		ums::MessageInfo::buffer_t msg = host.receiveMessage();
 		if (!msg.empty() && msg[0] == StatusMsg_ID) {
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
-			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
-					UMS_UNPACK_U32(m->commandCounter) == 1) {
-				break;
-			}
+			if ((m->flags & UMS_STEPPER_RUNNING) == 0) break;
 		}
 		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 	}
@@ -160,10 +151,7 @@ BOOST_AUTO_TEST_CASE( line_limit_test )
 		if (!msg.empty() && msg[0] == StatusMsg_ID) {
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
 			limitDetect |= (m->limits != 0);
-			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
-					UMS_UNPACK_U32(m->commandCounter) == 1) {
-				break;
-			}
+			if ((m->flags & UMS_STEPPER_RUNNING) == 0) break;
 		}
 		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 	}
@@ -197,10 +185,7 @@ BOOST_AUTO_TEST_CASE( simple_stream_test )
 		ums::MessageInfo::buffer_t msg = host.receiveMessage();
 		if (!msg.empty() && msg[0] == StatusMsg_ID) {
 			struct StatusMsg *m = (struct StatusMsg *)&msg[0];
-			if ((m->flags & UMS_STEPPER_RUNNING) == 0 &&
-					UMS_UNPACK_U32(m->commandCounter) == 5) {
-				break;
-			}
+			if ((m->flags & UMS_STEPPER_RUNNING) == 0) break;
 		}
 		boost::this_thread::sleep(boost::posix_time::milliseconds(20));
 		iter--;
