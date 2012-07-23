@@ -95,14 +95,14 @@ public:
 	    ParsedStepDir sd = p.get<0>();
 	    s->stepDir = 0;
 
-	    if (at_c<0>(sd)) s->stepDir        |= UMS_X_STEP;
-	    if (at_c<0>(sd) == '+') s->stepDir |= UMS_X_DIR;
-	    if (at_c<1>(sd)) s->stepDir        |= UMS_Y_STEP;
-	    if (at_c<1>(sd) == '+') s->stepDir |= UMS_Y_DIR;
-	    if (at_c<2>(sd)) s->stepDir        |= UMS_Z_STEP;
-	    if (at_c<2>(sd) == '+') s->stepDir |= UMS_Z_DIR;
-	    if (at_c<3>(sd)) s->stepDir        |= UMS_U_STEP;
-	    if (at_c<3>(sd) == '+') s->stepDir |= UMS_U_DIR;
+	    if (at_c<0>(sd)  && at_c<0>(sd) != '0') s->stepDir |= UMS_X_STEP;
+	    if (at_c<0>(sd) == '+') s->stepDir                 |= UMS_X_DIR;
+	    if (at_c<1>(sd)  && at_c<1>(sd) != '0') s->stepDir |= UMS_Y_STEP;
+	    if (at_c<1>(sd) == '+') s->stepDir                 |= UMS_Y_DIR;
+	    if (at_c<2>(sd)  && at_c<2>(sd) != '0') s->stepDir |= UMS_Z_STEP;
+	    if (at_c<2>(sd) == '+') s->stepDir                 |= UMS_Z_DIR;
+	    if (at_c<3>(sd)  && at_c<3>(sd) != '0') s->stepDir |= UMS_U_STEP;
+	    if (at_c<3>(sd) == '+') s->stepDir                 |= UMS_U_DIR;
 	}
 };
 
