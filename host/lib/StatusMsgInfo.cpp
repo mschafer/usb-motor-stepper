@@ -34,10 +34,10 @@ public:
 		ss << "Status:\tlimit: " << bits(m->limits);
 		ss << "\tflags: " << bits(m->flags);
 		ss << "\tcmdCount: " << cmdCount << "\tstepCount: " << stepCount;
-		ss << "x: " << UMS_UNPACK_I32(m->xPos) << "\t";
-		ss << "y: " << UMS_UNPACK_I32(m->yPos) << "\t";
-		ss << "z: " << UMS_UNPACK_I32(m->zPos) << "\t";
-		ss << "u: " << UMS_UNPACK_I32(m->uPos) << std::endl;
+		ss << "\tx: " << UMS_UNPACK_I32(m->xPos);
+		ss << "\ty: " << UMS_UNPACK_I32(m->yPos);
+		ss << "\tz: " << UMS_UNPACK_I32(m->zPos);
+		ss << "\tu: " << UMS_UNPACK_I32(m->uPos) << std::endl;
 		return ss.str();
 	}
 
