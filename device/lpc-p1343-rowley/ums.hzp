@@ -47,6 +47,7 @@
       <file file_name="$(TargetsDir)/LPC1000/include/CMSIS/system_LPC13xx.h"/>
       <file file_name="$(TargetsDir)/LPC1000/include/CMSIS/system_LPC13xx.c"/>
     </folder>
+    <configuration Name="Release" c_preprocessor_definitions="STARTUP_FROM_RESET"/>
   </project>
   <configuration Name="THUMB RAM Debug" inherited_configurations="THUMB;RAM;Debug"/>
   <configuration Name="THUMB" Platform="ARM" arm_instruction_set="THUMB" arm_library_instruction_set="THUMB" c_preprocessor_definitions="__THUMB" hidden="Yes"/>
@@ -57,5 +58,5 @@
   <configuration Name="THUMB Flash Debug" inherited_configurations="THUMB;Flash;Debug"/>
   <configuration Name="Flash" c_preprocessor_definitions="__FLASH_BUILD" hidden="Yes"/>
   <configuration Name="THUMB Flash Release" inherited_configurations="THUMB;Flash;Release"/>
-  <configuration Name="Common" arm_instruction_set="ARM"/>
+  <configuration Name="Common" linker_output_format="bin"/>
 </solution>

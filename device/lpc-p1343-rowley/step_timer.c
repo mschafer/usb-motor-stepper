@@ -16,8 +16,8 @@ void step_timer_init()
     /* interrupt on match 0, reset timer on match, stop timer on match */
     TMR_TMR32B0MCR = TMR_TMR32B0MCR_MR0_INT_ENABLED |TMR_TMR32B0MCR_MR0_RESET_ENABLED | TMR_TMR32B0MCR_MR0_STOP_ENABLED;
 
-    /* set prescale to divide by 72000, 1ms */
-    TMR_TMR32B0PR = 72000 - 1;
+    /* set prescale to divide by 72, 1usec */
+    TMR_TMR32B0PR = 72 - 1;
 
     /* clear any pending interrupts and then enable the interrupt. */
     TMR_TMR32B0IR = TMR_TMR32B0IR_MR0;
