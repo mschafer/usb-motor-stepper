@@ -64,10 +64,10 @@ void handle_LongLineCmd(uint8_t *cmdData)
 {
     struct LongLineCmd *lcmd = (struct LongLineCmd *)cmdData;
     st_line_setup( UMS_UNPACK_U16(lcmd->deltaX),
-    		UMS_UNPACK_U16(lcmd->deltaY),
-    		UMS_UNPACK_U16(lcmd->deltaZ),
-    		UMS_UNPACK_U16(lcmd->deltaU),
-    		UMS_UNPACK_U16(lcmd->delay));
+    		UMS_UNPACK_I16(lcmd->deltaY),
+    		UMS_UNPACK_I16(lcmd->deltaZ),
+    		UMS_UNPACK_I16(lcmd->deltaU),
+    		UMS_UNPACK_U32(lcmd->delay));
     st_full();
 }
 

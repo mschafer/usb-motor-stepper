@@ -98,7 +98,7 @@ struct LongLineCmd {
     uint8_t deltaY[2];
     uint8_t deltaZ[2];
     uint8_t deltaU[2];
-    uint8_t delay[2];
+    uint8_t delay[4];
 };
 
 #define MAX_CMD_LENGTH LongLineCmd_LENGTH

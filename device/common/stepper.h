@@ -33,7 +33,7 @@ void st_run_once();
 
 void st_setup_axis(struct AxisCmd *c);
 
-void st_line_setup(int dx, int dy, int dz, int du, uint16_t delay);
+void st_line_setup(int dx, int dy, int dz, int du, uint32_t delay);
 
 #ifdef __cplusplus
 }

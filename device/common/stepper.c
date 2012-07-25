@@ -60,12 +60,12 @@ struct
     int ex, ey, ez, eu;
     int maxd;
     int count;
+    uint32_t delay;
     uint8_t dir;
-    uint16_t delay;
 } Line;
 
 
-void st_line_setup(int dx, int dy, int dz, int du, uint16_t delay)
+void st_line_setup(int dx, int dy, int dz, int du, uint32_t delay)
 {
     Line.delay = delay;
 

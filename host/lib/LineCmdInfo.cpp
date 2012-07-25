@@ -90,13 +90,22 @@ public:
         int deltaZ = at_c<2>(ld).get_value_or(0);
         int deltaU = at_c<3>(ld).get_value_or(0);
 
-        int deltaMax = abs(deltaX);
+        size_t deltaMax = abs(deltaX);
         deltaMax = (deltaMax < abs(deltaY)) ? abs(deltaY) : deltaMax;
         deltaMax = (deltaMax < abs(deltaZ)) ? abs(deltaZ) : deltaMax;
         deltaMax = (deltaMax < abs(deltaU)) ? abs(deltaU) : deltaMax;
 
+        if (deltaMax > INT16_MAX) {
+        	throw std::runtime_error("LineCmd parse: overflow, deltas must fit in 16 bit signed integer");
+        }
+
+        unsigned int delay = p.get<1>();
+        if (delay > UINT32_MAX) {
+        	throw std::runtime_error("LineCmd parse: overflow, delay must fit in 32 bit unsigned integer");
+        }
+
         // if the deltas are too big, then we need a long line instead of a line
-        if (deltaMax > INT8_MAX) {
+        if (deltaMax > INT8_MAX || delay > UINT16_MAX) {
             m.resize(LongLineCmd_LENGTH);
             LongLineCmd *l = reinterpret_cast<LongLineCmd *>(&m[0]);
             l->cmdId = LongLineCmd_ID;
@@ -104,8 +113,7 @@ public:
             UMS_PACK_16(deltaY, l->deltaY);
             UMS_PACK_16(deltaZ, l->deltaZ);
             UMS_PACK_16(deltaU, l->deltaU);
-            unsigned int delay = p.get<1>();
-            UMS_PACK_16(delay, l->delay);
+            UMS_PACK_32(delay, l->delay);
         } else {
             m.resize(LineCmd_LENGTH);
             LineCmd *l = reinterpret_cast<LineCmd *>(&m[0]);
@@ -114,7 +122,6 @@ public:
             l->deltaY = (int8_t)deltaY;
             l->deltaZ = (int8_t)deltaZ;
             l->deltaU = (int8_t)deltaU;
-            unsigned int delay = p.get<1>();
             UMS_PACK_16(delay, l->delay);
         }
     }
