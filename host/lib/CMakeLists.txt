@@ -18,5 +18,5 @@ add_library (ums SHARED
 )
 
 if ( NOT WIN32 )
-target_link_libraries(boost_system boost_thread)
+target_link_libraries(ums boost_system boost_thread)
 endif ( NOT WIN32)

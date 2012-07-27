@@ -1,5 +1,9 @@
 #define BOOST_TEST_MAIN
-//#define BOOST_TEST_DYN_LINK
+
+// use dynamic boost test library on non-Windows arches
+#ifndef _WIN32
+#define BOOST_TEST_DYN_LINK
+#endif
 #define BOOST_TEST_MODULE Test Engine
 #include <boost/test/unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
