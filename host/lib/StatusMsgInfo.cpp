@@ -1,4 +1,5 @@
 #include "MessageInfo.hpp"
+#include <sstream>
 #include "messages.h"
 #include "ums.h"
 

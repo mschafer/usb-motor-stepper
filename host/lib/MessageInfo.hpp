@@ -8,6 +8,7 @@
 #include <boost/algorithm/string.hpp>
 #include "messages.h"
 #include "ILink.hpp"
+#include "UMS_DLL.h"
 
 namespace ums {
 
@@ -15,7 +16,7 @@ namespace ums {
  * Meta data for message.
  * Reception and translation.
  */
-class MessageInfo
+class UMS_API MessageInfo
 {
 public:
 	typedef std::vector<uint8_t> buffer_t;
@@ -45,9 +46,9 @@ protected:
 	struct Name {};
 	struct Id {};
 
-	typedef boost::multi_index_container <MessageInfo*,
+	typedef boost::multi_index_container <class MessageInfo*,
 		boost::multi_index::indexed_by<
-		boost::multi_index::hashed_unique <boost::multi_index::tag<Id>, boost::multi_index::member <MessageInfo, uint8_t, &MessageInfo::id_> >,
+		boost::multi_index::hashed_unique <boost::multi_index::tag<Id>, BOOST_MULTI_INDEX_CONST_MEM_FUN(MessageInfo, uint8_t, id) >,
 		boost::multi_index::hashed_unique < boost::multi_index::tag<Name>, BOOST_MULTI_INDEX_CONST_MEM_FUN(MessageInfo, std::string, lowerName) >
 		>
 	> MessageInfo_set;

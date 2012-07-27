@@ -6,7 +6,9 @@
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/algorithm/string.hpp>
+#include <vector>
 #include "commands.h"
+#include "UMS_DLL.h"
 
 namespace ums {
 
@@ -14,7 +16,7 @@ namespace ums {
  * Meta data for command.
  * Parsing and output generation.
  */
-class CommandInfo
+class UMS_API CommandInfo
 {
 public:
 	typedef std::vector<uint8_t> buffer_t;
@@ -51,7 +53,7 @@ protected:
 
 	typedef boost::multi_index_container <CommandInfo*,
 		boost::multi_index::indexed_by<
-		boost::multi_index::hashed_unique <boost::multi_index::tag<Id>, boost::multi_index::member <CommandInfo, uint8_t, &CommandInfo::id_> >,
+		boost::multi_index::hashed_unique <boost::multi_index::tag<Id>, BOOST_MULTI_INDEX_CONST_MEM_FUN(CommandInfo, uint8_t, id) >,
 		boost::multi_index::hashed_unique < boost::multi_index::tag<Name>, BOOST_MULTI_INDEX_CONST_MEM_FUN(CommandInfo, std::string, lowerName) >
 		>
 	> CommandInfo_set;

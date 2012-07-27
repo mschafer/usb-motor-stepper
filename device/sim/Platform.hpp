@@ -12,6 +12,7 @@
 #include "Axis.hpp"
 #include "ILink.hpp"
 #include "platform.h"
+#include "UMS_DLL.h"
 
 /**
  * \file Platform specific implementation of ums functions for simulator.
@@ -23,7 +24,7 @@ namespace ums {
  * Simulation platform implementation.
  * Singleton.
  */
-class Simulator : boost::noncopyable {
+class UMS_API Simulator : boost::noncopyable {
 public:
 	void runOnce();
 

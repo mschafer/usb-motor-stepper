@@ -2,12 +2,13 @@
 #define ums_Axis_hpp
 
 #include <boost/array.hpp>
+#include "UMS_DLL.h"
 #include "commands.h"
 
 namespace ums {
 
 /** Description of a simulated pin. */
-struct Pin {
+struct UMS_API Pin {
 
 	/** Default constructor creates an unassigned pin. */
 	Pin() : port_(UMS_UNASSIGNED_PORT), pin_(0), inverted_(false) {}
@@ -76,7 +77,7 @@ private:
 };
 
 /** Simulates a single axis as a stepper motor connected to physical pins. */
-struct Axis {
+struct UMS_API Axis {
 	Axis() : maxFwdPos_(INT_MAX), maxRevPos_(INT_MIN), lastStep_(false), position_(0), enabled_(true)
 	{}
 

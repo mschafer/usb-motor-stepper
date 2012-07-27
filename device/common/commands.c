@@ -111,6 +111,7 @@ uint8_t cmd_get_length(uint8_t cmdId)
 
 uint8_t *cmd_receive()
 {
+	uint8_t len;
 	if (rxOffset == 0) {
 		if (pf_receive_byte(cmdBuff)) {
 			rxOffset = 1;
@@ -123,7 +124,7 @@ uint8_t *cmd_receive()
         handle_bad_cmd(cmdBuff);
     }
 
-	uint8_t len = cmd_get_length(cmdBuff[0]);
+	len = cmd_get_length(cmdBuff[0]);
 	while (rxOffset < len) {
 		if (!pf_receive_byte(cmdBuff+rxOffset)) {
 			return NULL;

@@ -1,6 +1,7 @@
 #ifndef ums_ILink_hpp
 #define ums_ILink_hpp
 
+#include <stdint.h>
 #include <deque>
 #include <vector>
 #include <boost/optional.hpp>

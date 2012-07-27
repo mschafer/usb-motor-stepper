@@ -91,12 +91,14 @@ void st_line_setup(int dx, int dy, int dz, int du, uint32_t delay)
 
 uint8_t st_line_next_step()
 {
+	uint8_t step;
+
     // return 0 if there we are at the end of the line
     if (Line.count == Line.maxd) {
         return 0;
     }
 
-    uint8_t step = Line.dir;
+    step = Line.dir;
 
     Line.ex += 2 * Line.adx;
     if (Line.ex > Line.maxd) {
@@ -164,9 +166,10 @@ uint8_t st_full()
 
 void st_add_step(uint8_t stepDir, uint32_t delay)
 {
+	uint8_t p;
 	stepFIFO[stepHead]  = stepDir;
 	delayFIFO[stepHead] = delay;
-	uint8_t p = stepHead+1;
+	p = stepHead+1;
 	if (p == STEP_FIFO_SIZE)
 		stepHead = 0;
 	else
@@ -279,12 +282,13 @@ void st_run_once()
 
 	// nothing to do if the FIFO is empty
 	if (stepTail != stepHead) {
+		uint8_t p, stepDir;
 		umsStepCounter++;
 		// read the next step from FIFO and increment tail
-		uint8_t stepDir = stepFIFO[stepTail];
+		stepDir = stepFIFO[stepTail];
 		prevDelay = delayFIFO[stepTail];
 		pf_set_step_timer(delayFIFO[stepTail]);
-		uint8_t p = stepTail + 1;
+		p = stepTail + 1;
 		if (p == STEP_FIFO_SIZE)
 			stepTail = 0;
 		else

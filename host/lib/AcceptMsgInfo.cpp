@@ -1,5 +1,6 @@
 #include "MessageInfo.hpp"
 #include "messages.h"
+#include <sstream>
 
 namespace ums {
 

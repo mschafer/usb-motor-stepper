@@ -2,17 +2,18 @@
 #define ums_Host_hpp
 
 #include <boost/utility.hpp>
+#include <boost/thread.hpp>
 #include "ILink.hpp"
 #include "MessageInfo.hpp"
 #include "CommandInfo.hpp"
 #include "Platform.hpp"
 #include "commands.h"
 #include "messages.h"
-#include <boost/thread.hpp>
+#include "UMS_DLL.h"
 
 namespace ums {
 
-class Host : boost::noncopyable {
+class UMS_API Host : boost::noncopyable {
 public:
 
 	static const std::string SIMULATOR_NAME;

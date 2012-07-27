@@ -5,10 +5,11 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/array.hpp>
+#include "UMS_DLL.h"
 
 namespace ums {
 
-class SerialLink : public ILink
+class UMS_API SerialLink : public ILink
 {
 public:
 	SerialLink(const std::string &portName);

@@ -1,9 +1,6 @@
 # usb-motor-stepper/host/test
 
-add_executable(stepper
-	main.cpp
-)
-
+link_directories(${Boost_LIBRARY_DIRS})
 include_directories ( 
     ${Boost_INCLUDE_DIRS} 
 	${PROJECT_SOURCE_DIR}/device/common
@@ -11,6 +8,13 @@ include_directories (
 	${PROJECT_SOURCE_DIR}/host/lib
 )
 
-include_directories(${Boost_INCLUDE_DIRS})
-link_directories(${Boost_LIBRARY_DIRS})
+add_executable(stepper
+	main.cpp
+)
+
+if (WIN32)
+target_link_libraries(stepper ums)
+else (WIN32)
 target_link_libraries(stepper boost_system boost_thread boost_program_options ums)
+endif (WIN32)
+

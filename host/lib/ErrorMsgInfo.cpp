@@ -1,3 +1,4 @@
+#include <sstream>
 #include "MessageInfo.hpp"
 #include "messages.h"
 
