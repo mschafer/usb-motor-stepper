@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE( simple_stream_test )
 	ss << "step x+ y- z+ 100" << std::endl;
 	ss << "delay 123000" << std::endl;
 	ss << "step x+ y- u+ 100" << std::endl;
-	ss << "line x+5 y3 z -2 100" << std::endl;
+	ss << "line x+5 y3 z -2 5523" << std::endl;
 
 	ums::Host host;
 	host.enableDevice();
@@ -197,5 +197,5 @@ BOOST_AUTO_TEST_CASE( simple_stream_test )
 	BOOST_CHECK(pos[1] == -1);
 	BOOST_CHECK(pos[2] == -1);
 	BOOST_CHECK(pos[3] == 1);
-	BOOST_CHECK(pos[4] == 123901);
+	BOOST_CHECK(pos[4] == 128924);
 }

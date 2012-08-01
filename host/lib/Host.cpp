@@ -14,6 +14,7 @@ boost::mutex Host::uniqueSim_;
 Host::Host(const std::string &linkName) : ownsSim_(false)
 {
 	if (linkName.compare(SIMULATOR_NAME)==0) {
+		///\todo exception here can leave lock in bad state
 		// take unique ownership of the simulator because device C code uses globals
 		ownsSim_ = uniqueSim_.try_lock();
 		if (!ownsSim_) {

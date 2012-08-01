@@ -56,19 +56,18 @@ uint8_t stepHead, stepTail;
 uint32_t prevDelay;
 struct
 {
-    int adx, ady, adz, adu;
-    int ex, ey, ez, eu;
+    int adx, ady, adz, adu, adt;
+    int ex, ey, ez, eu, et;
     int maxd;
     int count;
-    uint32_t delay;
-    uint8_t dir;
+    uint32_t stepDelay;
+    uint8_t dir, step, delayInc;
+
 } Line;
 
 
 void st_line_setup(int dx, int dy, int dz, int du, uint32_t delay)
 {
-    Line.delay = delay;
-
     Line.adx = abs(dx);
     Line.ady = abs(dy);
     Line.adz = abs(dz);
@@ -85,48 +84,63 @@ void st_line_setup(int dx, int dy, int dz, int du, uint32_t delay)
     Line.maxd = Line.adz > Line.maxd ? Line.adz : Line.maxd;
     Line.maxd = Line.adu > Line.maxd ? Line.adu : Line.maxd;
 
+    // dither delay between steps to get exactly the right delay
+    if (Line.maxd != 0) {
+    	Line.stepDelay = delay / Line.maxd;
+    } else {
+    	Line.stepDelay = delay;
+    }
+    Line.adt = delay - (Line.stepDelay * Line.maxd);
+
     Line.ex = Line.ey = Line.ez = Line.eu = 0;
     Line.count = 0;
+    Line.step = 0;
+    Line.delayInc = 0;
 }
 
 uint8_t st_line_next_step()
 {
-	uint8_t step;
-
     // return 0 if there we are at the end of the line
     if (Line.count == Line.maxd) {
         return 0;
     }
 
-    step = Line.dir;
+    Line.step = Line.dir;
 
     Line.ex += 2 * Line.adx;
     if (Line.ex > Line.maxd) {
-        step |= UMS_X_STEP;
+        Line.step |= UMS_X_STEP;
         Line.ex -= 2 * Line.maxd;
     }
 
     Line.ey += 2 * Line.ady;
     if (Line.ey > Line.maxd) {
-        step |= UMS_Y_STEP;
+    	Line.step |= UMS_Y_STEP;
         Line.ey -= 2 * Line.maxd;
     }
 
     Line.ez += 2 * Line.adz;
     if (Line.ez > Line.maxd) {
-        step |= UMS_Z_STEP;
+    	Line.step |= UMS_Z_STEP;
         Line.ez -= 2 * Line.maxd;
     }
 
     Line.eu += 2 * Line.adu;
     if (Line.eu > Line.maxd) {
-        step |= UMS_U_STEP;
+    	Line.step |= UMS_U_STEP;
         Line.eu -= 2 * Line.maxd;
+    }
+
+    Line.et += 2 * Line.adt;
+    Line.delayInc = 0;
+    if (Line.et > Line.maxd) {
+    	Line.et -= 2 * Line.maxd;
+    	Line.delayInc = 1;
     }
 
     Line.count++;
 
-    return step;
+    return 1;
 }
 
 void st_init( )
@@ -152,9 +166,8 @@ uint8_t st_full()
 
 	// if not full, try to fill up with steps from active line
 	else {
-	    uint8_t lineStep;
-	    while ((lineStep = st_line_next_step()) != 0) {
-	        st_add_step(lineStep, Line.delay);
+	    while (st_line_next_step() != 0) {
+	        st_add_step(Line.step, Line.stepDelay + Line.delayInc);
 	        if  ((stepTail == stepHead+1) ||
 	                (stepTail == 0 && stepHead == STEP_FIFO_SIZE-1)) {
 	            return 1;
