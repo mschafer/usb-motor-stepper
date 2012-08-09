@@ -90,7 +90,7 @@ public:
         int deltaZ = at_c<2>(ld).get_value_or(0);
         int deltaU = at_c<3>(ld).get_value_or(0);
 
-        size_t deltaMax = abs(deltaX);
+        int deltaMax = abs(deltaX);
         deltaMax = (deltaMax < abs(deltaY)) ? abs(deltaY) : deltaMax;
         deltaMax = (deltaMax < abs(deltaZ)) ? abs(deltaZ) : deltaMax;
         deltaMax = (deltaMax < abs(deltaU)) ? abs(deltaU) : deltaMax;

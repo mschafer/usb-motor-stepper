@@ -10,11 +10,11 @@ building a DLL on windows.
 // We are using the Visual Studio Compiler and building Shared libraries
 
 #if defined (_WIN32) 
+  // VS will warn about every boost and std template not having dll interface w/o these
+  #pragma warning( disable: 4251 )
+  #pragma warning( disable: 4275 )
   #if defined(ums_EXPORTS)
     #define  UMS_API __declspec(dllexport)
-    // VS will warn about every boost and std template not having dll interface w/o these
-    #pragma warning( disable: 4251 )
-    #pragma warning( disable: 4275 )
   #else
     #define  UMS_API __declspec(dllimport)
   #endif
