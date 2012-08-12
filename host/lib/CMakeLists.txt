@@ -17,6 +17,11 @@ add_library (ums SHARED
 	${LIB_SRCS}
 )
 
+install (TARGETS ums
+  LIBRARY DESTINATION bin
+)
+  
+
 if ( NOT WIN32 )
 target_link_libraries(ums boost_system boost_thread)
 endif ( NOT WIN32)

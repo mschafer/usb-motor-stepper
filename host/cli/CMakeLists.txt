@@ -1,4 +1,4 @@
-# usb-motor-stepper/host/test
+# usb-motor-stepper/host/cli
 
 link_directories(${Boost_LIBRARY_DIRS})
 include_directories ( 
@@ -12,6 +12,10 @@ add_executable(stepper
 	main.cpp
 )
 
+install (TARGETS stepper
+  RUNTIME DESTINATION bin
+)
+  
 if (WIN32)
 target_link_libraries(stepper ums)
 else (WIN32)

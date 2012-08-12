@@ -14,4 +14,4 @@ add_custom_target ( ${DEV_NAME}_firmware ALL
   ${CMAKE_COMMAND} -E copy ${DEV_BUILD_DIR}/ums.bin ${PROJECT_BINARY_DIR}/firmware/${DEV_NAME}
 )
 
-#install(DIRECTORY ${PROJECT_BINARY_DIR}/fcec_image DESTINATION .)
+install (FILES ${PROJECT_BINARY_DIR}/firmware/${DEV_NAME}/ums.bin DESTINATION firmware/${DEV_NAME}) 
