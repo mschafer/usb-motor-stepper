@@ -17,7 +17,7 @@ add_library (ums SHARED
 	${LIB_SRCS}
 )
 
-install (TARGETS ums
+install (TARGETS ums DESTINATION bin
   LIBRARY DESTINATION bin
 )
   

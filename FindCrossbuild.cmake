@@ -10,6 +10,7 @@ find_program(CROSSBUILD_EXECUTABLE
   ENV PATH
   "c:/Program Files/Rowley Associates Limited/CrossWorks for ARM 2.0/bin"
   "c:/Program Files (x86)/Rowley Associates Limited/CrossWorks for ARM 2.0/bin"
+  "C:/Program Files (x86)/Rowley Associates Limited/CrossWorks for ARM 2.2/bin"
   "/Applications/CrossWorks for ARM 2.2/bin"
 )
 
