@@ -21,6 +21,13 @@ install (TARGETS ums DESTINATION bin
   LIBRARY DESTINATION bin
 )
   
+install (FILES 
+    CommandInfo.hpp
+    Host.hpp
+    MessageInfo.hpp
+    SerialLink.hpp
+    DESTINATION include
+)
 
 if ( NOT WIN32 )
 target_link_libraries(ums boost_system boost_thread)
