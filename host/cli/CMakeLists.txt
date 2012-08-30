@@ -17,8 +17,8 @@ install (TARGETS stepper
 )
   
 if (WIN32)
-target_link_libraries(stepper ums)
+    target_link_libraries(stepper motor_stepper)
 else (WIN32)
-target_link_libraries(stepper boost_system boost_thread boost_program_options ums)
+    target_link_libraries(stepper boost_system boost_thread boost_program_options motor_stepper)
 endif (WIN32)
 

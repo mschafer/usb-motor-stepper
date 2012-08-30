@@ -16,7 +16,7 @@ add_executable(test-usb-motor-stepper
 )
 
 if (WIN32)
-target_link_libraries(test-usb-motor-stepper ums)
+    target_link_libraries(test-usb-motor-stepper motor_stepper)
 else (WIN32)
-target_link_libraries(test-usb-motor-stepper boost_unit_test_framework boost_system boost_thread ums)
+    target_link_libraries(test-usb-motor-stepper boost_unit_test_framework boost_system boost_thread motor_stepper)
 endif (WIN32)

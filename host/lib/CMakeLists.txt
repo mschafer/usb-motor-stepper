@@ -11,13 +11,13 @@ include_directories ( ${Boost_INCLUDE_DIRS}
 	${PROJECT_SOURCE_DIR}/host/lib
 )
 
-add_library (ums SHARED
+add_library (motor_stepper SHARED
 	${COMMON_SRCS}
 	${SIM_SRCS}
 	${LIB_SRCS}
 )
 
-install (TARGETS ums DESTINATION bin
+install (TARGETS motor_stepper DESTINATION bin
   LIBRARY DESTINATION bin
 )
   
@@ -29,6 +29,6 @@ install (FILES
     DESTINATION include
 )
 
-if ( NOT WIN32 )
-target_link_libraries(ums boost_system boost_thread)
-endif ( NOT WIN32)
+if (NOT WIN32)
+    target_link_libraries(motor_stepper boost_system boost_thread)
+endif (NOT WIN32)
